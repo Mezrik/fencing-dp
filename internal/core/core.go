@@ -6,11 +6,11 @@ import (
 	"mp.fencing.core/internal/models"
 )
 
-type App struct {
+type Core struct {
 	db *gorm.DB
 }
 
-func NewApp(db *gorm.DB) *App {
+func SetupCore(db *gorm.DB) *Core {
 	models := []interface{}{
 		&models.Competition{},
 		&models.Competitor{},
@@ -27,7 +27,7 @@ func NewApp(db *gorm.DB) *App {
 
 	database.Seed(db)
 
-	return &App{
+	return &Core{
 		db: db,
 	}
 }
