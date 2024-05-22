@@ -7,7 +7,7 @@ import (
 )
 
 type Core struct {
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 func SetupCore(db *gorm.DB) *Core {
@@ -28,6 +28,6 @@ func SetupCore(db *gorm.DB) *Core {
 	database.Seed(db)
 
 	return &Core{
-		db: db,
+		DB: db,
 	}
 }

@@ -4,10 +4,7 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 	"mp.fencing.core/frontend"
-	"mp.fencing.core/internal/core"
 )
 
 func main() {
@@ -32,8 +29,4 @@ func main() {
 	if err != nil {
 		println("Error:", err.Error())
 	}
-
-	db, _ := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-
-	core.SetupCore(db)
 }

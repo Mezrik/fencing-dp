@@ -1,10 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import { GetCompetitions } from "../wailsjs/go/main/App";
+import { models } from "../wailsjs/go/models";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [competitions, setCompetitions] = useState<models.Competition[]>([]);
+
+  const getCompetitions = async () => {
+    const competitions = await GetCompetitions();
+    setCompetitions(competitions);
+  };
+
+  useEffect(() => {
+    getCompetitions();
+  }, []);
 
   return (
     <>
@@ -28,8 +40,14 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+
+      {competitions.map((competition, i) => (
+        <div key={i}>
+          <h2>{competition.name}</h2>
+        </div>
+      ))}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
