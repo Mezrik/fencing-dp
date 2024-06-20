@@ -3,11 +3,13 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import { GetCompetitions } from "../wailsjs/go/main/App";
-import { models } from "../wailsjs/go/models";
+import { common } from "../wailsjs/go/models";
 
 function App() {
   const [count, setCount] = useState(0);
-  const [competitions, setCompetitions] = useState<models.Competition[]>([]);
+  const [competitions, setCompetitions] = useState<common.CompetitionResult[]>(
+    []
+  );
 
   const getCompetitions = async () => {
     const competitions = await GetCompetitions();

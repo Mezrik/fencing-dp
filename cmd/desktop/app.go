@@ -4,16 +4,17 @@ import (
 	"context"
 	"fmt"
 
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"mp.fencing.core/internal/core"
-	"mp.fencing.core/internal/models"
+	"github.com/Mezrik/fencing-dp/internal/app/common"
+	"github.com/Mezrik/fencing-dp/internal/app/interfaces"
+	"github.com/Mezrik/fencing-dp/internal/app/services"
+	"github.com/Mezrik/fencing-dp/internal/infrastructure/database/inmemory"
+	"github.com/Mezrik/fencing-dp/internal/infrastructure/database/inmemory/repositories"
 )
 
 // App struct
 type App struct {
-	ctx  context.Context
-	core *core.Core
+	ctx                context.Context
+	competitionService interfaces.CompetitionService
 }
 
 // NewApp creates a new App application struct
@@ -26,9 +27,11 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
-	db, _ := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	db, _ := inmemory.NewConnection()
 
-	a.core = core.SetupCore(db)
+	competitionRepository := repositories.NewInMemoryCompetitionRepository(db)
+
+	a.competitionService = services.NewCompetitionService(competitionRepository)
 }
 
 // Greet returns a greeting for the given name
@@ -36,8 +39,9 @@ func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
-func (a *App) GetCompetitions() []models.Competition {
-	var competitions []models.Competition
-	a.core.DB.Find(&competitions)
+func (a *App) GetCompetitions() []*common.CompetitionResult {
+
+	competitions, _ := a.competitionService.GetAllCompetitions()
+
 	return competitions
 }

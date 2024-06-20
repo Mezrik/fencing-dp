@@ -1,8 +1,6 @@
-package models
-
-import "gorm.io/gorm"
+package entities
 
 type CompetitionCategory struct {
-	gorm.Model
+	Entity
 	Name string
 }
