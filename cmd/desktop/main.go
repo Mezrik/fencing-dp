@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
+
 	"github.com/Mezrik/fencing-dp/frontend"
+	"github.com/Mezrik/fencing-dp/internal/interface/desktop"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -10,6 +13,7 @@ import (
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
+	admin := desktop.New()
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -20,9 +24,13 @@ func main() {
 			Assets: frontend.Assets,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup:        app.startup,
+		OnStartup: func(ctx context.Context) {
+			admin.Startup(ctx)
+			app.Startup(ctx, admin)
+		},
 		Bind: []interface{}{
 			app,
+			admin,
 		},
 	})
 

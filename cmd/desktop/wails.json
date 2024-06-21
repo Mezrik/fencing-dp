@@ -8,8 +8,14 @@
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
+  "wailsjsdir": "../../frontend/src/generated",
   "author": {
     "name": "Martin Petr",
     "email": "martin.petr.276@gmail.com"
+  },
+  "bindings": {
+    "ts_generation": {
+      "outputType": "interfaces"
+    }
   }
 }

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { GetCompetitions } from "../wailsjs/go/main/App";
-import { common } from "../wailsjs/go/models";
+import { GetCompetitions } from "@wailsjs/go/desktop/Admin";
+import { common } from "@wailsjs/go/models";
 
 function App() {
   const [count, setCount] = useState(0);
