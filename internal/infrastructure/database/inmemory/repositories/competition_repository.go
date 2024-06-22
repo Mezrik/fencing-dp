@@ -17,14 +17,10 @@ func NewInMemoryCompetitionRepository(db *gorm.DB) repositories.CompetitionRepos
 	return &InMemoryCompetitionRepository{db: db}
 }
 
-func (repo *InMemoryCompetitionRepository) Create(competition *entities.Competition) (*entities.Competition, error) {
+func (repo *InMemoryCompetitionRepository) Create(competition *entities.Competition) error {
 	dbCompetition := mappers.ToCompetitionModel(competition)
 
-	if err := repo.db.Create(&dbCompetition).Error; err != nil {
-		return nil, err
-	}
-
-	return repo.FindById(dbCompetition.ID)
+	return repo.db.Create(&dbCompetition).Error
 }
 
 func (repo *InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Competition, error) {

@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewCompetition(t *testing.T) {
-	competition := NewCompetition("Competition 1")
+	competition, _ := NewCompetition("Competition 1")
 
 	if competition.Name != "Competition 1" {
 		t.Error("Expected name to be 'Competition 1', got", competition.Name)

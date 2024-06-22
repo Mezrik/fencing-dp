@@ -6,7 +6,7 @@ import (
 )
 
 type CompetitionRepository interface {
-	Create(competition *entities.Competition) (*entities.Competition, error)
+	Create(competition *entities.Competition) error
 	FindAll() ([]*entities.Competition, error)
 	FindById(id uuid.UUID) (*entities.Competition, error)
 }
