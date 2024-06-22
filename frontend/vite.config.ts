@@ -11,6 +11,7 @@ export default defineConfig({
     alias: {
       "@": resolvePath("./src"),
       "@wailsjs": resolvePath("./src/generated/wailsjs"),
+      "@server-api": resolvePath("./src/generated/server"),
     },
   },
 });

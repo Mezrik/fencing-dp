@@ -8,7 +8,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@wailsjs/*": ["src/generated/wailsjs/*"]
+      "@wailsjs/*": ["src/generated/wailsjs/*"],
+      "@server-api/*": ["src/generated/server/*"]
     },
 
     /* Bundler mode */
