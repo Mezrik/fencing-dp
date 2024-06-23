@@ -3,15 +3,15 @@ package desktop
 import (
 	"context"
 
-	"github.com/Mezrik/fencing-dp/internal/app/interfaces"
-	"github.com/Mezrik/fencing-dp/internal/app/services"
-	"github.com/Mezrik/fencing-dp/internal/infrastructure/database/inmemory"
-	"github.com/Mezrik/fencing-dp/internal/infrastructure/database/inmemory/repositories"
+	"github.com/Mezrik/fencing-dp/internal/common/database/inmemory"
+	"github.com/Mezrik/fencing-dp/internal/competition"
+	"github.com/Mezrik/fencing-dp/internal/competition/app"
+	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
 )
 
 type Admin struct {
-	ctx                context.Context
-	competitionService interfaces.CompetitionService
+	ctx          context.Context
+	competitions app.Application
 }
 
 func New() *Admin {
@@ -25,5 +25,5 @@ func (a *Admin) Startup(ctx context.Context) {
 
 	competitionRepository := repositories.NewInMemoryCompetitionRepository(db)
 
-	a.competitionService = services.NewCompetitionService(competitionRepository)
+	a.competitions = competition.NewCompetitionApp(competitionRepository)
 }

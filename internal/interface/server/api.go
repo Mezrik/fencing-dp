@@ -1,13 +1,15 @@
 package server
 
-import "github.com/Mezrik/fencing-dp/internal/app/interfaces"
+import (
+	"github.com/Mezrik/fencing-dp/internal/competition/app"
+)
 
 var _ ServerInterface = (*Server)(nil)
 
 type Server struct {
-	competitionService interfaces.CompetitionService
+	competition app.Application
 }
 
-func NewServer(competitionService interfaces.CompetitionService) Server {
-	return Server{competitionService}
+func NewServer(competition app.Application) Server {
+	return Server{competition}
 }
