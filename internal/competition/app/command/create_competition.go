@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Mezrik/fencing-dp/internal/common/decorator"
+	"github.com/Mezrik/fencing-dp/internal/common/logger"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
 	"github.com/sirupsen/logrus"
@@ -23,7 +24,7 @@ type createCompetitionHandler struct {
 	repo repositories.CompetitionRepository
 }
 
-func NewCreateTrainingHandler(repo repositories.CompetitionRepository, logger *logrus.Entry) CreateCompetitionHandler {
+func NewCreateCompetitionHandler(repo repositories.CompetitionRepository, logger *logrus.Entry) CreateCompetitionHandler {
 	if repo == nil {
 		panic("nil repo")
 	}
@@ -31,7 +32,11 @@ func NewCreateTrainingHandler(repo repositories.CompetitionRepository, logger *l
 	return decorator.ApplyCommandDecorators[CreateCompetition](createCompetitionHandler{repo}, logger)
 }
 
-func (h createCompetitionHandler) Handle(ctx context.Context, cmd CreateCompetition) error {
+func (h createCompetitionHandler) Handle(ctx context.Context, cmd CreateCompetition) (err error) {
+	defer func() {
+		logger.LogCommandExecution("CreateCompetition", cmd, err)
+	}()
+
 	compt, err := entities.NewCompetition(cmd.Name)
 
 	if err != nil {

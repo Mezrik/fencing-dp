@@ -5,9 +5,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Mezrik/fencing-dp/internal/common/logger"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/sirupsen/logrus"
 )
 
 func RunHTTPServer(createHandler func(router chi.Router) http.Handler) {
@@ -21,20 +23,18 @@ func RunHTTPServerOnAddr(addr string, createHandler func(router chi.Router) http
 	rootRouter := chi.NewRouter()
 	rootRouter.Mount("/api", createHandler(apiRouter))
 
-	// logrus.Info("Starting HTTP server")
+	logrus.Info("Starting HTTP server")
 
-	print("Listening on: ", addr)
 	err := http.ListenAndServe(addr, rootRouter)
 	if err != nil {
-		// logrus.WithError(err).Panic("Unable to start HTTP server")
-		print("Unable to start HTTP server: ", err)
+		logrus.WithError(err).Panic("Unable to start HTTP server")
 	}
 }
 
 func setMiddlewares(router *chi.Mux) {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
-	// router.Use(logs.NewStructuredLogger(logrus.StandardLogger()))
+	router.Use(logger.NewStructuredLogger(logrus.StandardLogger()))
 	router.Use(middleware.Recoverer)
 
 	addCorsMiddleware(router)

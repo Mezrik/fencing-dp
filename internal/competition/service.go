@@ -12,7 +12,7 @@ func NewCompetitionApp(competitionRepo repositories.CompetitionRepository, logge
 
 	return app.Application{
 		Commands: app.Commands{
-			CreateCompetition: command.NewCreateTrainingHandler(competitionRepo, logger),
+			CreateCompetition: command.NewCreateCompetitionHandler(competitionRepo, logger),
 		},
 		Queries: app.Queries{
 			AllCompetitions: query.NewAllCompetitionsHandler(competitionRepo, logger),

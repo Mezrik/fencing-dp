@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Mezrik/fencing-dp/internal/common/database/inmemory"
+	"github.com/Mezrik/fencing-dp/internal/common/logger"
 	"github.com/Mezrik/fencing-dp/internal/competition"
 	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
 	"github.com/Mezrik/fencing-dp/internal/interface/server"
@@ -19,6 +20,8 @@ func main() {
 	}
 
 	db, _ := inmemory.NewConnection()
+
+	logger.Init()
 
 	logger := logrus.NewEntry(logrus.StandardLogger())
 

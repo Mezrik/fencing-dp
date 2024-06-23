@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Mezrik/fencing-dp/internal/common/database/inmemory"
+	"github.com/Mezrik/fencing-dp/internal/common/logger"
 	"github.com/Mezrik/fencing-dp/internal/competition"
 	"github.com/Mezrik/fencing-dp/internal/competition/app"
 	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
@@ -23,6 +24,8 @@ func (a *Admin) Startup(ctx context.Context) {
 	a.ctx = ctx
 
 	db, _ := inmemory.NewConnection()
+
+	logger.Init()
 
 	logger := logrus.NewEntry(logrus.StandardLogger())
 
