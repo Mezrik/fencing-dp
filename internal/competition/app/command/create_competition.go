@@ -7,6 +7,7 @@ import (
 	"github.com/Mezrik/fencing-dp/internal/common/decorator"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
+	"github.com/sirupsen/logrus"
 )
 
 type CreateCompetition struct {
@@ -22,12 +23,12 @@ type createCompetitionHandler struct {
 	repo repositories.CompetitionRepository
 }
 
-func NewCreateTrainingHandler(repo repositories.CompetitionRepository) CreateCompetitionHandler {
+func NewCreateTrainingHandler(repo repositories.CompetitionRepository, logger *logrus.Entry) CreateCompetitionHandler {
 	if repo == nil {
 		panic("nil repo")
 	}
 
-	return decorator.ApplyCommandDecorators[CreateCompetition](createCompetitionHandler{repo})
+	return decorator.ApplyCommandDecorators[CreateCompetition](createCompetitionHandler{repo}, logger)
 }
 
 func (h createCompetitionHandler) Handle(ctx context.Context, cmd CreateCompetition) error {

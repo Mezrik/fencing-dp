@@ -5,6 +5,7 @@ import (
 
 	"github.com/Mezrik/fencing-dp/internal/common/decorator"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
+	"github.com/sirupsen/logrus"
 )
 
 type AllCompetitions struct{}
@@ -15,12 +16,12 @@ type allCompetitionsHandler struct {
 	repo repositories.CompetitionRepository
 }
 
-func NewAllCompetitionsHandler(repo repositories.CompetitionRepository) AllCompetitionsHandler {
+func NewAllCompetitionsHandler(repo repositories.CompetitionRepository, logger *logrus.Entry) AllCompetitionsHandler {
 	if repo == nil {
 		panic("nil repo")
 	}
 
-	return decorator.ApplyQueryDecorators[AllCompetitions, []*Competition](allCompetitionsHandler{repo})
+	return decorator.ApplyQueryDecorators[AllCompetitions, []*Competition](allCompetitionsHandler{repo}, logger)
 }
 
 func (h allCompetitionsHandler) Handle(ctx context.Context, _ AllCompetitions) ([]*Competition, error) {

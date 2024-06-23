@@ -7,6 +7,7 @@ import (
 	"github.com/Mezrik/fencing-dp/internal/competition"
 	"github.com/Mezrik/fencing-dp/internal/competition/app"
 	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
+	"github.com/sirupsen/logrus"
 )
 
 type Admin struct {
@@ -23,7 +24,9 @@ func (a *Admin) Startup(ctx context.Context) {
 
 	db, _ := inmemory.NewConnection()
 
+	logger := logrus.NewEntry(logrus.StandardLogger())
+
 	competitionRepository := repositories.NewInMemoryCompetitionRepository(db)
 
-	a.competitions = competition.NewCompetitionApp(competitionRepository)
+	a.competitions = competition.NewCompetitionApp(competitionRepository, logger)
 }
