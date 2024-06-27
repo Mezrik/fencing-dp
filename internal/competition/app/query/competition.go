@@ -13,7 +13,7 @@ type Competition struct {
 func ToCompetitionQueryFromEntity(competition *entities.Competition) *Competition {
 	return &Competition{
 		ID:   competition.ID,
-		Name: competition.Name,
+		Name: competition.Name(),
 	}
 }
 func ToCompetitionQueryListFromEntities(competitions []*entities.Competition) []*Competition {

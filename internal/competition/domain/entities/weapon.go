@@ -1,8 +1,36 @@
 package entities
 
-import "github.com/Mezrik/fencing-dp/internal/common"
+import (
+	"errors"
+	"time"
+
+	"github.com/Mezrik/fencing-dp/internal/common"
+	"github.com/google/uuid"
+)
 
 type Weapon struct {
 	common.Entity
-	Name string
+	name string
+}
+
+func NewWeapon(name string) (*Weapon, error) {
+	if name == "" {
+		return nil, errors.New("name must not be empty")
+	}
+
+	return &Weapon{
+		Entity: common.Entity{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		name:   name,
+	}, nil
+}
+
+func UnmarshalWeapon(id uuid.UUID, name string, createdAt time.Time, updatedAt time.Time) *Weapon {
+	return &Weapon{
+		Entity: common.Entity{ID: id, CreatedAt: createdAt, UpdatedAt: updatedAt},
+		name:   name,
+	}
+}
+
+func (w Weapon) Name() string {
+	return w.name
 }
