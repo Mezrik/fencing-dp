@@ -1,20 +1,32 @@
-package competition
+package app
 
 import (
-	"github.com/Mezrik/fencing-dp/internal/competition/app"
 	"github.com/Mezrik/fencing-dp/internal/competition/app/command"
 	"github.com/Mezrik/fencing-dp/internal/competition/app/query"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
 	"github.com/sirupsen/logrus"
 )
 
-func NewCompetitionApp(competitionRepo repositories.CompetitionRepository, logger *logrus.Entry) app.Application {
+type Service struct {
+	Commands Commands
+	Queries  Queries
+}
 
-	return app.Application{
-		Commands: app.Commands{
+type Commands struct {
+	CreateCompetition command.CreateCompetitionHandler
+}
+
+type Queries struct {
+	AllCompetitions query.AllCompetitionsHandler
+}
+
+func NewCompetitionService(competitionRepo repositories.CompetitionRepository, logger *logrus.Entry) Service {
+
+	return Service{
+		Commands: Commands{
 			CreateCompetition: command.NewCreateCompetitionHandler(competitionRepo, logger),
 		},
-		Queries: app.Queries{
+		Queries: Queries{
 			AllCompetitions: query.NewAllCompetitionsHandler(competitionRepo, logger),
 		},
 	}

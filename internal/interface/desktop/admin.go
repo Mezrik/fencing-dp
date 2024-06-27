@@ -5,15 +5,14 @@ import (
 
 	"github.com/Mezrik/fencing-dp/internal/common/database/inmemory"
 	"github.com/Mezrik/fencing-dp/internal/common/logger"
-	"github.com/Mezrik/fencing-dp/internal/competition"
-	"github.com/Mezrik/fencing-dp/internal/competition/app"
+	competition "github.com/Mezrik/fencing-dp/internal/competition/app"
 	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
 	"github.com/sirupsen/logrus"
 )
 
 type Admin struct {
 	ctx          context.Context
-	competitions app.Application
+	competitions competition.Service
 }
 
 func New() *Admin {
@@ -31,5 +30,5 @@ func (a *Admin) Startup(ctx context.Context) {
 
 	competitionRepository := repositories.NewInMemoryCompetitionRepository(db)
 
-	a.competitions = competition.NewCompetitionApp(competitionRepository, logger)
+	a.competitions = competition.NewCompetitionService(competitionRepository, logger)
 }
