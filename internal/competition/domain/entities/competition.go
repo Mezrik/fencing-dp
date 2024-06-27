@@ -8,70 +8,92 @@ import (
 	"github.com/google/uuid"
 )
 
-type CompetitionType int
+type CompetitionTypeEnum int
 
 const (
-	National CompetitionType = iota + 1
+	National CompetitionTypeEnum = iota + 1
 	International
 )
 
-type Gender int
+type GenderEnum int
 
 const (
-	Male Gender = iota + 1
+	Male GenderEnum = iota + 1
 	Female
 )
 
 type Competition struct {
 	common.Entity
-	Name           string
-	OrganizerName  string
-	FederationName string
-	Type           CompetitionType
-	Category       CompetitionCategory
-	Gender         Gender
-	Weapon         Weapon
-	Date           time.Time
+	name            string
+	organizerName   string
+	federationName  string
+	competitionType CompetitionTypeEnum
+	category        CompetitionCategory
+	gender          GenderEnum
+	weapon          Weapon
+	date            time.Time
 }
 
-func (c *Competition) validate() error {
-	if c.Name == "" {
-		return errors.New("name must not be empty")
-	}
-
-	return nil
-}
-
-func NewCompetition(name string) (*Competition, error) {
+func NewCompetition(name string, orgName string, fedName string, comptType CompetitionTypeEnum, category CompetitionCategory, gender GenderEnum, weapon Weapon, date time.Time) (*Competition, error) {
 	if name == "" {
 		return nil, errors.New("name must not be empty")
 	}
 
 	return &Competition{
-		Entity: common.Entity{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
-		Name:   name,
+		Entity:          common.Entity{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		name:            name,
+		organizerName:   orgName,
+		federationName:  fedName,
+		competitionType: comptType,
+		category:        category,
+		gender:          gender,
+		weapon:          weapon,
+		date:            date,
 	}, nil
 }
 
-func (c *Competition) UpdateName(name string) error {
-	c.Name = name
-	c.UpdatedAt = time.Now()
-
-	return c.validate()
+func UnmarshalCompetition(id uuid.UUID, createdAt time.Time, updatedAt time.Time, name string, orgName string, fedName string, comptType CompetitionTypeEnum, category CompetitionCategory, gender GenderEnum, weapon Weapon, date time.Time) *Competition {
+	return &Competition{
+		Entity:          common.Entity{ID: id, CreatedAt: createdAt, UpdatedAt: updatedAt},
+		name:            name,
+		organizerName:   orgName,
+		federationName:  fedName,
+		competitionType: comptType,
+		category:        category,
+		gender:          gender,
+		weapon:          weapon,
+		date:            date,
+	}
 }
 
-func (c *Competition) UpdateCategory(category CompetitionCategory) error {
-	c.Category = category
-	c.UpdatedAt = time.Now()
-
-	return c.validate()
+func (c Competition) Name() string {
+	return c.name
 }
 
-type ValidatedCompetition struct {
-	Competition
-	Errors []string
+func (c Competition) OrganizerName() string {
+	return c.organizerName
 }
 
-func (vc *ValidatedCompetition) IsValid() bool {
-	return len(vc.Errors) == 0
+func (c Competition) FederationName() string {
+	return c.federationName
+}
+
+func (c Competition) CompetitionType() CompetitionTypeEnum {
+	return c.competitionType
+}
+
+func (c Competition) Category() CompetitionCategory {
+	return c.category
+}
+
+func (c Competition) Gender() GenderEnum {
+	return c.gender
+}
+
+func (c Competition) Weapon() Weapon {
+	return c.weapon
+}
+
+func (c Competition) Date() time.Time {
+	return c.date
 }

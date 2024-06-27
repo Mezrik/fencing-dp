@@ -12,10 +12,14 @@ import (
 )
 
 type CreateCompetition struct {
-	Name           string
-	OrganizerName  string
-	FederationName string
-	Date           time.Time
+	Name            string
+	OrganizerName   string
+	FederationName  string
+	Date            time.Time
+	CompetitionType entities.CompetitionTypeEnum
+	Category        entities.CompetitionCategory
+	Gender          entities.GenderEnum
+	Weapon          entities.Weapon
 }
 
 type CreateCompetitionHandler decorator.CommandHandler[CreateCompetition]
@@ -37,7 +41,7 @@ func (h createCompetitionHandler) Handle(ctx context.Context, cmd CreateCompetit
 		logger.LogCommandExecution("CreateCompetition", cmd, err)
 	}()
 
-	compt, err := entities.NewCompetition(cmd.Name)
+	compt, err := entities.NewCompetition(cmd.Name, cmd.OrganizerName, cmd.FederationName, cmd.CompetitionType, cmd.Category, cmd.Gender, cmd.Weapon, cmd.Date)
 
 	if err != nil {
 		return err
