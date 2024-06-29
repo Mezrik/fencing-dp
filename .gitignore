@@ -34,3 +34,5 @@ dist-ssr
 *.sqlite
 
 build
+
+internal/common/database/generated/*
