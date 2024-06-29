@@ -1,0 +1,4 @@
+desktop:
+  dialect: sqlite3
+  datasource: desktop-sqlite.db
+  dir: migrations/desktop-sqlite3

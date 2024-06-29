@@ -1,0 +1,7 @@
+output = "internal/common/models"
+wipe = true
+no-tests = true
+add-enum-types = true
+
+[sqlite3]
+dbname = "desktop-sqlite.db"
