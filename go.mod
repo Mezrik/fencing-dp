@@ -11,8 +11,6 @@ require (
 	github.com/oapi-codegen/oapi-codegen/v2 v2.3.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/wailsapp/wails/v2 v2.9.1
-	gorm.io/driver/sqlite v1.5.5
-	gorm.io/gorm v1.25.10
 )
 
 require (
@@ -48,7 +46,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-sqlite3 v1.14.22 // indirect
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect

@@ -1,33 +1,19 @@
 package inmemory
 
 import (
-	"log"
+	"database/sql"
 
-	"gorm.io/gorm"
-
-	"gorm.io/driver/sqlite"
+	"github.com/sirupsen/logrus"
 )
 
-func NewConnection() (*gorm.DB, error) {
-	gormDB, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+func NewConnection(logger *logrus.Entry) (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", "/desktop-sqlite.db")
 
 	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
+		logger.WithError(err).Error("failed to connect database")
 	}
 
-	// models := []interface{}{
-	// 	&models.CompetitionModel{},
-	// 	&models.WeaponModel{},
-	// 	&models.CompetitionCategoryModel{},
-	// }
+	// TODO: do the auto migration
 
-	// for _, m := range models {
-	// 	if err := gormDB.AutoMigrate(m); err != nil {
-	// 		// TODO: handle error
-	// 	}
-	// }
-
-	gormDB.AutoMigrate()
-
-	return gormDB, err
+	return db, err
 }

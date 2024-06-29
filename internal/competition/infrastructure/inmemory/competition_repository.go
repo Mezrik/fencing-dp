@@ -1,69 +1,78 @@
 package repositories
 
 import (
-	"github.com/Mezrik/fencing-dp/internal/common"
+	"context"
+	"database/sql"
+
+	models "github.com/Mezrik/fencing-dp/internal/common/database/generated"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
-	"github.com/Mezrik/fencing-dp/internal/competition/infrastructure/models"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 type InMemoryCompetitionRepository struct {
-	db *gorm.DB
+	db  *sql.DB
+	ctx context.Context
 }
 
-func NewInMemoryCompetitionRepository(db *gorm.DB) repositories.CompetitionRepository {
+func NewInMemoryCompetitionRepository(ctx context.Context, db *sql.DB) repositories.CompetitionRepository {
 	return &InMemoryCompetitionRepository{db: db}
 }
 
 func (repo InMemoryCompetitionRepository) Create(competition *entities.Competition) error {
 	dbCompetition := repo.marshalCompetition(competition)
 
-	return repo.db.Create(&dbCompetition).Error
+	return dbCompetition.Insert(repo.ctx, repo.db, boil.Infer())
 }
 
 func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Competition, error) {
-	var dbCompetition models.CompetitionModel
+	marshalledId, err := id.MarshalBinary()
 
-	if err := repo.db.Preload("Category").Preload("Weapon").First(&dbCompetition, id).Error; err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	return repo.unmarshalCompetition(&dbCompetition), nil
+	dbCompetition, err := models.FindCompetition(repo.ctx, repo.db, marshalledId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return repo.unmarshalCompetition(dbCompetition), nil
 }
 
 func (repo InMemoryCompetitionRepository) FindAll() ([]*entities.Competition, error) {
-	var dbCompetitions []models.CompetitionModel
+	dbCompetitions, err := models.Competitions().All(repo.ctx, repo.db)
 
-	if err := repo.db.Preload("Category").Preload("Weapon").Find(&dbCompetitions).Error; err != nil {
+	if err != nil {
 		return nil, err
 	}
 
 	competitions := make([]*entities.Competition, len(dbCompetitions))
 	for i, dbCompetition := range dbCompetitions {
-		competitions[i] = repo.unmarshalCompetition(&dbCompetition)
+		competitions[i] = repo.unmarshalCompetition(dbCompetition)
 	}
 
 	return competitions, nil
 }
 
-func (repo InMemoryCompetitionRepository) unmarshalCompetition(m *models.CompetitionModel) *entities.Competition {
-	competitionCategory := entities.UnmarshalCompetitionCategory(m.Category.ID, m.Category.Name, m.Category.CreatedAt, m.Category.UpdatedAt)
+func (repo InMemoryCompetitionRepository) unmarshalCompetition(m *models.Competition) *entities.Competition {
+	competitionCategory := entities.UnmarshalCompetitionCategory(uuid.UUID(m.R.Category.ID), m.R.Category.Name, m.R.Category.CreatedAt, m.R.Category.UpdatedAt.Time)
 
-	weapon := entities.UnmarshalWeapon(m.Weapon.ID, m.Weapon.Name, m.Weapon.CreatedAt, m.Weapon.UpdatedAt)
+	weapon := entities.UnmarshalWeapon(uuid.UUID(m.R.Weapon.ID), m.R.Weapon.Name, m.R.Weapon.CreatedAt, m.R.Weapon.UpdatedAt.Time)
 
-	return entities.UnmarshalCompetition(m.ID, m.CreatedAt, m.UpdatedAt, m.Name, m.OrganizerName, m.FederationName, m.CompetitionType, *competitionCategory, m.Gender, *weapon, m.Date)
+	return entities.UnmarshalCompetition(uuid.UUID(m.ID), m.CreatedAt, m.UpdatedAt.Time, m.Name, m.OrganizerName, m.FederationName, entities.CompetitionTypeEnum(m.CompetitionType), *competitionCategory, entities.GenderEnum(m.Gender), *weapon, m.Date)
 }
 
-func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) models.CompetitionModel {
-	competitionModel := models.CompetitionModel{
-		Model:           common.Model{ID: c.ID, CreatedAt: c.CreatedAt, UpdatedAt: c.UpdatedAt},
+func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) models.Competition {
+	competitionModel := models.Competition{
+		ID:              c.ID[:],
 		Name:            c.Name(),
 		OrganizerName:   c.OrganizerName(),
 		FederationName:  c.FederationName(),
-		CompetitionType: c.CompetitionType(),
-		Gender:          c.Gender(),
+		CompetitionType: int64(c.CompetitionType()),
+		Gender:          int64(c.Gender()),
 		Date:            c.Date(),
 	}
 

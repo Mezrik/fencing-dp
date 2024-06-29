@@ -20,6 +20,7 @@ type GenderEnum int
 const (
 	Male GenderEnum = iota + 1
 	Female
+	Mixed
 )
 
 type Competition struct {

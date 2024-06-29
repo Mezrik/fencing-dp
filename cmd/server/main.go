@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Mezrik/fencing-dp/internal/common/database/inmemory"
@@ -19,13 +20,15 @@ func main() {
 		panic(err)
 	}
 
-	db, _ := inmemory.NewConnection()
+	ctx := context.TODO() // TODO: use different context
 
 	logger.Init()
 
 	logger := logrus.NewEntry(logrus.StandardLogger())
 
-	competitionRepository := repositories.NewInMemoryCompetitionRepository(db)
+	db, _ := inmemory.NewConnection(logger)
+
+	competitionRepository := repositories.NewInMemoryCompetitionRepository(ctx, db)
 
 	competitionService := app.NewCompetitionService(competitionRepository, logger)
 

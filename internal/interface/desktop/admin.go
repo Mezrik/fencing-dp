@@ -22,13 +22,13 @@ func New() *Admin {
 func (a *Admin) Startup(ctx context.Context) {
 	a.ctx = ctx
 
-	db, _ := inmemory.NewConnection()
-
 	logger.Init()
 
 	logger := logrus.NewEntry(logrus.StandardLogger())
 
-	competitionRepository := repositories.NewInMemoryCompetitionRepository(db)
+	db, _ := inmemory.NewConnection(logger)
+
+	competitionRepository := repositories.NewInMemoryCompetitionRepository(a.ctx, db)
 
 	a.competitions = competition.NewCompetitionService(competitionRepository, logger)
 }
