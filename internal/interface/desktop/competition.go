@@ -6,7 +6,6 @@ import (
 )
 
 func (a *Admin) GetCompetitions() []*query.Competition {
-
 	competitions, _ := a.competitions.Queries.AllCompetitions.Handle(a.ctx, query.AllCompetitions{})
 
 	return competitions
