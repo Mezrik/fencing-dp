@@ -20,7 +20,7 @@ func main() {
 		panic(err)
 	}
 
-	ctx := context.TODO() // TODO: use different context
+	ctx := context.Background()
 
 	logger.Init()
 
