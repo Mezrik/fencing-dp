@@ -9,4 +9,10 @@ type CompetitionRepository interface {
 	Create(competition *entities.Competition) error
 	FindAll() ([]*entities.Competition, error)
 	FindById(id uuid.UUID) (*entities.Competition, error)
+
+	FindCategoryById(id uuid.UUID) (*entities.CompetitionCategory, error)
+	FindAllCategories() ([]*entities.CompetitionCategory, error)
+
+	FindWeaponById(id uuid.UUID) (*entities.Weapon, error)
+	FindAllWeapons() ([]*entities.Weapon, error)
 }

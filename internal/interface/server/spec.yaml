@@ -16,6 +16,19 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/CompetitionResult"
+    post:
+      tags:
+        - Competition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCompetitionCommand"
+      responses:
+        '200':
+          description: todo
+
 components:
   schemas:
     # base types
@@ -27,3 +40,49 @@ components:
         name:
           type: string
           example: "Competition 1"
+    CreateCompetitionCommand:
+      type: object
+      required:
+        - name
+        - organizerName
+        - federationName
+        - date
+        - competitionType
+        - gender
+        - categoryId
+        - weaponId
+      properties:
+        name:
+          type: string
+          example: "Test Open 2024"
+        organizerName:
+          type: string
+          example: "SC Praha"
+        federationName:
+          type: string
+          example: "CSS"
+        date: 
+          type: string
+          example: "2024-01-01"
+        competitionType: 
+          $ref: "#/components/schemas/CompetitionTypeEnum"
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        categoryId:
+          type: string
+          format: uuid
+        weaponId:
+          type: string
+          format: uuid
+
+    CompetitionTypeEnum:
+      type: string
+      enum: [national, international]
+    GenderEnum:
+      type: string
+      enum: [male, female, mixed]
+    
+
+          
+        
+        

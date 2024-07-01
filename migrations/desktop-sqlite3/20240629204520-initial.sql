@@ -22,8 +22,8 @@ create table competitions (
   name text not null,
   organizer_name text not null,
   federation_name text not null,
-  competitionType integer check(competitionType in (0, 1)) not null,
-  gender integer check(gender in (0, 1, 2)) not null,
+  competitionType text check(competitionType in ("national", "international")) not null,
+  gender text check(gender in ("male", "female", "mixed")) not null,
   date datetime not null,
   foreign key(weapon_id) references weapons(id),
   foreign key(category_id) references competition_categories(id)

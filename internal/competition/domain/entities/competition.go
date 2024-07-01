@@ -8,19 +8,19 @@ import (
 	"github.com/google/uuid"
 )
 
-type CompetitionTypeEnum int
+type CompetitionTypeEnum string
 
 const (
-	National CompetitionTypeEnum = iota + 1
-	International
+	National      CompetitionTypeEnum = "national"
+	International CompetitionTypeEnum = "international"
 )
 
-type GenderEnum int
+type GenderEnum string
 
 const (
-	Male GenderEnum = iota + 1
-	Female
-	Mixed
+	Male   GenderEnum = "male"
+	Female GenderEnum = "female"
+	Mixed  GenderEnum = "mixed"
 )
 
 type Competition struct {

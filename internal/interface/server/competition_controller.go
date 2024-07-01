@@ -12,3 +12,7 @@ func (s Server) GetCompetitions(w http.ResponseWriter, r *http.Request) {
 
 	render.Respond(w, r, competitions)
 }
+
+func (s Server) PostCompetitions(w http.ResponseWriter, r *http.Request) {
+	render.Status(r, http.StatusNotImplemented)
+}

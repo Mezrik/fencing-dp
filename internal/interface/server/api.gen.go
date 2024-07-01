@@ -8,6 +8,20 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	openapi_types "github.com/oapi-codegen/runtime/types"
+)
+
+// Defines values for CompetitionTypeEnum.
+const (
+	International CompetitionTypeEnum = "international"
+	National      CompetitionTypeEnum = "national"
+)
+
+// Defines values for GenderEnum.
+const (
+	Female GenderEnum = "female"
+	Male   GenderEnum = "male"
+	Mixed  GenderEnum = "mixed"
 )
 
 // CompetitionResult defines model for CompetitionResult.
@@ -15,11 +29,35 @@ type CompetitionResult struct {
 	Name string `json:"name"`
 }
 
+// CompetitionTypeEnum defines model for CompetitionTypeEnum.
+type CompetitionTypeEnum string
+
+// CreateCompetitionCommand defines model for CreateCompetitionCommand.
+type CreateCompetitionCommand struct {
+	CategoryId      openapi_types.UUID  `json:"categoryId"`
+	CompetitionType CompetitionTypeEnum `json:"competitionType"`
+	Date            string              `json:"date"`
+	FederationName  string              `json:"federationName"`
+	Gender          GenderEnum          `json:"gender"`
+	Name            string              `json:"name"`
+	OrganizerName   string              `json:"organizerName"`
+	WeaponId        openapi_types.UUID  `json:"weaponId"`
+}
+
+// GenderEnum defines model for GenderEnum.
+type GenderEnum string
+
+// PostCompetitionsJSONRequestBody defines body for PostCompetitions for application/json ContentType.
+type PostCompetitionsJSONRequestBody = CreateCompetitionCommand
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
 	// (GET /competitions)
 	GetCompetitions(w http.ResponseWriter, r *http.Request)
+
+	// (POST /competitions)
+	PostCompetitions(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -28,6 +66,11 @@ type Unimplemented struct{}
 
 // (GET /competitions)
 func (_ Unimplemented) GetCompetitions(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (POST /competitions)
+func (_ Unimplemented) PostCompetitions(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -46,6 +89,21 @@ func (siw *ServerInterfaceWrapper) GetCompetitions(w http.ResponseWriter, r *htt
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetCompetitions(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCompetitions operation middleware
+func (siw *ServerInterfaceWrapper) PostCompetitions(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCompetitions(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -170,6 +228,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions", wrapper.GetCompetitions)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/competitions", wrapper.PostCompetitions)
 	})
 
 	return r

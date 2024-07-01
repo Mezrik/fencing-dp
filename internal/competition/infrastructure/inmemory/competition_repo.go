@@ -57,6 +57,83 @@ func (repo InMemoryCompetitionRepository) FindAll() ([]*entities.Competition, er
 	return competitions, nil
 }
 
+func (repo InMemoryCompetitionRepository) FindCategoryById(id uuid.UUID) (*entities.CompetitionCategory, error) {
+	marshalledId, err := id.MarshalBinary()
+
+	if err != nil {
+		return nil, err
+	}
+
+	category, err := models.FindCompetitionCategory(repo.ctx, repo.db, marshalledId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return entities.UnmarshalCompetitionCategory(
+		uuid.UUID(category.ID),
+		category.Name, category.CreatedAt,
+		category.UpdatedAt.Time), nil
+}
+
+func (repo InMemoryCompetitionRepository) FindAllCategories() ([]*entities.CompetitionCategory, error) {
+	dbCategories, err := models.CompetitionCategories().All(repo.ctx, repo.db)
+
+	if err != nil {
+		return nil, err
+	}
+
+	categories := make([]*entities.CompetitionCategory, len(dbCategories))
+	for i, dbCategory := range dbCategories {
+		categories[i] = entities.UnmarshalCompetitionCategory(
+			uuid.UUID(dbCategory.ID),
+			dbCategory.Name,
+			dbCategory.CreatedAt,
+			dbCategory.UpdatedAt.Time)
+	}
+
+	return categories, nil
+}
+
+func (repo InMemoryCompetitionRepository) FindWeaponById(id uuid.UUID) (*entities.Weapon, error) {
+	marshalledId, err := id.MarshalBinary()
+
+	if err != nil {
+		return nil, err
+	}
+
+	weapon, err := models.FindWeapon(repo.ctx, repo.db, marshalledId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return entities.UnmarshalWeapon(
+		uuid.UUID(weapon.ID),
+		weapon.Name,
+		weapon.CreatedAt,
+		weapon.UpdatedAt.Time), nil
+}
+
+func (repo InMemoryCompetitionRepository) FindAllWeapons() ([]*entities.Weapon, error) {
+	dbWeapons, err := models.Weapons().All(repo.ctx, repo.db)
+
+	if err != nil {
+		return nil, err
+	}
+
+	weapons := make([]*entities.Weapon, len(dbWeapons))
+	for i, dbWeapon := range dbWeapons {
+		weapons[i] = entities.UnmarshalWeapon(
+			uuid.UUID(dbWeapon.ID),
+			dbWeapon.Name,
+			dbWeapon.CreatedAt,
+			dbWeapon.UpdatedAt.Time)
+	}
+
+	return weapons, nil
+}
+
 func (repo InMemoryCompetitionRepository) unmarshalCompetition(m *models.Competition) *entities.Competition {
 	competitionCategory := entities.UnmarshalCompetitionCategory(uuid.UUID(m.R.Category.ID), m.R.Category.Name, m.R.Category.CreatedAt, m.R.Category.UpdatedAt.Time)
 
@@ -71,8 +148,8 @@ func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competi
 		Name:            c.Name(),
 		OrganizerName:   c.OrganizerName(),
 		FederationName:  c.FederationName(),
-		CompetitionType: int64(c.CompetitionType()),
-		Gender:          int64(c.Gender()),
+		CompetitionType: string(c.CompetitionType()),
+		Gender:          string(c.Gender()),
 		Date:            c.Date(),
 	}
 
