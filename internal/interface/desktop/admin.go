@@ -2,6 +2,7 @@ package desktop
 
 import (
 	"context"
+	"os"
 
 	"github.com/Mezrik/fencing-dp/internal/common/database/inmemory"
 	"github.com/Mezrik/fencing-dp/internal/common/logger"
@@ -25,6 +26,12 @@ func (a *Admin) Startup(ctx context.Context) {
 	logger.Init()
 
 	logger := logrus.NewEntry(logrus.StandardLogger())
+
+	f, err := os.OpenFile("output.log", os.O_WRONLY|os.O_CREATE, 0755)
+	if err != nil {
+		logger.WithError(err).Error("failed to open log file")
+	}
+	logrus.SetOutput(f)
 
 	db, _ := inmemory.NewConnection(logger)
 
