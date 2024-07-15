@@ -16,3 +16,9 @@ func (a *Admin) CreateCompetition(competition command.CreateCompetition) error {
 
 	return err
 }
+
+func (a *Admin) GetCompetitionsCategories() []*query.CompetitionCategory {
+	categories, _ := a.competitions.Queries.AllCategories.Handle(a.ctx, query.AllCategories{})
+
+	return categories
+}

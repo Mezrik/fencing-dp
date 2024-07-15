@@ -29,6 +29,20 @@ paths:
         '200':
           description: todo
 
+  /competitions/categories:
+    get:
+      tags:
+        - Competition
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompetitionCategoryResult"
+
 components:
   schemas:
     # base types
@@ -40,6 +54,7 @@ components:
         name:
           type: string
           example: "Competition 1"
+
     CreateCompetitionCommand:
       type: object
       required:
@@ -81,6 +96,20 @@ components:
     GenderEnum:
       type: string
       enum: [male, female, mixed]
+
+    CompetitionCategoryResult:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: "Category 1"
     
 
           

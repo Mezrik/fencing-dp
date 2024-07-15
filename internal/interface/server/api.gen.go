@@ -24,6 +24,12 @@ const (
 	Mixed  GenderEnum = "mixed"
 )
 
+// CompetitionCategoryResult defines model for CompetitionCategoryResult.
+type CompetitionCategoryResult struct {
+	Id   openapi_types.UUID `json:"id"`
+	Name string             `json:"name"`
+}
+
 // CompetitionResult defines model for CompetitionResult.
 type CompetitionResult struct {
 	Name string `json:"name"`
@@ -58,6 +64,9 @@ type ServerInterface interface {
 
 	// (POST /competitions)
 	PostCompetitions(w http.ResponseWriter, r *http.Request)
+
+	// (GET /competitions/categories)
+	GetCompetitionsCategories(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -71,6 +80,11 @@ func (_ Unimplemented) GetCompetitions(w http.ResponseWriter, r *http.Request) {
 
 // (POST /competitions)
 func (_ Unimplemented) PostCompetitions(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /competitions/categories)
+func (_ Unimplemented) GetCompetitionsCategories(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -104,6 +118,21 @@ func (siw *ServerInterfaceWrapper) PostCompetitions(w http.ResponseWriter, r *ht
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostCompetitions(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCompetitionsCategories operation middleware
+func (siw *ServerInterfaceWrapper) GetCompetitionsCategories(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCompetitionsCategories(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -231,6 +260,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/competitions", wrapper.PostCompetitions)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/competitions/categories", wrapper.GetCompetitionsCategories)
 	})
 
 	return r
