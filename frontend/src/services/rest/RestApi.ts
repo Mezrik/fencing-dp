@@ -1,7 +1,9 @@
 import {
+  CompetitionCategoryResult,
   CompetitionResult,
   CreateCompetitionCommand,
   getCompetitions,
+  getCompetitionsCategories,
   postCompetitions,
 } from '@/generated/server';
 import { Api } from '@/services/Api';
@@ -13,5 +15,9 @@ export class RestApi implements Api {
 
   CreateCompetition(data: CreateCompetitionCommand): Promise<void> {
     return postCompetitions(data);
+  }
+
+  GetCompetitionsCategories(): Promise<Array<CompetitionCategoryResult>> {
+    return getCompetitionsCategories();
   }
 }
