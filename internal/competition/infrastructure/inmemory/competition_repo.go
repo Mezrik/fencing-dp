@@ -21,19 +21,17 @@ func NewInMemoryCompetitionRepository(ctx context.Context, db *sql.DB) repositor
 }
 
 func (repo InMemoryCompetitionRepository) Create(competition *entities.Competition) error {
-	dbCompetition := repo.marshalCompetition(competition)
+	dbCompetition, err := repo.marshalCompetition(competition)
+
+	if err != nil {
+		return err
+	}
 
 	return dbCompetition.Insert(repo.ctx, repo.db, boil.Infer())
 }
 
 func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Competition, error) {
-	marshalledId, err := id.MarshalBinary()
-
-	if err != nil {
-		return nil, err
-	}
-
-	dbCompetition, err := models.FindCompetition(repo.ctx, repo.db, marshalledId)
+	dbCompetition, err := models.FindCompetition(repo.ctx, repo.db, id)
 
 	if err != nil {
 		return nil, err
@@ -58,13 +56,7 @@ func (repo InMemoryCompetitionRepository) FindAll() ([]*entities.Competition, er
 }
 
 func (repo InMemoryCompetitionRepository) FindCategoryById(id uuid.UUID) (*entities.CompetitionCategory, error) {
-	marshalledId, err := id.MarshalBinary()
-
-	if err != nil {
-		return nil, err
-	}
-
-	category, err := models.FindCompetitionCategory(repo.ctx, repo.db, marshalledId)
+	category, err := models.FindCompetitionCategory(repo.ctx, repo.db, id)
 
 	if err != nil {
 		return nil, err
@@ -96,13 +88,7 @@ func (repo InMemoryCompetitionRepository) FindAllCategories() ([]*entities.Compe
 }
 
 func (repo InMemoryCompetitionRepository) FindWeaponById(id uuid.UUID) (*entities.Weapon, error) {
-	marshalledId, err := id.MarshalBinary()
-
-	if err != nil {
-		return nil, err
-	}
-
-	weapon, err := models.FindWeapon(repo.ctx, repo.db, marshalledId)
+	weapon, err := models.FindWeapon(repo.ctx, repo.db, id)
 
 	if err != nil {
 		return nil, err
@@ -142,16 +128,19 @@ func (repo InMemoryCompetitionRepository) unmarshalCompetition(m *models.Competi
 	return entities.UnmarshalCompetition(uuid.UUID(m.ID), m.CreatedAt, m.UpdatedAt.Time, m.Name, m.OrganizerName, m.FederationName, entities.CompetitionTypeEnum(m.CompetitionType), *competitionCategory, entities.GenderEnum(m.Gender), *weapon, m.Date)
 }
 
-func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) models.Competition {
-	competitionModel := models.Competition{
-		ID:              c.ID[:],
+func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) (*models.Competition, error) {
+	competitionModel := &models.Competition{
+		ID:              c.ID,
 		Name:            c.Name(),
 		OrganizerName:   c.OrganizerName(),
 		FederationName:  c.FederationName(),
 		CompetitionType: string(c.CompetitionType()),
 		Gender:          string(c.Gender()),
 		Date:            c.Date(),
+		CategoryID:      c.Category().ID,
+		WeaponID:        c.Weapon().ID,
+		CreatedAt:       c.CreatedAt,
 	}
 
-	return competitionModel
+	return competitionModel, nil
 }

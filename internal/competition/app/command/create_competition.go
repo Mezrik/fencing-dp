@@ -65,7 +65,8 @@ func (h createCompetitionHandler) Handle(ctx context.Context, cmd CreateCompetit
 		*category,
 		cmd.Gender,
 		*weapon,
-		cmd.Date)
+		cmd.Date,
+	)
 
 	if err != nil {
 		return err

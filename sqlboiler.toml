@@ -5,3 +5,34 @@ add-enum-types = true
 
 [sqlite3]
 dbname = "desktop-sqlite.db"
+
+[[types]]
+[types.match]
+name = "id"
+
+[types.replace]
+type = "uuid.UUID"
+
+[types.imports]
+third_party = ['"github.com/google/uuid"']
+
+[[types]]
+[types.match]
+name = "category_id"
+
+[types.replace]
+type = "uuid.UUID"
+
+[types.imports]
+third_party = ['"github.com/google/uuid"']
+
+
+[[types]]
+[types.match]
+name = "weapon_id"
+
+[types.replace]
+type = "uuid.UUID"
+
+[types.imports]
+third_party = ['"github.com/google/uuid"']

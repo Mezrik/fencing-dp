@@ -8,7 +8,7 @@ import (
 )
 
 func NewConnection(logger *logrus.Entry) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "/desktop-sqlite.db") // TODO: make configurable
+	db, err := sql.Open("sqlite3", "file:/Users/martinpetr/Projects/diplomka/fencing-core/desktop-sqlite.db") // TODO: make configurable
 
 	if err != nil {
 		logger.WithError(err).Error("failed to connect database")

@@ -6,7 +6,7 @@ import (
 )
 
 type CompetitionCategory struct {
-	ID   uuid.UUID `json:"id"`
+	ID   uuid.UUID `json:"id" ts_type:"UUID"`
 	Name string    `json:"name"`
 }
 
