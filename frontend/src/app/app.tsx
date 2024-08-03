@@ -8,32 +8,28 @@ import { CompetitionTypeEnum, GenderEnum } from '@/generated/server';
 const Test = () => {
   const api = useContext(ApiContext);
 
-  useEffect(() => {
-    const get = async () => {
-      const result = await api?.GetCompetitionsCategories();
-      console.log(result);
-      return result;
-    };
+  const get = async () => {
+    const result = await api?.GetCompetitionsCategories();
+    console.log(result);
+    return result;
+  };
 
-    const post = async () => {
-      await api?.CreateCompetition({
-        categoryId: 'fd051bee-50b2-4207-9700-8c3aa584366f',
-        competitionType: CompetitionTypeEnum.international,
-        date: new Date().toISOString(),
-        federationName: 'test',
-        gender: GenderEnum.mixed,
-        name: 'test competition',
-        organizerName: 'tst org',
-        weaponId: 'b5b5eea8-2241-4b4b-9d69-9f8bcd82716d',
-      });
+  const post = async () => {
+    await api?.CreateCompetition({
+      categoryId: 'c60bc77e-ba33-4be8-bedb-00cbf0782a0e',
+      competitionType: CompetitionTypeEnum.international,
+      date: new Date().toISOString(),
+      federationName: 'test',
+      gender: GenderEnum.mixed,
+      name: 'test competition',
+      organizerName: 'tst org',
+      weaponId: 'b5b5eea8-2241-4b4b-9d69-9f8bcd82716d',
+    });
 
-      console.log(await get());
-    };
+    console.log(await get());
+  };
 
-    get();
-  }, []);
-
-  return null;
+  return <button onClick={get}>Click</button>;
 };
 
 function App() {

@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	models "github.com/Mezrik/fencing-dp/internal/common/database/generated"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
@@ -63,12 +64,20 @@ func (repo InMemoryCompetitionRepository) FindCategoryById(id uuid.UUID) (*entit
 	}
 
 	return entities.UnmarshalCompetitionCategory(
-		uuid.UUID(category.ID),
+		category.ID,
 		category.Name, category.CreatedAt,
 		category.UpdatedAt.Time), nil
 }
 
 func (repo InMemoryCompetitionRepository) FindAllCategories() ([]*entities.CompetitionCategory, error) {
+	category := models.CompetitionCategory{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		Name:      "Test cat",
+	}
+
+	category.Insert(repo.ctx, repo.db, boil.Infer())
+
 	dbCategories, err := models.CompetitionCategories().All(repo.ctx, repo.db)
 
 	if err != nil {
@@ -78,7 +87,7 @@ func (repo InMemoryCompetitionRepository) FindAllCategories() ([]*entities.Compe
 	categories := make([]*entities.CompetitionCategory, len(dbCategories))
 	for i, dbCategory := range dbCategories {
 		categories[i] = entities.UnmarshalCompetitionCategory(
-			uuid.UUID(dbCategory.ID),
+			dbCategory.ID,
 			dbCategory.Name,
 			dbCategory.CreatedAt,
 			dbCategory.UpdatedAt.Time)
