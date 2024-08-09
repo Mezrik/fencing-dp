@@ -2,143 +2,80 @@ package repositories
 
 import (
 	"context"
-	"database/sql"
-	"time"
 
-	models "github.com/Mezrik/fencing-dp/internal/common/database/generated"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
+	"github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory/database/dao"
+	"github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory/database/models"
 	"github.com/google/uuid"
-	"github.com/volatiletech/sqlboiler/v4/boil"
+	"github.com/jmoiron/sqlx"
 )
 
 type InMemoryCompetitionRepository struct {
-	db  *sql.DB
+	db  *sqlx.DB
 	ctx context.Context
 }
 
-func NewInMemoryCompetitionRepository(ctx context.Context, db *sql.DB) repositories.CompetitionRepository {
+func NewInMemoryCompetitionRepository(ctx context.Context, db *sqlx.DB) repositories.CompetitionRepository {
 	return &InMemoryCompetitionRepository{db: db}
 }
 
 func (repo InMemoryCompetitionRepository) Create(competition *entities.Competition) error {
-	dbCompetition, err := repo.marshalCompetition(competition)
+	dao := &dao.CompetitionDao{DB: repo.db}
+
+	competitionModel, err := repo.marshalCompetition(competition)
 
 	if err != nil {
 		return err
 	}
 
-	return dbCompetition.Insert(repo.ctx, repo.db, boil.Infer())
+	return dao.Create(competitionModel)
 }
 
 func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Competition, error) {
-	dbCompetition, err := models.FindCompetition(repo.ctx, repo.db, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return repo.unmarshalCompetition(dbCompetition), nil
+	return nil, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindAll() ([]*entities.Competition, error) {
-	dbCompetitions, err := models.Competitions().All(repo.ctx, repo.db)
+	dao := &dao.CompetitionDao{DB: repo.db}
+
+	competitionsModels, err := dao.FindAll()
 
 	if err != nil {
 		return nil, err
 	}
 
-	competitions := make([]*entities.Competition, len(dbCompetitions))
-	for i, dbCompetition := range dbCompetitions {
-		competitions[i] = repo.unmarshalCompetition(dbCompetition)
+	competitions := make([]*entities.Competition, 0, len(competitionsModels))
+
+	for _, c := range competitionsModels {
+		category := entities.UnmarshalCompetitionCategory(c.Category.ID, c.Category.Name, c.Category.CreatedAt, c.Category.UpdatedAt)
+		weapon := entities.UnmarshalWeapon(c.Weapon.ID, c.Weapon.Name, c.Weapon.CreatedAt, c.Weapon.UpdatedAt)
+
+		competitions = append(competitions, entities.UnmarshalCompetition(c.ID, c.CreatedAt, c.UpdatedAt, c.Name, c.OrganizerName, c.FederationName, entities.CompetitionTypeEnum(c.CompetitionType), *category, entities.GenderEnum(c.Gender), *weapon, c.Date))
 	}
 
 	return competitions, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindCategoryById(id uuid.UUID) (*entities.CompetitionCategory, error) {
-	category, err := models.FindCompetitionCategory(repo.ctx, repo.db, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return entities.UnmarshalCompetitionCategory(
-		category.ID,
-		category.Name, category.CreatedAt,
-		category.UpdatedAt.Time), nil
+	return nil, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindAllCategories() ([]*entities.CompetitionCategory, error) {
-	category := models.CompetitionCategory{
-		ID:        uuid.New(),
-		CreatedAt: time.Now(),
-		Name:      "Test cat",
-	}
 
-	category.Insert(repo.ctx, repo.db, boil.Infer())
-
-	dbCategories, err := models.CompetitionCategories().All(repo.ctx, repo.db)
-
-	if err != nil {
-		return nil, err
-	}
-
-	categories := make([]*entities.CompetitionCategory, len(dbCategories))
-	for i, dbCategory := range dbCategories {
-		categories[i] = entities.UnmarshalCompetitionCategory(
-			dbCategory.ID,
-			dbCategory.Name,
-			dbCategory.CreatedAt,
-			dbCategory.UpdatedAt.Time)
-	}
-
-	return categories, nil
+	return nil, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindWeaponById(id uuid.UUID) (*entities.Weapon, error) {
-	weapon, err := models.FindWeapon(repo.ctx, repo.db, id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return entities.UnmarshalWeapon(
-		uuid.UUID(weapon.ID),
-		weapon.Name,
-		weapon.CreatedAt,
-		weapon.UpdatedAt.Time), nil
+	return nil, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindAllWeapons() ([]*entities.Weapon, error) {
-	dbWeapons, err := models.Weapons().All(repo.ctx, repo.db)
-
-	if err != nil {
-		return nil, err
-	}
-
-	weapons := make([]*entities.Weapon, len(dbWeapons))
-	for i, dbWeapon := range dbWeapons {
-		weapons[i] = entities.UnmarshalWeapon(
-			uuid.UUID(dbWeapon.ID),
-			dbWeapon.Name,
-			dbWeapon.CreatedAt,
-			dbWeapon.UpdatedAt.Time)
-	}
-
-	return weapons, nil
+	return nil, nil
 }
 
-func (repo InMemoryCompetitionRepository) unmarshalCompetition(m *models.Competition) *entities.Competition {
-	competitionCategory := entities.UnmarshalCompetitionCategory(uuid.UUID(m.R.Category.ID), m.R.Category.Name, m.R.Category.CreatedAt, m.R.Category.UpdatedAt.Time)
-
-	weapon := entities.UnmarshalWeapon(uuid.UUID(m.R.Weapon.ID), m.R.Weapon.Name, m.R.Weapon.CreatedAt, m.R.Weapon.UpdatedAt.Time)
-
-	return entities.UnmarshalCompetition(uuid.UUID(m.ID), m.CreatedAt, m.UpdatedAt.Time, m.Name, m.OrganizerName, m.FederationName, entities.CompetitionTypeEnum(m.CompetitionType), *competitionCategory, entities.GenderEnum(m.Gender), *weapon, m.Date)
-}
-
-func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) (*models.Competition, error) {
-	competitionModel := &models.Competition{
+func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) (*models.CompetitionModel, error) {
+	competitionModel := &models.CompetitionModel{
 		ID:              c.ID,
 		Name:            c.Name(),
 		OrganizerName:   c.OrganizerName(),
