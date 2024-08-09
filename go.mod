@@ -14,7 +14,6 @@ require (
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/volatiletech/null/v8 v8.1.2
-	github.com/volatiletech/sqlboiler/v4 v4.16.2
 	github.com/volatiletech/strmangle v0.0.6
 	github.com/wailsapp/wails/v2 v2.9.1
 )
