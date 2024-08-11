@@ -16,20 +16,20 @@ const Test = () => {
 
   const post = async () => {
     await api?.CreateCompetition({
-      categoryId: 'c60bc77e-ba33-4be8-bedb-00cbf0782a0e',
+      categoryId: '9ecf8eb0-4101-40fd-b46e-41d9cf39fc22',
       competitionType: CompetitionTypeEnum.international,
       date: new Date().toISOString(),
       federationName: 'test',
       gender: GenderEnum.mixed,
       name: 'test competition',
       organizerName: 'tst org',
-      weaponId: 'b5b5eea8-2241-4b4b-9d69-9f8bcd82716d',
+      weaponId: '4b0dec55-2a2b-46f7-8fd6-c001761148da',
     });
 
     console.log(await get());
   };
 
-  return <button onClick={get}>Click</button>;
+  return <button onClick={post}>Click</button>;
 };
 
 function App() {

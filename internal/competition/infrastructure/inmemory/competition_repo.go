@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 
+	"github.com/Mezrik/fencing-dp/internal/common/util"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
 	"github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory/database/dao"
@@ -48,17 +49,32 @@ func (repo InMemoryCompetitionRepository) FindAll() ([]*entities.Competition, er
 	competitions := make([]*entities.Competition, 0, len(competitionsModels))
 
 	for _, c := range competitionsModels {
-		category := entities.UnmarshalCompetitionCategory(c.Category.ID, c.Category.Name, c.Category.CreatedAt, c.Category.UpdatedAt)
-		weapon := entities.UnmarshalWeapon(c.Weapon.ID, c.Weapon.Name, c.Weapon.CreatedAt, c.Weapon.UpdatedAt)
+		category := entities.UnmarshalCompetitionCategory(c.Category.ID, c.Category.Name, c.Category.CreatedAt, util.GetTimePtr(c.Category.UpdatedAt))
+		weapon := entities.UnmarshalWeapon(c.Weapon.ID, c.Weapon.Name, c.Weapon.CreatedAt, util.GetTimePtr(c.Weapon.UpdatedAt))
 
-		competitions = append(competitions, entities.UnmarshalCompetition(c.ID, c.CreatedAt, c.UpdatedAt, c.Name, c.OrganizerName, c.FederationName, entities.CompetitionTypeEnum(c.CompetitionType), *category, entities.GenderEnum(c.Gender), *weapon, c.Date))
+		competitions = append(competitions, entities.UnmarshalCompetition(c.ID, c.CreatedAt, util.GetTimePtr(c.UpdatedAt), c.Name, c.OrganizerName, c.FederationName, entities.CompetitionTypeEnum(c.CompetitionType), *category, entities.GenderEnum(c.Gender), *weapon, c.Date))
 	}
 
 	return competitions, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindCategoryById(id uuid.UUID) (*entities.CompetitionCategory, error) {
-	return nil, nil
+	dao := &dao.CompetitionCategoryDao{DB: repo.db}
+
+	competitionCategoryModel, err := dao.FindById(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	competitionCategory := entities.UnmarshalCompetitionCategory(
+		competitionCategoryModel.ID,
+		competitionCategoryModel.Name,
+		competitionCategoryModel.CreatedAt,
+		util.GetTimePtr(competitionCategoryModel.UpdatedAt),
+	)
+
+	return competitionCategory, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindAllCategories() ([]*entities.CompetitionCategory, error) {
@@ -67,7 +83,22 @@ func (repo InMemoryCompetitionRepository) FindAllCategories() ([]*entities.Compe
 }
 
 func (repo InMemoryCompetitionRepository) FindWeaponById(id uuid.UUID) (*entities.Weapon, error) {
-	return nil, nil
+	dao := &dao.WeaponDao{DB: repo.db}
+
+	weaponModel, err := dao.FindById(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	weapon := entities.UnmarshalWeapon(
+		weaponModel.ID,
+		weaponModel.Name,
+		weaponModel.CreatedAt,
+		util.GetTimePtr(weaponModel.UpdatedAt),
+	)
+
+	return weapon, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindAllWeapons() ([]*entities.Weapon, error) {
