@@ -19,12 +19,12 @@ func NewCompetitionCategory(name string) (*CompetitionCategory, error) {
 	}
 
 	return &CompetitionCategory{
-		Entity: common.Entity{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		Entity: common.Entity{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: nil},
 		name:   name,
 	}, nil
 }
 
-func UnmarshalCompetitionCategory(id uuid.UUID, name string, createdAt time.Time, updatedAt time.Time) *CompetitionCategory {
+func UnmarshalCompetitionCategory(id uuid.UUID, name string, createdAt time.Time, updatedAt *time.Time) *CompetitionCategory {
 	return &CompetitionCategory{
 		Entity: common.Entity{ID: id, CreatedAt: createdAt, UpdatedAt: updatedAt},
 		name:   name,

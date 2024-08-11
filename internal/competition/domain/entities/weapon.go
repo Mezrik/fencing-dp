@@ -19,14 +19,14 @@ func NewWeapon(name string) (*Weapon, error) {
 	}
 
 	return &Weapon{
-		Entity: common.Entity{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		Entity: common.Entity{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: nil},
 		name:   name,
 	}, nil
 }
 
-func UnmarshalWeapon(id uuid.UUID, name string, createdAt time.Time, updatedAt time.Time) *Weapon {
+func UnmarshalWeapon(id uuid.UUID, name string, createdAt time.Time, updatedAt *time.Time) *Weapon {
 	return &Weapon{
-		Entity: common.Entity{ID: id, CreatedAt: createdAt, UpdatedAt: updatedAt},
+		Entity: common.Entity{ID: id, CreatedAt: createdAt, UpdatedAt: nil},
 		name:   name,
 	}
 }
