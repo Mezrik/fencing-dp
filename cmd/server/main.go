@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/Mezrik/fencing-dp/internal/common/database"
 	"github.com/Mezrik/fencing-dp/internal/common/logger"
 	"github.com/Mezrik/fencing-dp/internal/competition/app"
 	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
-	db "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory/database"
 	"github.com/Mezrik/fencing-dp/internal/interface/server"
 	"github.com/Mezrik/fencing-dp/migrations"
 	"github.com/go-chi/chi/v5"
@@ -27,7 +27,7 @@ func main() {
 
 	logger := logrus.NewEntry(logrus.StandardLogger())
 
-	db, _ := db.NewConnection(logger, ctx, migrations.SQLiteMigrations)
+	db, _ := database.NewConnection(logger, ctx, migrations.SQLiteMigrations)
 
 	competitionRepository := repositories.NewInMemoryCompetitionRepository(ctx, db)
 

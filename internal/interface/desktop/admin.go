@@ -6,10 +6,10 @@ import (
 
 	"github.com/Mezrik/fencing-dp/migrations"
 
+	"github.com/Mezrik/fencing-dp/internal/common/database"
 	"github.com/Mezrik/fencing-dp/internal/common/logger"
 	competition "github.com/Mezrik/fencing-dp/internal/competition/app"
 	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
-	db "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory/database"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,7 +35,7 @@ func (a *Admin) Startup(ctx context.Context) {
 	}
 	logrus.SetOutput(f)
 
-	db, _ := db.NewConnection(logger, a.ctx, migrations.SQLiteMigrations)
+	db, _ := database.NewConnection(logger, a.ctx, migrations.SQLiteMigrations)
 
 	competitionRepository := repositories.NewInMemoryCompetitionRepository(a.ctx, db)
 

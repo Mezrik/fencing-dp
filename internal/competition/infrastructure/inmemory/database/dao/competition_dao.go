@@ -11,13 +11,38 @@ type CompetitionDao struct {
 }
 
 func (dao *CompetitionDao) Create(competition *models.CompetitionModel) error {
-	_, err := dao.DB.Exec(`INSERT INTO competitions (id, created_at, updated_at, weapon_id, category_id, name, organizer_name, federation_name, competition_type, gender, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, competition.ID, competition.CreatedAt, competition.UpdatedAt, competition.WeaponID, competition.CategoryID, competition.Name, competition.OrganizerName, competition.FederationName, competition.CompetitionType, competition.Gender, competition.Date)
+	query := `
+		INSERT INTO competitions (
+			id,
+			created_at,
+			updated_at,
+			weapon_id,
+			category_id,
+			name,
+			organizer_name,
+			federation_name,
+			competition_type,
+			gender,
+			date
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`
 
-	if err != nil {
-		return err
-	}
+	_, err := dao.DB.Exec(
+		query,
+		competition.ID,
+		competition.CreatedAt,
+		competition.UpdatedAt,
+		competition.WeaponID,
+		competition.CategoryID,
+		competition.Name,
+		competition.OrganizerName,
+		competition.FederationName,
+		competition.CompetitionType,
+		competition.Gender,
+		competition.Date,
+	)
 
-	return nil
+	return err
 }
 
 func (dao *CompetitionDao) FindById(id uuid.UUID) (*models.CompetitionModel, error) {
