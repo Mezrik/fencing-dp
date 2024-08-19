@@ -1,14 +1,10 @@
-import { useContext } from 'react';
-
-import { ApiContext } from '@/services/ApiProvider';
+import { api } from '@/services/api';
 import { CompetitionTypeEnum, GenderEnum } from '@/generated/server';
 
 import { AppRouter } from './router';
 import { AppProvider } from './app-provider';
 
 const Test = () => {
-  const api = useContext(ApiContext);
-
   const get = async () => {
     const result = await api?.GetCompetitionsCategories();
     console.log(result);
