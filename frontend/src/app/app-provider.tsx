@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { I18nProvider } from '@lingui/react';
 import { i18n } from '@lingui/core';
+import { HelmetProvider } from 'react-helmet-async';
 
 import { ApiProvider } from '@/services/ApiProvider';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -22,11 +23,13 @@ export const AppProvider: FC<{ children?: React.ReactNode }> = ({ children }) =>
 
   return (
     <I18nProvider i18n={i18n}>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <ApiProvider>{children}</ApiProvider>
-        </TooltipProvider>
-      </QueryClientProvider>
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <ApiProvider>{children}</ApiProvider>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </HelmetProvider>
     </I18nProvider>
   );
 };

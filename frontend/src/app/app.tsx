@@ -2,7 +2,6 @@ import { useContext } from 'react';
 
 import { ApiContext } from '@/services/ApiProvider';
 import { CompetitionTypeEnum, GenderEnum } from '@/generated/server';
-import { AppShell } from '@/components/app-shell/app-shell';
 
 import { AppRouter } from './router';
 import { AppProvider } from './app-provider';
@@ -37,9 +36,7 @@ const Test = () => {
 export const App = () => {
   return (
     <AppProvider>
-      <AppShell>
-        <AppRouter />
-      </AppShell>
+      <AppRouter />
     </AppProvider>
   );
 };
