@@ -1,9 +1,11 @@
-import { Trans } from '@lingui/macro';
-import { AppShell } from '@/components/app-shell/app-shell';
-import { AppProvider } from './app-provider';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
+
 import { ApiContext } from '@/services/ApiProvider';
 import { CompetitionTypeEnum, GenderEnum } from '@/generated/server';
+import { AppShell } from '@/components/app-shell/app-shell';
+
+import { AppRouter } from './router';
+import { AppProvider } from './app-provider';
 
 const Test = () => {
   const api = useContext(ApiContext);
@@ -32,15 +34,12 @@ const Test = () => {
   return <button onClick={post}>Click</button>;
 };
 
-function App() {
+export const App = () => {
   return (
     <AppProvider>
       <AppShell>
-        <Trans>This is a translation</Trans>
-        <Test />
+        <AppRouter />
       </AppShell>
     </AppProvider>
   );
-}
-
-export default App;
+};

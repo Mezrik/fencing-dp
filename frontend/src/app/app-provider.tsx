@@ -1,22 +1,32 @@
-import { ApiProvider } from "@/services/ApiProvider";
-import { I18nProvider } from "@lingui/react";
-import { i18n } from "@lingui/core";
-import { FC, useEffect } from "react";
-import { defaultLocale, dynamicActivate } from "@/i18n";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { FC, useEffect, useState } from 'react';
+import { I18nProvider } from '@lingui/react';
+import { i18n } from '@lingui/core';
 
-export const AppProvider: FC<{ children?: React.ReactNode }> = ({
-  children,
-}) => {
+import { ApiProvider } from '@/services/ApiProvider';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { defaultLocale, dynamicActivate } from '@/i18n';
+import { queryConfig } from '@/lib/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+export const AppProvider: FC<{ children?: React.ReactNode }> = ({ children }) => {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: queryConfig,
+      }),
+  );
+
   useEffect(() => {
     void dynamicActivate(defaultLocale);
   }, []);
 
   return (
     <I18nProvider i18n={i18n}>
-      <TooltipProvider>
-        <ApiProvider>{children}</ApiProvider>
-      </TooltipProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <ApiProvider>{children}</ApiProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
     </I18nProvider>
   );
 };
