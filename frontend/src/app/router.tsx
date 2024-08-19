@@ -18,7 +18,21 @@ export const createAppRouter = (queryClient: QueryClient) => {
             return { Component: CompetitionsRoute };
           },
         },
+        {
+          path: '',
+          lazy: async () => {
+            const { DashboardRoute } = await import('./routes/app/dashboard');
+            return { Component: DashboardRoute };
+          },
+        },
       ],
+    },
+    {
+      path: '*',
+      lazy: async () => {
+        const { NotFoundRoute } = await import('./routes/not-found');
+        return { Component: NotFoundRoute };
+      },
     },
   ]);
 };
