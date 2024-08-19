@@ -35,6 +35,30 @@ type Competition struct {
 	date            time.Time
 }
 
+func (g GenderEnum) TSName() string {
+	switch g {
+	case Male:
+		return "male"
+	case Female:
+		return "female"
+	case Mixed:
+		return "mixed"
+	default:
+		return "???"
+	}
+}
+
+func (ct CompetitionTypeEnum) TSName() string {
+	switch ct {
+	case National:
+		return "national"
+	case International:
+		return "international"
+	default:
+		return "???"
+	}
+}
+
 func NewCompetition(name string, orgName string, fedName string, comptType CompetitionTypeEnum, category CompetitionCategory, gender GenderEnum, weapon Weapon, date time.Time) (*Competition, error) {
 	if name == "" {
 		return nil, errors.New("name must not be empty")

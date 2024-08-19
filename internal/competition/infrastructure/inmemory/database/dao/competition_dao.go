@@ -50,7 +50,33 @@ func (dao *CompetitionDao) FindById(id uuid.UUID) (*models.CompetitionModel, err
 }
 
 func (dao *CompetitionDao) FindAll() ([]*models.CompetitionModel, error) {
-	return nil, nil
+	query := `
+        SELECT 
+					w.id as "weapon.id", 
+					w.name as "weapon.name", 
+					w.created_at as "weapon.created_at", 
+					w.updated_at as "weapon.updated_at", 
+					cc.id as "category.id", 
+					cc.name as "category.name", 
+					cc.created_at as "category.created_at", 
+					cc.updated_at as "category.updated_at", 
+					c.*
+        FROM competitions c
+        JOIN weapons w ON c.weapon_id = w.id
+        JOIN competition_categories cc ON c.category_id = cc.id
+    `
+
+	// Define a slice to hold the results
+	var competitions []*models.CompetitionModel
+
+	// Use sqlx to execute the query and map the rows directly to structs
+	err := dao.DB.Select(&competitions, query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return competitions, nil
 }
 
 func (dao *CompetitionDao) Update(competition *models.CompetitionModel) error {

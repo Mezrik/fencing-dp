@@ -50,10 +50,40 @@ components:
       type: object
       required:
         - name
+        - id
+        - date
+        - competitionType
+        - gender
+        - weapon
+        - category
+        - organizerName
+        - federationName
+
       properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
         name:
           type: string
           example: "Competition 1"
+        organizerName: 
+          type: string
+          example: "Organizer 1"
+        federationName: 
+          type: string
+          example: "Federation 1"
+        date: 
+          type: string
+          example: "2024-01-01"
+        competitionType: 
+          $ref: "#/components/schemas/CompetitionTypeEnum"
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        weapon:
+          $ref: "#/components/schemas/WeaponResult"
+        category:
+          $ref: "#/components/schemas/CompetitionCategoryResult"
 
     CreateCompetitionCommand:
       type: object
@@ -98,6 +128,20 @@ components:
       enum: [male, female, mixed]
 
     CompetitionCategoryResult:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: "Category 1"
+
+    WeaponResult:
       type: object
       required:
         - id
