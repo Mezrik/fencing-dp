@@ -24,6 +24,10 @@ export const createAppRouter = (queryClient: QueryClient) => {
             const { DashboardRoute } = await import('./routes/app/dashboard');
             return { Component: DashboardRoute };
           },
+          loader: async () => {
+            const { dashboardLoader } = await import('./routes/app/dashboard');
+            return dashboardLoader(queryClient)();
+          },
         },
       ],
     },
