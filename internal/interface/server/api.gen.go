@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
@@ -32,7 +33,15 @@ type CompetitionCategoryResult struct {
 
 // CompetitionResult defines model for CompetitionResult.
 type CompetitionResult struct {
-	Name string `json:"name"`
+	Category        CompetitionCategoryResult `json:"category"`
+	CompetitionType CompetitionTypeEnum       `json:"competitionType"`
+	Date            string                    `json:"date"`
+	FederationName  string                    `json:"federationName"`
+	Gender          GenderEnum                `json:"gender"`
+	Id              openapi_types.UUID        `json:"id"`
+	Name            string                    `json:"name"`
+	OrganizerName   string                    `json:"organizerName"`
+	Weapon          WeaponResult              `json:"weapon"`
 }
 
 // CompetitionTypeEnum defines model for CompetitionTypeEnum.
@@ -53,6 +62,12 @@ type CreateCompetitionCommand struct {
 // GenderEnum defines model for GenderEnum.
 type GenderEnum string
 
+// WeaponResult defines model for WeaponResult.
+type WeaponResult struct {
+	Id   openapi_types.UUID `json:"id"`
+	Name string             `json:"name"`
+}
+
 // PostCompetitionsJSONRequestBody defines body for PostCompetitions for application/json ContentType.
 type PostCompetitionsJSONRequestBody = CreateCompetitionCommand
 
@@ -67,6 +82,9 @@ type ServerInterface interface {
 
 	// (GET /competitions/categories)
 	GetCompetitionsCategories(w http.ResponseWriter, r *http.Request)
+
+	// (GET /competitions/{competitionId})
+	GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -85,6 +103,11 @@ func (_ Unimplemented) PostCompetitions(w http.ResponseWriter, r *http.Request) 
 
 // (GET /competitions/categories)
 func (_ Unimplemented) GetCompetitionsCategories(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /competitions/{competitionId})
+func (_ Unimplemented) GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -133,6 +156,32 @@ func (siw *ServerInterfaceWrapper) GetCompetitionsCategories(w http.ResponseWrit
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetCompetitionsCategories(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCompetitionsCompetitionId operation middleware
+func (siw *ServerInterfaceWrapper) GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "competitionId" -------------
+	var competitionId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "competitionId", chi.URLParam(r, "competitionId"), &competitionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "competitionId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCompetitionsCompetitionId(w, r, competitionId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -263,6 +312,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions/categories", wrapper.GetCompetitionsCategories)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/competitions/{competitionId}", wrapper.GetCompetitionsCompetitionId)
 	})
 
 	return r

@@ -3,12 +3,19 @@ package desktop
 import (
 	"github.com/Mezrik/fencing-dp/internal/competition/app/command"
 	"github.com/Mezrik/fencing-dp/internal/competition/app/query"
+	"github.com/google/uuid"
 )
 
 func (a *Admin) GetCompetitions() []*query.Competition {
 	competitions, _ := a.competitions.Queries.AllCompetitions.Handle(a.ctx, query.AllCompetitions{})
 
 	return competitions
+}
+
+func (a *Admin) GetCompetition(id uuid.UUID) *query.Competition {
+	competition, _ := a.competitions.Queries.GetCompetition.Handle(a.ctx, query.GetCompetition{ID: id})
+
+	return competition
 }
 
 func (a *Admin) CreateCompetition(competition command.CreateCompetition) error {
