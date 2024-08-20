@@ -1,7 +1,13 @@
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import { createBrowserRouter, createHashRouter, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  createHashRouter,
+  LoaderFunctionArgs,
+  RouterProvider,
+} from 'react-router-dom';
 import { AppRoot } from './routes/app/root';
 import { useMemo } from 'react';
+import { pathnames } from './pathnames';
 
 const createRouter = import.meta.env.MODE === 'desktop' ? createHashRouter : createBrowserRouter;
 
@@ -12,14 +18,25 @@ export const createAppRouter = (queryClient: QueryClient) => {
       element: <AppRoot />,
       children: [
         {
-          path: 'competitions',
+          path: pathnames.competitionsPath,
           lazy: async () => {
             const { CompetitionsRoute } = await import('./routes/app/competitions/competitions');
             return { Component: CompetitionsRoute };
           },
         },
         {
-          path: '',
+          path: pathnames.competitionPath,
+          lazy: async () => {
+            const { CompetitionRoute } = await import('./routes/app/competitions/competition');
+            return { Component: CompetitionRoute };
+          },
+          loader: async (args: LoaderFunctionArgs) => {
+            const { competitionLoader } = await import('./routes/app/competitions/competition');
+            return competitionLoader(queryClient)(args);
+          },
+        },
+        {
+          path: pathnames.dashboardPath,
           lazy: async () => {
             const { DashboardRoute } = await import('./routes/app/dashboard');
             return { Component: DashboardRoute };
