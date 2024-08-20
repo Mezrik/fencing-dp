@@ -29,3 +29,9 @@ func (a *Admin) GetCompetitionsCategories() []*query.CompetitionCategory {
 
 	return categories
 }
+
+func (a *Admin) GetCompetitionsWeapons() []*query.Weapon {
+	weapons, _ := a.competitions.Queries.AllWeapons.Handle(a.ctx, query.AllWeapons{})
+
+	return weapons
+}

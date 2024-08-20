@@ -83,6 +83,9 @@ type ServerInterface interface {
 	// (GET /competitions/categories)
 	GetCompetitionsCategories(w http.ResponseWriter, r *http.Request)
 
+	// (GET /competitions/weapons)
+	GetCompetitionsWeapons(w http.ResponseWriter, r *http.Request)
+
 	// (GET /competitions/{competitionId})
 	GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
 }
@@ -103,6 +106,11 @@ func (_ Unimplemented) PostCompetitions(w http.ResponseWriter, r *http.Request) 
 
 // (GET /competitions/categories)
 func (_ Unimplemented) GetCompetitionsCategories(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /competitions/weapons)
+func (_ Unimplemented) GetCompetitionsWeapons(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -156,6 +164,21 @@ func (siw *ServerInterfaceWrapper) GetCompetitionsCategories(w http.ResponseWrit
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetCompetitionsCategories(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCompetitionsWeapons operation middleware
+func (siw *ServerInterfaceWrapper) GetCompetitionsWeapons(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCompetitionsWeapons(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -312,6 +335,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions/categories", wrapper.GetCompetitionsCategories)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/competitions/weapons", wrapper.GetCompetitionsWeapons)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions/{competitionId}", wrapper.GetCompetitionsCompetitionId)

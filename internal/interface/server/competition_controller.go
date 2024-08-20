@@ -50,3 +50,9 @@ func (s Server) GetCompetitionsCategories(w http.ResponseWriter, r *http.Request
 
 	render.Respond(w, r, categories)
 }
+
+func (s Server) GetCompetitionsWeapons(w http.ResponseWriter, r *http.Request) {
+	weapons, _ := s.competition.Queries.AllWeapons.Handle(r.Context(), query.AllWeapons{})
+
+	render.Respond(w, r, weapons)
+}

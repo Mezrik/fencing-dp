@@ -20,6 +20,7 @@ type Queries struct {
 	AllCompetitions query.AllCompetitionsHandler
 	GetCompetition  query.GetCompetitionHandler
 	AllCategories   query.AllCategoriesHandler
+	AllWeapons      query.AllWeaponsHandler
 }
 
 func NewCompetitionService(competitionRepo repositories.CompetitionRepository, logger *logrus.Entry) Service {
@@ -32,6 +33,7 @@ func NewCompetitionService(competitionRepo repositories.CompetitionRepository, l
 			AllCompetitions: query.NewAllCompetitionsHandler(competitionRepo, logger),
 			GetCompetition:  query.NewGetCompetitionHandler(competitionRepo, logger),
 			AllCategories:   query.NewAllCategoriesHandler(competitionRepo, logger),
+			AllWeapons:      query.NewAllWeaponsHandler(competitionRepo, logger),
 		},
 	}
 }
