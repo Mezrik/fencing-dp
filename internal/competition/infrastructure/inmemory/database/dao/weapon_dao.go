@@ -31,7 +31,15 @@ func (dao *WeaponDao) FindById(id uuid.UUID) (*models.WeaponModel, error) {
 }
 
 func (dao *WeaponDao) FindAll() ([]*models.WeaponModel, error) {
-	return nil, nil
+	var weaponModels []*models.WeaponModel
+
+	err := dao.DB.Select(&weaponModels, "SELECT * FROM weapons")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return weaponModels, nil
 }
 
 func (dao *WeaponDao) Update(competition *models.WeaponModel) error {

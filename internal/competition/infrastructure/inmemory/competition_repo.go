@@ -34,7 +34,32 @@ func (repo InMemoryCompetitionRepository) Create(competition *entities.Competiti
 }
 
 func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Competition, error) {
-	return nil, nil
+	dao := &dao.CompetitionDao{DB: repo.db}
+
+	c, err := dao.FindById(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	category := entities.UnmarshalCompetitionCategory(c.Category.ID, c.Category.Name, c.Category.CreatedAt, util.GetTimePtr(c.Category.UpdatedAt))
+	weapon := entities.UnmarshalWeapon(c.Weapon.ID, c.Weapon.Name, c.Weapon.CreatedAt, util.GetTimePtr(c.Weapon.UpdatedAt))
+
+	competition := entities.UnmarshalCompetition(
+		c.ID,
+		c.CreatedAt,
+		util.GetTimePtr(c.UpdatedAt),
+		c.Name,
+		c.OrganizerName,
+		c.FederationName,
+		entities.CompetitionTypeEnum(c.CompetitionType),
+		*category,
+		entities.GenderEnum(c.Gender),
+		*weapon,
+		c.Date,
+	)
+
+	return competition, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindAll() ([]*entities.Competition, error) {
@@ -78,8 +103,21 @@ func (repo InMemoryCompetitionRepository) FindCategoryById(id uuid.UUID) (*entit
 }
 
 func (repo InMemoryCompetitionRepository) FindAllCategories() ([]*entities.CompetitionCategory, error) {
+	dao := &dao.CompetitionCategoryDao{DB: repo.db}
 
-	return nil, nil
+	competitionCategoriesModels, err := dao.FindAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	competitionCategories := make([]*entities.CompetitionCategory, 0, len(competitionCategoriesModels))
+
+	for _, c := range competitionCategoriesModels {
+		competitionCategories = append(competitionCategories, entities.UnmarshalCompetitionCategory(c.ID, c.Name, c.CreatedAt, util.GetTimePtr(c.UpdatedAt)))
+	}
+
+	return competitionCategories, nil
 }
 
 func (repo InMemoryCompetitionRepository) FindWeaponById(id uuid.UUID) (*entities.Weapon, error) {
@@ -102,7 +140,21 @@ func (repo InMemoryCompetitionRepository) FindWeaponById(id uuid.UUID) (*entitie
 }
 
 func (repo InMemoryCompetitionRepository) FindAllWeapons() ([]*entities.Weapon, error) {
-	return nil, nil
+	dao := &dao.WeaponDao{DB: repo.db}
+
+	weaponsModels, err := dao.FindAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	weapons := make([]*entities.Weapon, 0, len(weaponsModels))
+
+	for _, w := range weaponsModels {
+		weapons = append(weapons, entities.UnmarshalWeapon(w.ID, w.Name, w.CreatedAt, util.GetTimePtr(w.UpdatedAt)))
+	}
+
+	return weapons, nil
 }
 
 func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) (*models.CompetitionModel, error) {

@@ -31,7 +31,15 @@ func (dao *CompetitionCategoryDao) FindById(id uuid.UUID) (*models.CompetitionCa
 }
 
 func (dao *CompetitionCategoryDao) FindAll() ([]*models.CompetitionCategoryModel, error) {
-	return nil, nil
+	var competitionCategories []*models.CompetitionCategoryModel
+
+	err := dao.DB.Select(&competitionCategories, "SELECT * FROM competition_categories")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return competitionCategories, nil
 }
 
 func (dao *CompetitionCategoryDao) Update(competition *models.CompetitionCategoryModel) error {
