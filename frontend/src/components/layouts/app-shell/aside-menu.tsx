@@ -1,19 +1,60 @@
-import {
-  Book,
-  LifeBuoy,
-  Settings2,
-  SquareUser,
-  Swords,
-  Circle,
-} from "lucide-react";
-import { FC } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Trans } from "@lingui/macro";
+import { Book, LifeBuoy, Settings2, SquareUser, Swords, Circle } from 'lucide-react';
+import { ComponentProps, ComponentType, FC } from 'react';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { t, Trans } from '@lingui/macro';
+import { pathnames } from '@/app/pathnames';
+import { cn } from '@/utils/class-names';
+import { NavLink } from 'react-router-dom';
+
+type AsideMenuItemProps = {
+  name: string;
+  to: string;
+  icon: ComponentType<ComponentProps<'svg'>>;
+};
+
+const menuItems: AsideMenuItemProps[] = [
+  {
+    name: t`Competitions`,
+    to: pathnames.competitionsPath,
+    icon: Swords,
+  },
+  {
+    name: t`Documentation`,
+    to: '',
+    icon: Book,
+  },
+  {
+    name: t`Settings`,
+    to: '',
+    icon: Settings2,
+  },
+];
+
+const AsideMenuItem: FC<AsideMenuItemProps> = ({ name, to, icon }) => {
+  const Icon = icon;
+  return (
+    <Tooltip key={name}>
+      <TooltipTrigger asChild>
+        <NavLink to={to}>
+          {({ isActive }) => (
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn('rounded-lg', isActive && 'bg-muted')}
+              aria-label={name}
+            >
+              <Icon className="size-5" />
+            </Button>
+          )}
+        </NavLink>
+      </TooltipTrigger>
+      <TooltipContent side="right" sideOffset={5}>
+        {name}
+      </TooltipContent>
+    </Tooltip>
+  );
+};
 
 export const AsideMenu: FC<{ children?: React.ReactNode }> = () => {
   return (
@@ -24,84 +65,13 @@ export const AsideMenu: FC<{ children?: React.ReactNode }> = () => {
         </Button>
       </div>
       <nav className="grid gap-1 p-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-lg bg-muted"
-              aria-label="Competitions"
-            >
-              <Swords className="size-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={5}>
-            <Trans>Competitions</Trans>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-lg"
-              aria-label="Documentation"
-            >
-              <Book className="size-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={5}>
-            Documentation
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-lg"
-              aria-label="Settings"
-            >
-              <Settings2 className="size-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={5}>
-            Settings
-          </TooltipContent>
-        </Tooltip>
+        {menuItems.map((props) => (
+          <AsideMenuItem key={props.name} {...props} />
+        ))}
       </nav>
       <nav className="mt-auto grid gap-1 p-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="mt-auto rounded-lg"
-              aria-label="Help"
-            >
-              <LifeBuoy className="size-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={5}>
-            Help
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="mt-auto rounded-lg"
-              aria-label="Account"
-            >
-              <SquareUser className="size-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={5}>
-            Account
-          </TooltipContent>
-        </Tooltip>
+        <AsideMenuItem to="" name={t`Help`} icon={LifeBuoy} />
+        <AsideMenuItem to="" name={t`Account`} icon={SquareUser} />
       </nav>
     </aside>
   );
