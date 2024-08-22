@@ -2,7 +2,7 @@ import { Book, LifeBuoy, Settings2, SquareUser, Swords, Circle } from 'lucide-re
 import { ComponentProps, ComponentType, FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { t, Trans } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { pathnames } from '@/app/pathnames';
 import { cn } from '@/utils/class-names';
 import { NavLink } from 'react-router-dom';
