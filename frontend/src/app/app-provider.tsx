@@ -7,6 +7,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { defaultLocale, dynamicActivate } from '@/i18n';
 import { queryConfig } from '@/lib/react-query';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/toaster';
 
 export const AppProvider: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [queryClient] = useState(
@@ -24,7 +25,10 @@ export const AppProvider: FC<{ children?: React.ReactNode }> = ({ children }) =>
     <I18nProvider i18n={i18n}>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
-          <TooltipProvider>{children}</TooltipProvider>
+          <TooltipProvider>
+            {children}
+            <Toaster />
+          </TooltipProvider>
         </QueryClientProvider>
       </HelmetProvider>
     </I18nProvider>

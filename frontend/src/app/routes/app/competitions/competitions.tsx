@@ -1,11 +1,15 @@
 import { BasicPageLayout } from '@/components/layouts';
+import { Button } from '@/components/ui/button';
 import {
   getCompetitionsQueryOptions,
   useCompetitions,
 } from '@/features/competitions/api/get-competitions';
 import { CompetitionCard } from '@/features/competitions/components/competition-card';
-import { t } from '@lingui/macro';
+import { CreateCompetition } from '@/features/competitions/components/create-competition';
+import { t, Trans } from '@lingui/macro';
 import { QueryClient } from '@tanstack/react-query';
+import { PlusIcon } from 'lucide-react';
+import { useState } from 'react';
 
 export const competitionsLoader = (queryClient: QueryClient) => async () => {
   const query = getCompetitionsQueryOptions();
@@ -14,6 +18,8 @@ export const competitionsLoader = (queryClient: QueryClient) => async () => {
 };
 
 export const CompetitionsRoute = () => {
+  const [showCreate, setShowCreate] = useState(false);
+
   const competitionsQuery = useCompetitions({});
 
   if (competitionsQuery.isLoading) {
@@ -23,7 +29,17 @@ export const CompetitionsRoute = () => {
   const competitions = competitionsQuery.data ?? [];
 
   return (
-    <BasicPageLayout title={t`Competitions`}>
+    <BasicPageLayout
+      title={t`Competitions`}
+      actions={
+        <Button className="gap-2" variant="default" onClick={() => setShowCreate(true)}>
+          <PlusIcon className="size-4" />
+          <span className="hidden sm:inline">
+            <Trans>Create competition</Trans>
+          </span>
+        </Button>
+      }
+    >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {competitions.map((comp) => (
           <CompetitionCard
@@ -36,6 +52,7 @@ export const CompetitionsRoute = () => {
           />
         ))}
       </div>
+      <CreateCompetition open={showCreate} onOpenChange={setShowCreate} />
     </BasicPageLayout>
   );
 };

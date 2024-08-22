@@ -68,7 +68,7 @@ export const CompetitionCard: FC<CompetitionCard> = ({
           <Button variant="outline" asChild>
             <Link to={pathnames.buildCompetitionPath(competitionId)}>View</Link>
           </Button>
-          <Button variant="link">Edit</Button>
+          <Button variant="ghost">Edit</Button>
         </CardFooter>
       </Card>
     </div>
