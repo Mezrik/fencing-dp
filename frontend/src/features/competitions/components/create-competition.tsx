@@ -23,7 +23,6 @@ import { createCompetitionInputSchema, useCreateCompetition } from '../api/creat
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
