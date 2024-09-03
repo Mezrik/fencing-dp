@@ -76,6 +76,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CompetitionResult"
+                
+  /competitors:
+    get:
+      tags:
+        - Competitor
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: "#/components/schemas/CompetitorResult"
+    post:
+      tags:
+        - Competitor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCompetitorCommand"
+      responses:
+        '200':
+          description: todo
+      
 
 components:
   schemas:
@@ -189,7 +216,85 @@ components:
           type: string
           example: "Category 1"
     
+    CreateCompetitorCommand:
+      type: object
+      required:
+        - surname
+        - firstname
+        - gender
+        - clubId
+        - license
+        - birthdate
+      properties:
+        surname:
+          type: string
+          example: "surname"
+        firstname:
+          type: string
+          example: "firstname"
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        clubId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        license:
+          type: string
+          example: "license"
+        licenseFie:
+          type: string
+          example: "licenseFie"
+        birthdate:
+          type: string
+          example: "2024-01-01"
 
-          
+    CompetitorResult:
+      type: object
+      required:
+        - id
+        - surname
+        - firstname
+        - gender
+        - club
+        - license
+        - birthdate
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        surname:
+          type: string
+          example: "surname"
+        firstname:
+          type: string
+          example: "firstname"
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        club:
+          $ref: "#/components/schemas/ClubResult"
+        license:
+          type: string
+          example: "license"
+        licenseFie:
+          type: string
+          example: "licenseFie"
+        birthdate:
+          type: string
+          example: "2024-01-01"
+
+    ClubResult: 
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: "club 1"
         
         

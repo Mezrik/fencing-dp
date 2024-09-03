@@ -9,13 +9,16 @@ import (
 	"github.com/Mezrik/fencing-dp/internal/common/database"
 	"github.com/Mezrik/fencing-dp/internal/common/logger"
 	competition "github.com/Mezrik/fencing-dp/internal/competition/app"
-	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
+	competitionRepositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
+	competitor "github.com/Mezrik/fencing-dp/internal/competitor/app"
+	competitorRepositories "github.com/Mezrik/fencing-dp/internal/competitor/infrastructure/inmemory"
 	"github.com/sirupsen/logrus"
 )
 
 type Admin struct {
 	ctx          context.Context
 	competitions competition.Service
+	competitors  competitor.Service
 }
 
 func New() *Admin {
@@ -37,7 +40,12 @@ func (a *Admin) Startup(ctx context.Context) {
 
 	db, _ := database.NewConnection(logger, a.ctx, migrations.SQLiteMigrations)
 
-	competitionRepository := repositories.NewInMemoryCompetitionRepository(a.ctx, db)
+	competitionRepository := competitionRepositories.NewInMemoryCompetitionRepository(a.ctx, db)
+	competitorRepository := competitorRepositories.NewInMemoryCompetitorRepository(a.ctx, db)
+	clubRepository := competitorRepositories.NewInMemoryClubRepo(a.ctx, db)
 
 	a.competitions = competition.NewCompetitionService(competitionRepository, logger)
+
+	a.competitors = competitor.NewCompetitorService(competitorRepository, clubRepository, logger)
+
 }
