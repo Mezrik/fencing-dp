@@ -4,9 +4,11 @@ import (
 	"time"
 
 	"github.com/Mezrik/fencing-dp/internal/competitor/domain/entities"
+	"github.com/google/uuid"
 )
 
 type Competitor struct {
+	ID         uuid.UUID `json:"id" ts_type:"UUID"`
 	Surname    string    `json:"surname"`
 	Firstname  string    `json:"firstname"`
 	Club       Club      `json:"club"`
