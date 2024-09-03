@@ -25,6 +25,12 @@ const (
 	Mixed  GenderEnum = "mixed"
 )
 
+// ClubResult defines model for ClubResult.
+type ClubResult struct {
+	Id   openapi_types.UUID `json:"id"`
+	Name string             `json:"name"`
+}
+
 // CompetitionCategoryResult defines model for CompetitionCategoryResult.
 type CompetitionCategoryResult struct {
 	Id   openapi_types.UUID `json:"id"`
@@ -47,6 +53,18 @@ type CompetitionResult struct {
 // CompetitionTypeEnum defines model for CompetitionTypeEnum.
 type CompetitionTypeEnum string
 
+// CompetitorResult defines model for CompetitorResult.
+type CompetitorResult struct {
+	Birthdate  string             `json:"birthdate"`
+	Club       ClubResult         `json:"club"`
+	Firstname  string             `json:"firstname"`
+	Gender     GenderEnum         `json:"gender"`
+	Id         openapi_types.UUID `json:"id"`
+	License    string             `json:"license"`
+	LicenseFie *string            `json:"licenseFie,omitempty"`
+	Surname    string             `json:"surname"`
+}
+
 // CreateCompetitionCommand defines model for CreateCompetitionCommand.
 type CreateCompetitionCommand struct {
 	CategoryId      openapi_types.UUID  `json:"categoryId"`
@@ -57,6 +75,17 @@ type CreateCompetitionCommand struct {
 	Name            string              `json:"name"`
 	OrganizerName   string              `json:"organizerName"`
 	WeaponId        openapi_types.UUID  `json:"weaponId"`
+}
+
+// CreateCompetitorCommand defines model for CreateCompetitorCommand.
+type CreateCompetitorCommand struct {
+	Birthdate  string             `json:"birthdate"`
+	ClubId     openapi_types.UUID `json:"clubId"`
+	Firstname  string             `json:"firstname"`
+	Gender     GenderEnum         `json:"gender"`
+	License    string             `json:"license"`
+	LicenseFie *string            `json:"licenseFie,omitempty"`
+	Surname    string             `json:"surname"`
 }
 
 // GenderEnum defines model for GenderEnum.
@@ -70,6 +99,9 @@ type WeaponResult struct {
 
 // PostCompetitionsJSONRequestBody defines body for PostCompetitions for application/json ContentType.
 type PostCompetitionsJSONRequestBody = CreateCompetitionCommand
+
+// PostCompetitorsJSONRequestBody defines body for PostCompetitors for application/json ContentType.
+type PostCompetitorsJSONRequestBody = CreateCompetitorCommand
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -88,6 +120,12 @@ type ServerInterface interface {
 
 	// (GET /competitions/{competitionId})
 	GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
+
+	// (GET /competitors)
+	GetCompetitors(w http.ResponseWriter, r *http.Request)
+
+	// (POST /competitors)
+	PostCompetitors(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -116,6 +154,16 @@ func (_ Unimplemented) GetCompetitionsWeapons(w http.ResponseWriter, r *http.Req
 
 // (GET /competitions/{competitionId})
 func (_ Unimplemented) GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /competitors)
+func (_ Unimplemented) GetCompetitors(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (POST /competitors)
+func (_ Unimplemented) PostCompetitors(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -205,6 +253,36 @@ func (siw *ServerInterfaceWrapper) GetCompetitionsCompetitionId(w http.ResponseW
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetCompetitionsCompetitionId(w, r, competitionId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCompetitors operation middleware
+func (siw *ServerInterfaceWrapper) GetCompetitors(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCompetitors(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCompetitors operation middleware
+func (siw *ServerInterfaceWrapper) PostCompetitors(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCompetitors(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -341,6 +419,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions/{competitionId}", wrapper.GetCompetitionsCompetitionId)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/competitors", wrapper.GetCompetitors)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/competitors", wrapper.PostCompetitors)
 	})
 
 	return r

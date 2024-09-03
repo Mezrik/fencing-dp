@@ -6,8 +6,11 @@ import (
 
 	"github.com/Mezrik/fencing-dp/internal/common/database"
 	"github.com/Mezrik/fencing-dp/internal/common/logger"
-	"github.com/Mezrik/fencing-dp/internal/competition/app"
-	repositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
+	competition "github.com/Mezrik/fencing-dp/internal/competition/app"
+	competitor "github.com/Mezrik/fencing-dp/internal/competitor/app"
+
+	competitionRepositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
+	competitorRepositories "github.com/Mezrik/fencing-dp/internal/competitor/infrastructure/inmemory"
 	"github.com/Mezrik/fencing-dp/internal/interface/server"
 	"github.com/Mezrik/fencing-dp/migrations"
 	"github.com/go-chi/chi/v5"
@@ -29,11 +32,15 @@ func main() {
 
 	db, _ := database.NewConnection(logger, ctx, migrations.SQLiteMigrations)
 
-	competitionRepository := repositories.NewInMemoryCompetitionRepository(ctx, db)
+	competitionRepository := competitionRepositories.NewInMemoryCompetitionRepository(ctx, db)
 
-	competitionService := app.NewCompetitionService(competitionRepository, logger)
+	competitorRepository := competitorRepositories.NewInMemoryCompetitorRepository(ctx, db)
+	clubRepository := competitorRepositories.NewInMemoryClubRepo(ctx, db)
+
+	competitorService := competitor.NewCompetitorService(competitorRepository, clubRepository, logger)
+	competitionService := competition.NewCompetitionService(competitionRepository, logger)
 
 	server.RunHTTPServer(func(router chi.Router) http.Handler {
-		return server.HandlerFromMux(server.NewServer(competitionService), router)
+		return server.HandlerFromMux(server.NewServer(competitionService, competitorService), router)
 	})
 }
