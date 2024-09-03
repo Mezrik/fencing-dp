@@ -1,7 +1,9 @@
 import {
   CompetitionCategoryResult,
   CompetitionResult,
+  CompetitorResult,
   CreateCompetitionCommand,
+  CreateCompetitorCommand,
   WeaponResult,
 } from '@/generated/server';
 import { DesktopApi } from './desktop-api';
@@ -19,6 +21,10 @@ export interface Api {
   GetCompetitionsCategories(): Promise<Array<CompetitionCategoryResult>>;
 
   GetCompetitionsWeapons(): Promise<Array<WeaponResult>>;
+
+  GetCompetitors(): Promise<Array<CompetitorResult>>;
+
+  CreateCompetitor(data: CreateCompetitorCommand): Promise<void>;
 }
 
 export const api: Api = import.meta.env.MODE === 'desktop' ? new DesktopApi() : new RestApi();

@@ -4,6 +4,8 @@ import {
   GetCompetition,
   GetCompetitionsCategories,
   GetCompetitionsWeapons,
+  CreateCompetitor,
+  GetCompetitors,
 } from '@/generated/wailsjs/go/desktop/Admin';
 import { command, query } from '@/generated/wailsjs/go/models';
 import { Api } from './api';
@@ -27,5 +29,13 @@ export class DesktopApi implements Api {
 
   GetCompetitionsWeapons(): Promise<Array<query.Weapon>> {
     return GetCompetitionsWeapons();
+  }
+
+  CreateCompetitor(command: command.CreateCompetitor): Promise<void> {
+    return CreateCompetitor(command);
+  }
+
+  GetCompetitors(): Promise<Array<query.Competitor>> {
+    return GetCompetitors();
   }
 }

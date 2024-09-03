@@ -8,6 +8,10 @@ import {
   getCompetitionsCompetitionId,
   WeaponResult,
   getCompetitionsWeapons,
+  CompetitorResult,
+  CreateCompetitorCommand,
+  getCompetitors,
+  postCompetitors,
 } from '@/generated/server';
 import { Api } from './api';
 
@@ -30,5 +34,13 @@ export class RestApi implements Api {
 
   GetCompetitionsWeapons(): Promise<Array<WeaponResult>> {
     return getCompetitionsWeapons();
+  }
+
+  GetCompetitors(): Promise<Array<CompetitorResult>> {
+    return getCompetitors();
+  }
+
+  CreateCompetitor(data: CreateCompetitorCommand): Promise<void> {
+    return postCompetitors(data);
   }
 }
