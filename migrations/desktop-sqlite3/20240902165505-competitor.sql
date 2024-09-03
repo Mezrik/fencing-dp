@@ -8,14 +8,14 @@ create table if not exists clubs (
 
 create table if not exists competitors (
   id text not null constraint competitors_pk primary key,
-  surnaname text not NULL,
+  surname text not NULL,
   firstname text not NULL,
   created_at datetime not null,
   updated_at datetime,
   gender text check(gender in ("male", "female", "mixed")) not null,
   club_id text not null constraint competitors_clubs_fk,
   license text not null,
-  licesnse_fie text,
+  license_fie text,
   birthdate date not null
 );
 
@@ -85,7 +85,7 @@ values
 insert into
   competitors (
     id,
-    surnaname,
+    surname,
     firstname,
     created_at,
     gender,

@@ -42,11 +42,11 @@ func (c *CompetitorDao) Create(competitor models.CompetitorModel) error {
 func (c *CompetitorDao) FindAll() ([]*models.CompetitorModel, error) {
 	query := `
     SELECT
-      club.name as "club.name",
-      club.id as "club.id",
+      clb.name as "club.name",
+      clb.id as "club.id",
       c.*
     FROM competitors c
-    JOIN club ON competitors.club_id = club.id
+    JOIN clubs clb ON c.club_id = clb.id
   `
 
 	var competitorModels []*models.CompetitorModel

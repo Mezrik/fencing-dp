@@ -20,6 +20,7 @@ type Competitor struct {
 
 func ToCompetitorQueryFromEntity(c *entities.Competitor) *Competitor {
 	return &Competitor{
+		ID:         c.ID,
 		Surname:    c.Surname(),
 		Firstname:  c.FirstName(),
 		Club:       Club{ID: c.Club().ID, Name: c.Club().Name()},
