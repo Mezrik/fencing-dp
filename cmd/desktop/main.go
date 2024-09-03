@@ -4,7 +4,8 @@ import (
 	"context"
 
 	"github.com/Mezrik/fencing-dp/frontend"
-	"github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
+	competitionEntities "github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
+	competitorEntities "github.com/Mezrik/fencing-dp/internal/competitor/domain/entities"
 	"github.com/Mezrik/fencing-dp/internal/interface/desktop"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -34,8 +35,9 @@ func main() {
 			admin,
 		},
 		EnumBind: []interface{}{
-			[]entities.GenderEnum{"male", "female", "mixed"},
-			[]entities.CompetitionTypeEnum{"national", "international"},
+			[]competitionEntities.GenderEnum{"male", "female", "mixed"},
+			[]competitionEntities.CompetitionTypeEnum{"national", "international"},
+			[]competitorEntities.GenderEnum{"male", "female", "mixed"},
 		},
 	})
 

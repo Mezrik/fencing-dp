@@ -16,6 +16,19 @@ const (
 	Mixed  GenderEnum = "mixed"
 )
 
+func (g GenderEnum) TSName() string {
+	switch g {
+	case Male:
+		return "male"
+	case Female:
+		return "female"
+	case Mixed:
+		return "mixed"
+	default:
+		return "???"
+	}
+}
+
 type Competitor struct {
 	common.Entity
 	firstname   string
