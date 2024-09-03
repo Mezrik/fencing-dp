@@ -23,6 +23,13 @@ func NewClub(name string) (*Club, error) {
 	}, nil
 }
 
+func UnmarshalClub(id uuid.UUID, name string, createdAt time.Time, updatedAt *time.Time) *Club {
+	return &Club{
+		Entity: common.Entity{ID: id, CreatedAt: createdAt, UpdatedAt: updatedAt},
+		name:   name,
+	}
+}
+
 func (c *Club) Name() string {
 	return c.name
 }

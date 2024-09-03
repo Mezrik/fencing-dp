@@ -9,5 +9,5 @@ type CompetitorRepo interface {
 	Create(competitor *entities.Competitor) error
 	FindAll() ([]*entities.Competitor, error)
 	FindById(id uuid.UUID) (*entities.Competitor, error)
-	FindAllByCompetitionId(id uuid.UUID) ([]*entities.Competitor, error)
+	FindAllByCompetitionId(id uuid.UUID) ([]*entities.Participant, error)
 }

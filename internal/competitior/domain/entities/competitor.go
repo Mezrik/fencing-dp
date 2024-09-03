@@ -52,6 +52,19 @@ func NewCompetitor(firstname string, surname string, gender GenderEnum, club Clu
 	}, nil
 }
 
+func UnmarshalCompetitor(id uuid.UUID, firstname string, surname string, gender GenderEnum, club Club, license string, license_fie *string, birthdate time.Time, createdAt time.Time, updatedAt *time.Time) *Competitor {
+	return &Competitor{
+		Entity:      common.Entity{ID: id, CreatedAt: createdAt, UpdatedAt: updatedAt},
+		firstname:   firstname,
+		surname:     surname,
+		gender:      gender,
+		club:        club,
+		license:     license,
+		license_fie: license_fie,
+		birthdate:   birthdate,
+	}
+}
+
 func (c *Competitor) FirstName() string {
 	return c.firstname
 }
