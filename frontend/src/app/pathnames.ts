@@ -6,4 +6,12 @@ const buildCompetitionPath = (id: string) => {
 
 const dashboardPath = '';
 
-export const pathnames = { competitionsPath, competitionPath, buildCompetitionPath, dashboardPath };
+const competitorsPath = '/competitors';
+
+export const pathnames = {
+  competitionsPath,
+  competitionPath,
+  buildCompetitionPath,
+  dashboardPath,
+  competitorsPath,
+};

@@ -1,4 +1,4 @@
-import { Book, LifeBuoy, Settings2, SquareUser, Swords, Circle } from 'lucide-react';
+import { Book, LifeBuoy, Settings2, SquareUser, Swords, Circle, Users } from 'lucide-react';
 import { ComponentProps, ComponentType, FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -18,6 +18,11 @@ const menuItems: AsideMenuItemProps[] = [
     name: t`Competitions`,
     to: pathnames.competitionsPath,
     icon: Swords,
+  },
+  {
+    name: t`Competitors`,
+    to: pathnames.competitorsPath,
+    icon: Users,
   },
   {
     name: t`Documentation`,

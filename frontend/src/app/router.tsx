@@ -46,6 +46,17 @@ export const createAppRouter = (queryClient: QueryClient) => {
             return dashboardLoader(queryClient)();
           },
         },
+        {
+          path: pathnames.competitorsPath,
+          lazy: async () => {
+            const { CompetitorsRoute } = await import('./routes/app/competitors/competitors');
+            return { Component: CompetitorsRoute };
+          },
+          loader: async () => {
+            const { competitorsLoader } = await import('./routes/app/competitors/competitors');
+            return competitorsLoader(queryClient)();
+          },
+        },
       ],
     },
     {
