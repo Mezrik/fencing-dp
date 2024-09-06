@@ -11,13 +11,48 @@ type ParticipantDao struct {
 }
 
 func (dao *ParticipantDao) Create(participant *models.ParticipantModel) error {
-	return nil
+	_, err := dao.DB.Exec(` INSERT INTO participants (
+		id,
+		created_at,
+		competitor_id,
+		competition_id,
+		deployment_number,
+		points,
+		starting_position
+	) VALUES (
+		:id,
+		:created_at,
+		:competitor_id,
+		:competition_id,
+		:deployment_number,
+		:points,
+		:starting_position
+	)
+	`, participant)
+
+	return err
 }
 
 func (dao *ParticipantDao) FindById(id uuid.UUID) (*models.ParticipantModel, error) {
-	return nil, nil
+	var participantModel models.ParticipantModel
+
+	err := dao.DB.Get(&participantModel, "SELECT * FROM participants WHERE id = ?", id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &participantModel, nil
 }
 
 func (dao *ParticipantDao) FindAll(competitionId uuid.UUID) ([]*models.ParticipantModel, error) {
-	return nil, nil
+	var participantModels []*models.ParticipantModel
+
+	err := dao.DB.Select(&participantModels, "SELECT * FROM participants WHERE competition_id = ?", competitionId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return participantModels, nil
 }

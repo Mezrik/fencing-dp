@@ -15,7 +15,15 @@ func (dao *ClubDao) Create(club models.ClubModel) error {
 }
 
 func (dao *ClubDao) FindAll() ([]*models.ClubModel, error) {
-	return nil, nil
+	var clubModels []*models.ClubModel
+
+	err := dao.DB.Select(&clubModels, "SELECT * FROM clubs")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return clubModels, nil
 }
 
 func (dao *ClubDao) FindById(id uuid.UUID) (*models.ClubModel, error) {

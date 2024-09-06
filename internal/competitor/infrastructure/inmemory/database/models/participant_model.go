@@ -8,7 +8,6 @@ import (
 )
 
 type ParticipantModel struct {
-	ID            uuid.UUID    `db:"id"`
 	CreatedAt     time.Time    `db:"created_at"`
 	UpdatedAt     sql.NullTime `db:"updated_at"`
 	CompetitorID  uuid.UUID    `db:"competitor_id"`
