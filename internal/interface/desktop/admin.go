@@ -12,6 +12,9 @@ import (
 	competitionRepositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
 	competitor "github.com/Mezrik/fencing-dp/internal/competitor/app"
 	competitorRepositories "github.com/Mezrik/fencing-dp/internal/competitor/infrastructure/inmemory"
+
+	match "github.com/Mezrik/fencing-dp/internal/match/app"
+	matchRepositories "github.com/Mezrik/fencing-dp/internal/match/infrastructure/inmemory"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,6 +22,7 @@ type Admin struct {
 	ctx          context.Context
 	competitions competition.Service
 	competitors  competitor.Service
+	matches      match.Service
 }
 
 func New() *Admin {
@@ -43,9 +47,11 @@ func (a *Admin) Startup(ctx context.Context) {
 	competitionRepository := competitionRepositories.NewInMemoryCompetitionRepository(a.ctx, db)
 	competitorRepository := competitorRepositories.NewInMemoryCompetitorRepository(a.ctx, db)
 	clubRepository := competitorRepositories.NewInMemoryClubRepo(a.ctx, db)
+	matchRepository := matchRepositories.NewInMemoryMatchRepo(a.ctx, db)
 
 	a.competitions = competition.NewCompetitionService(competitionRepository, logger)
 
 	a.competitors = competitor.NewCompetitorService(competitorRepository, clubRepository, logger)
 
+	a.matches = match.NewMatchService(matchRepository, logger)
 }

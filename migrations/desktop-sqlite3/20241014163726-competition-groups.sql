@@ -19,6 +19,7 @@ create table if not exists competition_matches (
 
 create table if not exists match_states (
   id text not null constraint match_states_pk primary key,
+  match_id text not null constraint match_states_competition_matches_fk,
   change text check(
     change in (
       'match_start',

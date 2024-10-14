@@ -11,7 +11,10 @@ import (
 
 	competitionRepositories "github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory"
 	competitorRepositories "github.com/Mezrik/fencing-dp/internal/competitor/infrastructure/inmemory"
+
 	"github.com/Mezrik/fencing-dp/internal/interface/server"
+	match "github.com/Mezrik/fencing-dp/internal/match/app"
+	matchRepositories "github.com/Mezrik/fencing-dp/internal/match/infrastructure/inmemory"
 	"github.com/Mezrik/fencing-dp/migrations"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -37,10 +40,14 @@ func main() {
 	competitorRepository := competitorRepositories.NewInMemoryCompetitorRepository(ctx, db)
 	clubRepository := competitorRepositories.NewInMemoryClubRepo(ctx, db)
 
+	matchRepository := matchRepositories.NewInMemoryMatchRepo(ctx, db)
+
+	matchService := match.NewMatchService(matchRepository, logger)
+
 	competitorService := competitor.NewCompetitorService(competitorRepository, clubRepository, logger)
 	competitionService := competition.NewCompetitionService(competitionRepository, logger)
 
 	server.RunHTTPServer(func(router chi.Router) http.Handler {
-		return server.HandlerFromMux(server.NewServer(competitionService, competitorService), router)
+		return server.HandlerFromMux(server.NewServer(competitionService, competitorService, matchService), router)
 	})
 }

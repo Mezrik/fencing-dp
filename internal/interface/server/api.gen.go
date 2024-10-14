@@ -25,6 +25,16 @@ const (
 	Mixed  GenderEnum = "mixed"
 )
 
+// Defines values for MatchChangeEnum.
+const (
+	FightStart      MatchChangeEnum = "fight_start"
+	FightStop       MatchChangeEnum = "fight_stop"
+	MatchEnd        MatchChangeEnum = "match_end"
+	MatchStart      MatchChangeEnum = "match_start"
+	PointAdded      MatchChangeEnum = "point_added"
+	PointSubtracted MatchChangeEnum = "point_subtracted"
+)
+
 // ClubResult defines model for ClubResult.
 type ClubResult struct {
 	Id   openapi_types.UUID `json:"id"`
@@ -108,6 +118,34 @@ type CreateCompetitorCommand struct {
 // GenderEnum defines model for GenderEnum.
 type GenderEnum string
 
+// Match defines model for Match.
+type Match struct {
+	GroupId        openapi_types.UUID `json:"groupId"`
+	Id             openapi_types.UUID `json:"id"`
+	ParticipantOne openapi_types.UUID `json:"participantOne"`
+	ParticipantTwo openapi_types.UUID `json:"participantTwo"`
+}
+
+// MatchChangeEnum defines model for MatchChangeEnum.
+type MatchChangeEnum string
+
+// MatchDetail defines model for MatchDetail.
+type MatchDetail struct {
+	GroupId        openapi_types.UUID `json:"groupId"`
+	Id             openapi_types.UUID `json:"id"`
+	ParticipantOne openapi_types.UUID `json:"participantOne"`
+	ParticipantTwo openapi_types.UUID `json:"participantTwo"`
+	State          []MatchStateItem   `json:"state"`
+}
+
+// MatchStateItem defines model for MatchStateItem.
+type MatchStateItem struct {
+	Change  MatchChangeEnum     `json:"change"`
+	Id      openapi_types.UUID  `json:"id"`
+	MatchId openapi_types.UUID  `json:"matchId"`
+	PointTo *openapi_types.UUID `json:"pointTo,omitempty"`
+}
+
 // WeaponResult defines model for WeaponResult.
 type WeaponResult struct {
 	Id   openapi_types.UUID `json:"id"`
@@ -152,6 +190,12 @@ type ServerInterface interface {
 
 	// (GET /competitors/all/{competitionId})
 	GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
+
+	// (GET /matches/{groupId}/all)
+	GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request, groupId openapi_types.UUID)
+
+	// (GET /matches/{matchId})
+	GetMatchesMatchId(w http.ResponseWriter, r *http.Request, matchId openapi_types.UUID)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -205,6 +249,16 @@ func (_ Unimplemented) PostCompetitors(w http.ResponseWriter, r *http.Request) {
 
 // (GET /competitors/all/{competitionId})
 func (_ Unimplemented) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /matches/{groupId}/all)
+func (_ Unimplemented) GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request, groupId openapi_types.UUID) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /matches/{matchId})
+func (_ Unimplemented) GetMatchesMatchId(w http.ResponseWriter, r *http.Request, matchId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -420,6 +474,58 @@ func (siw *ServerInterfaceWrapper) GetCompetitorsAllCompetitionId(w http.Respons
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// GetMatchesGroupIdAll operation middleware
+func (siw *ServerInterfaceWrapper) GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "groupId" -------------
+	var groupId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "groupId", chi.URLParam(r, "groupId"), &groupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "groupId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMatchesGroupIdAll(w, r, groupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetMatchesMatchId operation middleware
+func (siw *ServerInterfaceWrapper) GetMatchesMatchId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "matchId" -------------
+	var matchId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "matchId", chi.URLParam(r, "matchId"), &matchId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "matchId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMatchesMatchId(w, r, matchId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 type UnescapedCookieParamError struct {
 	ParamName string
 	Err       error
@@ -562,6 +668,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitors/all/{competitionId}", wrapper.GetCompetitorsAllCompetitionId)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/matches/{groupId}/all", wrapper.GetMatchesGroupIdAll)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/matches/{matchId}", wrapper.GetMatchesMatchId)
 	})
 
 	return r

@@ -7,6 +7,7 @@ import (
 	competitionEntities "github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
 	competitorEntities "github.com/Mezrik/fencing-dp/internal/competitor/domain/entities"
 	"github.com/Mezrik/fencing-dp/internal/interface/desktop"
+	matchEntities "github.com/Mezrik/fencing-dp/internal/match/domain/entities"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -38,6 +39,7 @@ func main() {
 			[]competitionEntities.GenderEnum{"male", "female", "mixed"},
 			[]competitionEntities.CompetitionTypeEnum{"national", "international"},
 			[]competitorEntities.GenderEnum{"male", "female", "mixed"},
+			[]matchEntities.MatchChangeEnum{"match_start", "match_end", "fight_start", "fight_stop", "point_added", "point_subtracted"},
 		},
 	})
 

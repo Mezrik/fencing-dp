@@ -172,6 +172,49 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/CompetitionParticipant"
+
+
+  /matches/{matchId}:
+    get:
+      tags:
+        - Match
+      parameters:
+        - in: path
+          name: matchId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+          required: true
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+  
+  /matches/{groupId}/all:
+    get:
+      tags:
+        - Match
+      parameters:
+        - in: path
+          name: groupId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+          required: true
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MatchDetail"
       
 
 components:
@@ -411,3 +454,84 @@ components:
         pisteNumber:
           type: integer
           example: 1
+
+    Match:
+      type: object
+      required:
+        - id
+        - groupId
+        - participantOne
+        - participantTwo
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        groupId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        participantOne:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        participantTwo:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+
+    MatchDetail:
+      type: object
+      required:
+        - id
+        - groupId
+        - participantOne
+        - participantTwo
+        - state
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        groupId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        participantOne:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        participantTwo:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        state:
+          type: array
+          items:
+            $ref: "#/components/schemas/MatchStateItem"
+
+    MatchStateItem:
+      type: object
+      required:
+        - id
+        - matchId
+        - change
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        matchId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        change:
+          $ref: "#/components/schemas/MatchChangeEnum"
+        pointTo:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+
+    MatchChangeEnum:
+      type: string
+      enum: [match_start, match_end, fight_start, fight_stop, point_added, point_subtracted]
