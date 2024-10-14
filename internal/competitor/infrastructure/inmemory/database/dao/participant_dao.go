@@ -72,9 +72,14 @@ func (dao *ParticipantDao) FindAll(competitionId uuid.UUID) ([]*models.Participa
 			c.club_id as "competitor.club_id",
 			c.license as "competitor.license",
 			c.license_fie as "competitor.license_fie",
-			c.birthdate as "competitor.birthdate"
+			c.birthdate as "competitor.birthdate",
+			cl.name as "competitor.club.name",
+			cl.created_at as "competitor.club.created_at",
+			cl.updated_at as "competitor.club.updated_at",
+			cl.id as "competitor.club.id"
 		FROM participating_competitors pc
 		JOIN competitors c ON pc.competitor_id = c.id
+		JOIN clubs cl ON c.club_id = cl.id
 		WHERE pc.competition_id = ?
 		`, competitionId)
 
