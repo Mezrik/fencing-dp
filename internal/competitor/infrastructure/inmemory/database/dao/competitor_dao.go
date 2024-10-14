@@ -61,5 +61,22 @@ func (c *CompetitorDao) FindAll() ([]*models.CompetitorModel, error) {
 }
 
 func (c *CompetitorDao) FindById(id uuid.UUID) (*models.CompetitorModel, error) {
-	return nil, nil
+	query := `
+    SELECT
+      clb.name as "club.name",
+      clb.id as "club.id",
+      c.*
+    FROM competitors c
+    JOIN clubs clb ON c.club_id = clb.id
+    `
+
+	var competitorModel models.CompetitorModel
+
+	err := c.DB.Get(&competitorModel, query, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &competitorModel, nil
 }

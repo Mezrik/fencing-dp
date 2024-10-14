@@ -44,8 +44,12 @@ func main() {
 
 	matchService := match.NewMatchService(matchRepository, logger)
 
-	competitorService := competitor.NewCompetitorService(competitorRepository, clubRepository, logger)
 	competitionService := competition.NewCompetitionService(competitionRepository, logger)
+	competitorService := competitor.NewCompetitorService(
+		competitorRepository,
+		clubRepository,
+		logger,
+	)
 
 	server.RunHTTPServer(func(router chi.Router) http.Handler {
 		return server.HandlerFromMux(server.NewServer(competitionService, competitorService, matchService), router)

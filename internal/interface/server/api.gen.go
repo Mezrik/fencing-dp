@@ -35,6 +35,12 @@ const (
 	PointSubtracted MatchChangeEnum = "point_subtracted"
 )
 
+// AssignCompetitorRequest defines model for AssignCompetitorRequest.
+type AssignCompetitorRequest struct {
+	CompetitionId openapi_types.UUID `json:"competitionId"`
+	CompetitorId  openapi_types.UUID `json:"competitorId"`
+}
+
 // ClubResult defines model for ClubResult.
 type ClubResult struct {
 	Id   openapi_types.UUID `json:"id"`
@@ -58,7 +64,7 @@ type CompetitionGroup struct {
 // CompetitionParticipant defines model for CompetitionParticipant.
 type CompetitionParticipant struct {
 	CompetitionId    openapi_types.UUID `json:"competitionId"`
-	Competitor       *CompetitorResult  `json:"competitor,omitempty"`
+	Competitor       CompetitorResult   `json:"competitor"`
 	DeploymentNumber *int               `json:"deploymentNumber,omitempty"`
 	Points           *float32           `json:"points,omitempty"`
 	StartingPosition *int               `json:"startingPosition,omitempty"`
@@ -120,10 +126,10 @@ type GenderEnum string
 
 // Match defines model for Match.
 type Match struct {
-	GroupId        openapi_types.UUID `json:"groupId"`
-	Id             openapi_types.UUID `json:"id"`
-	ParticipantOne openapi_types.UUID `json:"participantOne"`
-	ParticipantTwo openapi_types.UUID `json:"participantTwo"`
+	GroupId          openapi_types.UUID `json:"groupId"`
+	Id               openapi_types.UUID `json:"id"`
+	ParticipantOneId openapi_types.UUID `json:"participantOneId"`
+	ParticipantTwoId openapi_types.UUID `json:"participantTwoId"`
 }
 
 // MatchChangeEnum defines model for MatchChangeEnum.
@@ -131,18 +137,17 @@ type MatchChangeEnum string
 
 // MatchDetail defines model for MatchDetail.
 type MatchDetail struct {
-	GroupId        openapi_types.UUID `json:"groupId"`
-	Id             openapi_types.UUID `json:"id"`
-	ParticipantOne openapi_types.UUID `json:"participantOne"`
-	ParticipantTwo openapi_types.UUID `json:"participantTwo"`
-	State          []MatchStateItem   `json:"state"`
+	GroupId          openapi_types.UUID `json:"groupId"`
+	Id               openapi_types.UUID `json:"id"`
+	ParticipantOneId openapi_types.UUID `json:"participantOneId"`
+	ParticipantTwoId openapi_types.UUID `json:"participantTwoId"`
+	State            []MatchStateItem   `json:"state"`
 }
 
 // MatchStateItem defines model for MatchStateItem.
 type MatchStateItem struct {
 	Change  MatchChangeEnum     `json:"change"`
 	Id      openapi_types.UUID  `json:"id"`
-	MatchId openapi_types.UUID  `json:"matchId"`
 	PointTo *openapi_types.UUID `json:"pointTo,omitempty"`
 }
 
@@ -157,6 +162,9 @@ type PostCompetitionsJSONRequestBody = CreateCompetitionCommand
 
 // PostCompetitorsJSONRequestBody defines body for PostCompetitors for application/json ContentType.
 type PostCompetitorsJSONRequestBody = CreateCompetitorCommand
+
+// PostCompetitorsAssignParticipantJSONRequestBody defines body for PostCompetitorsAssignParticipant for application/json ContentType.
+type PostCompetitorsAssignParticipantJSONRequestBody = AssignCompetitorRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -190,6 +198,9 @@ type ServerInterface interface {
 
 	// (GET /competitors/all/{competitionId})
 	GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
+
+	// (POST /competitors/assign-participant)
+	PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request)
 
 	// (GET /matches/{groupId}/all)
 	GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request, groupId openapi_types.UUID)
@@ -249,6 +260,11 @@ func (_ Unimplemented) PostCompetitors(w http.ResponseWriter, r *http.Request) {
 
 // (GET /competitors/all/{competitionId})
 func (_ Unimplemented) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (POST /competitors/assign-participant)
+func (_ Unimplemented) PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -474,6 +490,21 @@ func (siw *ServerInterfaceWrapper) GetCompetitorsAllCompetitionId(w http.Respons
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// PostCompetitorsAssignParticipant operation middleware
+func (siw *ServerInterfaceWrapper) PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCompetitorsAssignParticipant(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 // GetMatchesGroupIdAll operation middleware
 func (siw *ServerInterfaceWrapper) GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -668,6 +699,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitors/all/{competitionId}", wrapper.GetCompetitorsAllCompetitionId)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/competitors/assign-participant", wrapper.PostCompetitorsAssignParticipant)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/matches/{groupId}/all", wrapper.GetMatchesGroupIdAll)

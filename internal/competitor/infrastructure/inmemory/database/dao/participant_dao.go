@@ -12,23 +12,15 @@ type ParticipantDao struct {
 
 func (dao *ParticipantDao) Create(participant *models.ParticipantModel) error {
 	_, err := dao.DB.Exec(` INSERT INTO participating_competitors (
-		id,
-		created_at,
 		competitor_id,
 		competition_id,
 		deployment_number,
 		points,
 		starting_position
 	) VALUES (
-		:id,
-		:created_at,
-		:competitor_id,
-		:competition_id,
-		:deployment_number,
-		:points,
-		:starting_position
+		?, ?, ?, ?, ?
 	)
-	`, participant)
+	`, participant.CompetitorID, participant.CompetitionID, participant.DeploymentNumber, participant.Points, participant.StartingPosition)
 
 	return err
 }

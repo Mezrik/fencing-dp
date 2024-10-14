@@ -266,7 +266,9 @@ export const CreateCompetitionDrawer: FC<CreateCompetitionProps> = (props) => {
             <Trans>Submit</Trans>
           </Button>
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">
+              <Trans>Cancel</Trans>
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

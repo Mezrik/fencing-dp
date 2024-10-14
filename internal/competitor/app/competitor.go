@@ -13,7 +13,8 @@ type Service struct {
 }
 
 type Commands struct {
-	CreateCompetitor command.CreateCompetitorHandler
+	CreateCompetitor  command.CreateCompetitorHandler
+	AssignParticipant command.AssignParticipantHandler
 }
 
 type Queries struct {
@@ -25,7 +26,8 @@ func NewCompetitorService(competitorRepo repositories.CompetitorRepo, clubRepo r
 
 	return Service{
 		Commands: Commands{
-			CreateCompetitor: command.NewCreateCompetitorHandler(competitorRepo, clubRepo, logger),
+			CreateCompetitor:  command.NewCreateCompetitorHandler(competitorRepo, clubRepo, logger),
+			AssignParticipant: command.NewAssignParticipantHandler(competitorRepo, logger),
 		},
 		Queries: Queries{
 			AllCompetitors:  query.NewAllCompetitionsHandler(competitorRepo, clubRepo, logger),

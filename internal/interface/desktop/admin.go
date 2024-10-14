@@ -51,7 +51,11 @@ func (a *Admin) Startup(ctx context.Context) {
 
 	a.competitions = competition.NewCompetitionService(competitionRepository, logger)
 
-	a.competitors = competitor.NewCompetitorService(competitorRepository, clubRepository, logger)
+	a.competitors = competitor.NewCompetitorService(
+		competitorRepository,
+		clubRepository,
+		logger,
+	)
 
 	a.matches = match.NewMatchService(matchRepository, logger)
 }

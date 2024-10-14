@@ -173,6 +173,21 @@ paths:
                 items:
                   $ref: "#/components/schemas/CompetitionParticipant"
 
+  /competitors/assign-participant:
+    post:
+      tags:
+        - Competitor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignCompetitorRequest"
+      responses:
+        '200':
+          description: todo
+          
+
 
   /matches/{matchId}:
     get:
@@ -531,3 +546,18 @@ components:
     MatchChangeEnum:
       type: string
       enum: [match_start, match_end, fight_start, fight_stop, point_added, point_subtracted]
+
+    AssignCompetitorRequest:
+      type: object
+      required:
+        - competitionId
+        - competitorId
+      properties:
+        competitionId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        competitorId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000

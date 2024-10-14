@@ -39,3 +39,21 @@ func (s Server) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Re
 
 	render.Respond(w, r, participants)
 }
+
+func (s Server) PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request) {
+	var payload command.AssignParticipant
+
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := s.competitor.Commands.AssignParticipant.Handle(r.Context(), payload)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	render.Respond(w, r, http.StatusOK)
+}
