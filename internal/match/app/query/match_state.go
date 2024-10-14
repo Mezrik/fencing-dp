@@ -7,7 +7,6 @@ import (
 
 type MatchState struct {
 	ID      uuid.UUID                `json:"id" ts_type:"UUID"`
-	MatchID uuid.UUID                `json:"matchId" ts_type:"UUID"`
 	Change  entities.MatchChangeEnum `json:"change"`
 	PointTo uuid.NullUUID            `json:"pointTo"`
 }
@@ -15,7 +14,6 @@ type MatchState struct {
 func ToMatchStateQueryFromEntity(m *entities.MatchState) *MatchState {
 	return &MatchState{
 		ID:      m.ID,
-		MatchID: m.MatchId(),
 		Change:  m.Change(),
 		PointTo: m.PointTo(),
 	}
