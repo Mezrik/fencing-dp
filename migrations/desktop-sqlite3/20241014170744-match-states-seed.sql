@@ -30,7 +30,7 @@ values
   );
 
 insert into
-  match_states (id, match_id change, point_to, created_at)
+  match_states (id, match_id, change, point_to, created_at)
 values
   (
     '0fb65ed8-9e31-4693-90e7-bcfdedf77462',
