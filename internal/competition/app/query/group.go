@@ -9,7 +9,7 @@ type Group struct {
 	ID            uuid.UUID `json:"id" ts_type:"UUID"`
 	Name          string    `json:"name"`
 	PisteNumber   *int64    `json:"pisteNumber"`
-	CompetitionID uuid.UUID `json:"competitionId"`
+	CompetitionID uuid.UUID `json:"competitionId" ts_type:"UUID"`
 }
 
 func ToGroupQueryFromEntity(group *entities.CompetitionGroup) *Group {

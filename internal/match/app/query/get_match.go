@@ -13,7 +13,7 @@ type GetMatch struct {
 	ID uuid.UUID
 }
 
-type GetMatchHandler decorator.QueryHandler[GetMatch, *Match]
+type GetMatchHandler decorator.QueryHandler[GetMatch, *MatchDetail]
 
 type getMatchHandler struct {
 	repo repositories.MatchRepository
@@ -24,14 +24,14 @@ func NewGetMatchHandler(repo repositories.MatchRepository, logger *logrus.Entry)
 		panic("nil repo")
 	}
 
-	return decorator.ApplyQueryDecorators[GetMatch, *Match](getMatchHandler{repo}, logger)
+	return decorator.ApplyQueryDecorators[GetMatch, *MatchDetail](getMatchHandler{repo}, logger)
 }
 
-func (h getMatchHandler) Handle(ctx context.Context, query GetMatch) (*Match, error) {
+func (h getMatchHandler) Handle(ctx context.Context, query GetMatch) (*MatchDetail, error) {
 	match, err := h.repo.FindById(query.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return ToMatchQueryFromEntity(match), nil
+	return ToMatchDetailQueryFromEntity(match), nil
 }

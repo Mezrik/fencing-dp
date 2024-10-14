@@ -192,7 +192,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Match"
+                $ref: "#/components/schemas/MatchDetail"
   
   /matches/{groupId}/all:
     get:
@@ -214,7 +214,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/MatchDetail"
+                  $ref: "#/components/schemas/Match"
       
 
 components:
@@ -460,8 +460,8 @@ components:
       required:
         - id
         - groupId
-        - participantOne
-        - participantTwo
+        - participantOneId
+        - participantTwoId
       properties:
         id:
           type: string
@@ -471,11 +471,11 @@ components:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174000
-        participantOne:
+        participantOneId:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174000
-        participantTwo:
+        participantTwoId:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174000
@@ -485,8 +485,8 @@ components:
       required:
         - id
         - groupId
-        - participantOne
-        - participantTwo
+        - participantOneId
+        - participantTwoId
         - state
       properties:
         id:
@@ -497,11 +497,11 @@ components:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174000
-        participantOne:
+        participantOneId:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174000
-        participantTwo:
+        participantTwoId:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174000
@@ -514,14 +514,9 @@ components:
       type: object
       required:
         - id
-        - matchId
         - change
       properties:
         id:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        matchId:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174000

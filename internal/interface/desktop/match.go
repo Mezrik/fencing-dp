@@ -11,7 +11,7 @@ func (a *Admin) GetMatches(groupID uuid.UUID) []*query.Match {
 	return matches
 }
 
-func (a *Admin) GetMatch(id uuid.UUID) *query.Match {
+func (a *Admin) GetMatch(id uuid.UUID) *query.MatchDetail {
 	match, _ := a.matches.Queries.GetMatch.Handle(a.ctx, query.GetMatch{ID: id})
 
 	return match
