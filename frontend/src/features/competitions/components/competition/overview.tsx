@@ -5,6 +5,7 @@ import { t, Trans } from '@lingui/macro';
 import { FC } from 'react';
 import { getCompetionTypeCaption, getGenderCaption } from '../../helpers';
 import { InfoList, InfoListItem } from '@/components/ui/info-list';
+import { ParticipantsList } from '../participant/participants-list';
 
 export const Overview: FC<{ competition: CompetitionResult }> = ({ competition }) => {
   return (
@@ -39,7 +40,9 @@ export const Overview: FC<{ competition: CompetitionResult }> = ({ competition }
             <Trans>List of competitors</Trans>
           </CardTitle>
         </CardHeader>
-        <CardContent></CardContent>
+        <CardContent>
+          <ParticipantsList competitionId={competition.id} />
+        </CardContent>
       </Card>
     </div>
   );
