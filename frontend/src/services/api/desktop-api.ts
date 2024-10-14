@@ -6,6 +6,11 @@ import {
   GetCompetitionsWeapons,
   CreateCompetitor,
   GetCompetitors,
+  GetCompetitionsGroups,
+  GetGroup,
+  GetMatch,
+  GetMatches,
+  GetParticipants,
 } from '@/generated/wailsjs/go/desktop/Admin';
 import { command, query } from '@/generated/wailsjs/go/models';
 import { Api } from './api';
@@ -37,5 +42,25 @@ export class DesktopApi implements Api {
 
   GetCompetitors(): Promise<Array<query.Competitor>> {
     return GetCompetitors();
+  }
+
+  GetCompetitionsGroups(competitionId: UUID): Promise<Array<query.Group>> {
+    return GetCompetitionsGroups(competitionId);
+  }
+
+  GetGroup(groupId: UUID): Promise<query.Group> {
+    return GetGroup(groupId);
+  }
+
+  GetMatch(id: UUID): Promise<query.MatchDetail> {
+    return GetMatch(id);
+  }
+
+  GetMatches(groupId: UUID): Promise<Array<query.Match>> {
+    return GetMatches(groupId);
+  }
+
+  GetParticipants(competitionId: UUID): Promise<Array<query.Participant>> {
+    return GetParticipants(competitionId);
   }
 }

@@ -5,6 +5,10 @@ import {
   CreateCompetitionCommand,
   CreateCompetitorCommand,
   WeaponResult,
+  CompetitionGroup,
+  Match,
+  MatchDetail,
+  CompetitionParticipant,
 } from '@/generated/server';
 import { DesktopApi } from './desktop-api';
 import { RestApi } from './rest-api';
@@ -25,6 +29,16 @@ export interface Api {
   GetCompetitors(): Promise<Array<CompetitorResult>>;
 
   CreateCompetitor(data: CreateCompetitorCommand): Promise<void>;
+
+  GetCompetitionsGroups(competitionId: UUID): Promise<Array<CompetitionGroup>>;
+
+  GetGroup(groupId: UUID, competitionId: UUID): Promise<CompetitionGroup>;
+
+  GetMatch(id: UUID): Promise<MatchDetail>;
+
+  GetMatches(groupId: UUID): Promise<Array<Match>>;
+
+  GetParticipants(competitionId: UUID): Promise<Array<CompetitionParticipant>>;
 }
 
 export const api: Api = import.meta.env.MODE === 'desktop' ? new DesktopApi() : new RestApi();

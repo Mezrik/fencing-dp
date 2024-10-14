@@ -12,6 +12,15 @@ import {
   CreateCompetitorCommand,
   getCompetitors,
   postCompetitors,
+  CompetitionGroup,
+  MatchDetail,
+  Match,
+  CompetitionParticipant,
+  getCompetitionsCompetitionIdGroups,
+  getCompetitionsCompetitionIdGroupsGroupId,
+  getMatchesMatchId,
+  getMatchesGroupIdAll,
+  getCompetitorsAllCompetitionId,
 } from '@/generated/server';
 import { Api } from './api';
 
@@ -42,5 +51,25 @@ export class RestApi implements Api {
 
   CreateCompetitor(data: CreateCompetitorCommand): Promise<void> {
     return postCompetitors(data);
+  }
+
+  GetCompetitionsGroups(competitionId: UUID): Promise<Array<CompetitionGroup>> {
+    return getCompetitionsCompetitionIdGroups(competitionId);
+  }
+
+  GetGroup(groupId: UUID, competitionId: UUID): Promise<CompetitionGroup> {
+    return getCompetitionsCompetitionIdGroupsGroupId(competitionId, groupId);
+  }
+
+  GetMatch(id: UUID): Promise<MatchDetail> {
+    return getMatchesMatchId(id);
+  }
+
+  GetMatches(groupId: UUID): Promise<Array<Match>> {
+    return getMatchesGroupIdAll(groupId);
+  }
+
+  GetParticipants(competitionId: UUID): Promise<Array<CompetitionParticipant>> {
+    return getCompetitorsAllCompetitionId(competitionId);
   }
 }
