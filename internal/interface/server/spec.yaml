@@ -102,6 +102,27 @@ paths:
       responses:
         '200':
           description: todo
+  /competitors/all/{competitionId}:
+    get:
+      tags:
+        - Competitor
+      parameters:
+        - in: path
+          name: competitionId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+          required: true
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompetitionParticipant"
       
 
 components:
@@ -296,5 +317,28 @@ components:
         name:
           type: string
           example: "club 1"
+    
+    CompetitionParticipant:
+      type: object
+      required:
+        - id
+        - competitionId
+        - competitorId
+      properties:
+        competitor:
+          $ref: "#/components/schemas/CompetitorResult"
+        competitionId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        deploymentNumber:
+          type: integer
+          example: 1
+        points:
+          type: number
+          example: 0
+        startingPosition:
+          type: integer
+          example: 1
         
         

@@ -37,6 +37,15 @@ type CompetitionCategoryResult struct {
 	Name string             `json:"name"`
 }
 
+// CompetitionParticipant defines model for CompetitionParticipant.
+type CompetitionParticipant struct {
+	CompetitionId    openapi_types.UUID `json:"competitionId"`
+	Competitor       *CompetitorResult  `json:"competitor,omitempty"`
+	DeploymentNumber *int               `json:"deploymentNumber,omitempty"`
+	Points           *float32           `json:"points,omitempty"`
+	StartingPosition *int               `json:"startingPosition,omitempty"`
+}
+
 // CompetitionResult defines model for CompetitionResult.
 type CompetitionResult struct {
 	Category        CompetitionCategoryResult `json:"category"`
@@ -126,6 +135,9 @@ type ServerInterface interface {
 
 	// (POST /competitors)
 	PostCompetitors(w http.ResponseWriter, r *http.Request)
+
+	// (GET /competitors/all/{competitionId})
+	GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -164,6 +176,11 @@ func (_ Unimplemented) GetCompetitors(w http.ResponseWriter, r *http.Request) {
 
 // (POST /competitors)
 func (_ Unimplemented) PostCompetitors(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /competitors/all/{competitionId})
+func (_ Unimplemented) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -283,6 +300,32 @@ func (siw *ServerInterfaceWrapper) PostCompetitors(w http.ResponseWriter, r *htt
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostCompetitors(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCompetitorsAllCompetitionId operation middleware
+func (siw *ServerInterfaceWrapper) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "competitionId" -------------
+	var competitionId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "competitionId", chi.URLParam(r, "competitionId"), &competitionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "competitionId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCompetitorsAllCompetitionId(w, r, competitionId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -425,6 +468,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/competitors", wrapper.PostCompetitors)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/competitors/all/{competitionId}", wrapper.GetCompetitorsAllCompetitionId)
 	})
 
 	return r

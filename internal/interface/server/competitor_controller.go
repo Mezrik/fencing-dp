@@ -7,6 +7,7 @@ import (
 	"github.com/Mezrik/fencing-dp/internal/competitor/app/command"
 	"github.com/Mezrik/fencing-dp/internal/competitor/app/query"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 )
 
 func (s Server) GetCompetitors(w http.ResponseWriter, r *http.Request) {
@@ -31,4 +32,10 @@ func (s Server) PostCompetitors(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.Respond(w, r, http.StatusOK)
+}
+
+func (s Server) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
+	participants, _ := s.competitor.Queries.AllParticipants.Handle(r.Context(), query.AllParticipants{CompetitionId: id})
+
+	render.Respond(w, r, participants)
 }
