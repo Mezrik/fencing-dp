@@ -416,6 +416,7 @@ components:
         - id
         - competitionId
         - competitorId
+        - competitor
       properties:
         competitor:
           $ref: "#/components/schemas/CompetitorResult"
