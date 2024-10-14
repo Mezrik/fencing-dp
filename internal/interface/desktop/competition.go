@@ -35,3 +35,15 @@ func (a *Admin) GetCompetitionsWeapons() []*query.Weapon {
 
 	return weapons
 }
+
+func (a *Admin) GetCompetitionsGroups(competitionId uuid.UUID) []*query.Group {
+	groups, _ := a.competitions.Queries.AllGroups.Handle(a.ctx, query.AllGroups{CompetitionID: competitionId})
+
+	return groups
+}
+
+func (a *Admin) GetGroup(id uuid.UUID) *query.Group {
+	group, _ := a.competitions.Queries.GetGroup.Handle(a.ctx, query.GetGroup{ID: id})
+
+	return group
+}

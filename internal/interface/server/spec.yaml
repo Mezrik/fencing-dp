@@ -76,6 +76,55 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CompetitionResult"
+
+  /competitions/{competitionId}/groups:
+    get:
+      tags:
+        - Competition
+      parameters:
+        - in: path
+          name: competitionId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000 
+          required: true
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompetitionGroup"
+  
+  /competitions/{competitionId}/groups/{groupId}:
+    get:
+      tags:
+        - Competition
+      parameters:
+        - in: path
+          name: competitionId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+          required: true
+        - in: path
+          name: groupId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+          required: true
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompetitionGroup"
                 
   /competitors:
     get:
@@ -341,4 +390,24 @@ components:
           type: integer
           example: 1
         
-        
+    CompetitionGroup: 
+      type: object
+      required:
+        - id
+        - name
+        - competitionId
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          example: "group 1"  
+        competitionId:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426614174000
+        pisteNumber:
+          type: integer
+          example: 1

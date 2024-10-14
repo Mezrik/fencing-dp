@@ -15,4 +15,7 @@ type CompetitionRepository interface {
 
 	FindWeaponById(id uuid.UUID) (*entities.Weapon, error)
 	FindAllWeapons() ([]*entities.Weapon, error)
+
+	FindAllGroups(competitionId uuid.UUID) ([]*entities.CompetitionGroup, error)
+	FindGroupById(id uuid.UUID) (*entities.CompetitionGroup, error)
 }

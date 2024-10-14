@@ -37,6 +37,14 @@ type CompetitionCategoryResult struct {
 	Name string             `json:"name"`
 }
 
+// CompetitionGroup defines model for CompetitionGroup.
+type CompetitionGroup struct {
+	CompetitionId openapi_types.UUID `json:"competitionId"`
+	Id            openapi_types.UUID `json:"id"`
+	Name          string             `json:"name"`
+	PisteNumber   *int               `json:"pisteNumber,omitempty"`
+}
+
 // CompetitionParticipant defines model for CompetitionParticipant.
 type CompetitionParticipant struct {
 	CompetitionId    openapi_types.UUID `json:"competitionId"`
@@ -130,6 +138,12 @@ type ServerInterface interface {
 	// (GET /competitions/{competitionId})
 	GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
 
+	// (GET /competitions/{competitionId}/groups)
+	GetCompetitionsCompetitionIdGroups(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
+
+	// (GET /competitions/{competitionId}/groups/{groupId})
+	GetCompetitionsCompetitionIdGroupsGroupId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID, groupId openapi_types.UUID)
+
 	// (GET /competitors)
 	GetCompetitors(w http.ResponseWriter, r *http.Request)
 
@@ -166,6 +180,16 @@ func (_ Unimplemented) GetCompetitionsWeapons(w http.ResponseWriter, r *http.Req
 
 // (GET /competitions/{competitionId})
 func (_ Unimplemented) GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /competitions/{competitionId}/groups)
+func (_ Unimplemented) GetCompetitionsCompetitionIdGroups(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /competitions/{competitionId}/groups/{groupId})
+func (_ Unimplemented) GetCompetitionsCompetitionIdGroupsGroupId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID, groupId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -270,6 +294,67 @@ func (siw *ServerInterfaceWrapper) GetCompetitionsCompetitionId(w http.ResponseW
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetCompetitionsCompetitionId(w, r, competitionId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCompetitionsCompetitionIdGroups operation middleware
+func (siw *ServerInterfaceWrapper) GetCompetitionsCompetitionIdGroups(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "competitionId" -------------
+	var competitionId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "competitionId", chi.URLParam(r, "competitionId"), &competitionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "competitionId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCompetitionsCompetitionIdGroups(w, r, competitionId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCompetitionsCompetitionIdGroupsGroupId operation middleware
+func (siw *ServerInterfaceWrapper) GetCompetitionsCompetitionIdGroupsGroupId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "competitionId" -------------
+	var competitionId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "competitionId", chi.URLParam(r, "competitionId"), &competitionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "competitionId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "groupId" -------------
+	var groupId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "groupId", chi.URLParam(r, "groupId"), &groupId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "groupId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCompetitionsCompetitionIdGroupsGroupId(w, r, competitionId, groupId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -462,6 +547,12 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions/{competitionId}", wrapper.GetCompetitionsCompetitionId)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/competitions/{competitionId}/groups", wrapper.GetCompetitionsCompetitionIdGroups)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/competitions/{competitionId}/groups/{groupId}", wrapper.GetCompetitionsCompetitionIdGroupsGroupId)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitors", wrapper.GetCompetitors)

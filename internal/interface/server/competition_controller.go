@@ -56,3 +56,15 @@ func (s Server) GetCompetitionsWeapons(w http.ResponseWriter, r *http.Request) {
 
 	render.Respond(w, r, weapons)
 }
+
+func (s Server) GetCompetitionsCompetitionIdGroups(w http.ResponseWriter, r *http.Request, competitionId uuid.UUID) {
+	groups, _ := s.competition.Queries.AllGroups.Handle(r.Context(), query.AllGroups{CompetitionID: competitionId})
+
+	render.Respond(w, r, groups)
+}
+
+func (s Server) GetCompetitionsCompetitionIdGroupsGroupId(w http.ResponseWriter, r *http.Request, competitionId uuid.UUID, groupId uuid.UUID) {
+	group, _ := s.competition.Queries.GetGroup.Handle(r.Context(), query.GetGroup{ID: groupId})
+
+	render.Respond(w, r, group)
+}

@@ -11,3 +11,10 @@ func GetTimePtr(nt sql.NullTime) *time.Time {
 	}
 	return nil
 }
+
+func GetInt64Ptr(nt sql.NullInt64) *int64 {
+	if nt.Valid {
+		return &nt.Int64
+	}
+	return nil
+}

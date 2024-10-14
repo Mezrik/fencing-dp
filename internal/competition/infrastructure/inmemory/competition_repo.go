@@ -157,6 +157,52 @@ func (repo InMemoryCompetitionRepository) FindAllWeapons() ([]*entities.Weapon, 
 	return weapons, nil
 }
 
+func (repo InMemoryCompetitionRepository) FindAllGroups(competitionId uuid.UUID) ([]*entities.CompetitionGroup, error) {
+	dao := &dao.CompetitionGroupDao{DB: repo.db}
+
+	competitionGroupModels, err := dao.FindAll(competitionId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	competitionGroups := make([]*entities.CompetitionGroup, 0, len(competitionGroupModels))
+
+	for _, c := range competitionGroupModels {
+		competitionGroups = append(competitionGroups, entities.UnmarshalCompetitionGroup(c.ID, c.Name, util.GetInt64Ptr(c.PisteNumber), c.CreatedAt, util.GetTimePtr(c.UpdatedAt), competitionId))
+	}
+
+	return competitionGroups, nil
+}
+
+func (repo InMemoryCompetitionRepository) FindGroupById(id uuid.UUID) (*entities.CompetitionGroup, error) {
+	competitionDao := &dao.CompetitionDao{DB: repo.db}
+	dao := &dao.CompetitionGroupDao{DB: repo.db}
+
+	_, err := competitionDao.FindById(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	competitionGroupModel, err := dao.FindById(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	competitionGroup := entities.UnmarshalCompetitionGroup(
+		competitionGroupModel.ID,
+		competitionGroupModel.Name,
+		util.GetInt64Ptr(competitionGroupModel.PisteNumber),
+		competitionGroupModel.CreatedAt,
+		util.GetTimePtr(competitionGroupModel.UpdatedAt),
+		competitionGroupModel.CompetitionId,
+	)
+
+	return competitionGroup, nil
+}
+
 func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) (*models.CompetitionModel, error) {
 	competitionModel := &models.CompetitionModel{
 		ID:              c.ID,

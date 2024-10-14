@@ -21,6 +21,8 @@ type Queries struct {
 	GetCompetition  query.GetCompetitionHandler
 	AllCategories   query.AllCategoriesHandler
 	AllWeapons      query.AllWeaponsHandler
+	AllGroups       query.AllGroupsHandler
+	GetGroup        query.GetGroupHandler
 }
 
 func NewCompetitionService(competitionRepo repositories.CompetitionRepository, logger *logrus.Entry) Service {
@@ -34,6 +36,8 @@ func NewCompetitionService(competitionRepo repositories.CompetitionRepository, l
 			GetCompetition:  query.NewGetCompetitionHandler(competitionRepo, logger),
 			AllCategories:   query.NewAllCategoriesHandler(competitionRepo, logger),
 			AllWeapons:      query.NewAllWeaponsHandler(competitionRepo, logger),
+			AllGroups:       query.NewAllGroupsHandler(competitionRepo, logger),
+			GetGroup:        query.NewGetGroupHandler(competitionRepo, logger),
 		},
 	}
 }
