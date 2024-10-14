@@ -38,11 +38,14 @@ export const CompetitorsRoute = () => {
           </span>
         </Button>
       }
+      className="flex flex-col min-h-0"
     >
       <div className="mb-4">
         <InputBase placeholder={t`Type here to search`} className="max-w-56" />
       </div>
-      <CompetitorsTable data={competitorsQuery.data} />
+      <div className="flex-grow overflow-y-auto">
+        <CompetitorsTable data={competitorsQuery.data} />
+      </div>
     </BasicPageLayout>
   );
 };

@@ -7,14 +7,15 @@ export const BasicPageLayout: FC<{
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
-}> = ({ children, title, subtitle, actions }) => {
+  className?: string;
+}> = ({ children, title, subtitle, actions, className }) => {
   return (
     <>
       <Head title={title} />
-      <div className="py-6">
+      <div className="py-6 flex flex-col w-full h-full max-h-screen min-h-0">
         <div
           className={cn(
-            'flex mx-auto max-w-7xl px-4 sm:px-6 md:px-8',
+            'flex mx-auto max-w-7xl px-4 sm:px-6 md:px-8 w-full',
             actions ? 'justify-between' : 'justify-start',
           )}
         >
@@ -26,7 +27,11 @@ export const BasicPageLayout: FC<{
           </div>
           {actions}
         </div>
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:px-8">{children}</div>
+        <div
+          className={cn('mx-auto max-w-7xl px-4 py-6 sm:px-6 md:px-8 w-full flex-grow', className)}
+        >
+          {children}
+        </div>
       </div>
     </>
   );
