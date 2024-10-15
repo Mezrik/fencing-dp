@@ -14,7 +14,7 @@ export const Overview: FC<{ competition: CompetitionResult }> = ({ competition }
 
   return (
     <div className="grid grid-cols-4 gap-4 w-full">
-      <Card className="col-span-1">
+      <Card className="col-span-4 md:col-span-1">
         <CardHeader>
           <CardTitle>
             <Trans>Basic information</Trans>
@@ -38,7 +38,7 @@ export const Overview: FC<{ competition: CompetitionResult }> = ({ competition }
           </InfoList>
         </CardContent>
       </Card>
-      <Card className="col-span-3">
+      <Card className="col-span-4 md:col-span-3">
         <CardHeader>
           <CardTitle className="flex gap-4 items-center">
             <Trans>List of competitors</Trans>

@@ -5,7 +5,7 @@ import {
   getCompetitorsQueryOptions,
   useCompetitors,
 } from '@/features/competitors/api/get-competitors';
-import { CompetitorsTable } from '@/features/competitors/components/CompetitorsTable';
+import { CompetitorsTable } from '@/features/competitors/components/competitors-table';
 import { t, Trans } from '@lingui/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';

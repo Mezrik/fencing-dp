@@ -158,12 +158,10 @@ export const AssignParticipantDialog: FC<AssignParticipantProps> = (props) => {
           <DialogTitle>{TITLE}</DialogTitle>
         </DialogHeader>
 
-        <div className="p-4 pb-0">
-          <AssignParticipantForm
-            onSubmit={() => props.onOpenChange(false)}
-            competitionId={props.competitionId}
-          />
-        </div>
+        <AssignParticipantForm
+          onSubmit={() => props.onOpenChange(false)}
+          competitionId={props.competitionId}
+        />
 
         <DialogFooter>
           <Button form={FORM_ID}>
