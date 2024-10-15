@@ -1,5 +1,5 @@
 import { MenGenderIcon, MixedGenderIcon, WomenGenderIcon } from '@/assets/icons';
-import { CompetitionTypeEnum, GenderEnum } from '@/generated/server';
+import { CompetitionParticipant, CompetitionTypeEnum, GenderEnum } from '@/generated/server';
 import { t } from '@lingui/macro';
 
 export const getCompetionTypeCaption = (competitionType: CompetitionTypeEnum) => {
@@ -37,4 +37,23 @@ export const getGenderIcon = (gender: GenderEnum) => {
     default:
       return null;
   }
+};
+
+export const mapParticipantsByGroup = (participants: CompetitionParticipant[]) => {
+  const participantsByGroup = participants.reduce<Record<UUID, CompetitionParticipant[]>>(
+    (acc, participant) => {
+      if (!participant.groupId) return acc;
+
+      if (!acc[participant.groupId]) {
+        acc[participant.groupId] = [];
+      }
+
+      acc[participant.groupId].push(participant);
+
+      return acc;
+    },
+    {},
+  );
+
+  return participantsByGroup;
 };

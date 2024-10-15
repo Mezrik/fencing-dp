@@ -176,14 +176,7 @@ func (repo InMemoryCompetitionRepository) FindAllGroups(competitionId uuid.UUID)
 }
 
 func (repo InMemoryCompetitionRepository) FindGroupById(id uuid.UUID) (*entities.CompetitionGroup, error) {
-	competitionDao := &dao.CompetitionDao{DB: repo.db}
 	dao := &dao.CompetitionGroupDao{DB: repo.db}
-
-	_, err := competitionDao.FindById(id)
-
-	if err != nil {
-		return nil, err
-	}
 
 	competitionGroupModel, err := dao.FindById(id)
 

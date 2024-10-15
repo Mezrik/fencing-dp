@@ -6,11 +6,12 @@ import (
 )
 
 type Participant struct {
-	Competitor       Competitor `json:"competitor"`
-	CompetitionID    uuid.UUID  `json:"competitionId" ts_type:"UUID"`
-	DeploymentNumber int        `json:"deploymentNumber"`
-	Points           float64    `json:"points"`
-	StartingPosition int        `json:"startingPosition"`
+	Competitor       Competitor    `json:"competitor"`
+	CompetitionID    uuid.UUID     `json:"competitionId" ts_type:"UUID"`
+	DeploymentNumber int           `json:"deploymentNumber"`
+	Points           float64       `json:"points"`
+	StartingPosition int           `json:"startingPosition"`
+	GroupID          uuid.NullUUID `json:"groupId" ts_type:"UUID"`
 }
 
 func ToParticipantQueryFromEntity(c *entities.Participant) *Participant {
@@ -20,6 +21,7 @@ func ToParticipantQueryFromEntity(c *entities.Participant) *Participant {
 		DeploymentNumber: c.DeploymentNumber(),
 		Points:           c.Points(),
 		StartingPosition: c.StartingPosition(),
+		GroupID:          c.GroupId(),
 	}
 }
 

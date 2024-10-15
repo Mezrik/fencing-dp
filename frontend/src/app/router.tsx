@@ -36,6 +36,17 @@ export const createAppRouter = (queryClient: QueryClient) => {
           },
         },
         {
+          path: pathnames.competitionGroupPath,
+          lazy: async () => {
+            const { GroupRoute } = await import('./routes/app/competitions/group');
+            return { Component: GroupRoute };
+          },
+          loader: async (args: LoaderFunctionArgs) => {
+            const { groupLoader } = await import('./routes/app/competitions/group');
+            return groupLoader(queryClient)(args);
+          },
+        },
+        {
           path: pathnames.dashboardPath,
           lazy: async () => {
             const { DashboardRoute } = await import('./routes/app/dashboard');

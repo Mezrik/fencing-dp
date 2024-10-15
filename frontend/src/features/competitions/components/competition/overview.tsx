@@ -42,7 +42,7 @@ export const Overview: FC<{ competition: CompetitionResult }> = ({ competition }
         <CardHeader>
           <CardTitle className="flex gap-4 items-center">
             <Trans>List of competitors</Trans>
-            <Button onClick={() => setShowAssignParticipant(true)} variant="secondary">
+            <Button onClick={() => setShowAssignParticipant(true)} variant="secondary" size="sm">
               <Trans>Assign competitor</Trans>
             </Button>
           </CardTitle>

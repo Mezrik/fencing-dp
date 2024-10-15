@@ -118,6 +118,7 @@ func (repo InMemoryCompetitorRepository) FindAllByCompetitionId(competitionId uu
 				p.DeploymentNumber,
 				p.Points,
 				p.StartingPosition,
+				p.GroupID,
 			),
 		)
 	}
