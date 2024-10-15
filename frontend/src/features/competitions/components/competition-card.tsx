@@ -59,9 +59,9 @@ export const CompetitionCard: FC<CompetitionCard> = ({
         <CardContent>
           {/* TODO: Show dynamic competition statistics */}
           <div className="flex gap-2 flex-wrap">
-            <Chip Icon={ZapIcon} label={t`Matches`} text="3/40" />
+            <Chip Icon={ZapIcon} label={t`Matches`} text="1/40" />
             <Chip Icon={ClockIcon} label={t`Average match time`} text="1:32" />
-            <Chip Icon={UsersRound} label={t`Participants`} text="80" />
+            <Chip Icon={UsersRound} label={t`Participants`} text="3" />
           </div>
         </CardContent>
         <CardFooter className="justify-between">

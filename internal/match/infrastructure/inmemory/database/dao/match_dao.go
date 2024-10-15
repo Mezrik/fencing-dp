@@ -17,7 +17,7 @@ func (dao *MatchDao) Create(match models.MatchModel) error {
 func (dao *MatchDao) FindAll(groupID uuid.UUID) ([]*models.MatchModel, error) {
 	var matchModels []*models.MatchModel
 
-	err := dao.DB.Select(&matchModels, "SELECT * FROM competition_matches WHERE group_id = ?", groupID)
+	err := dao.DB.Select(&matchModels, "SELECT * FROM competition_matches WHERE competition_group_id = ?", groupID)
 
 	if err != nil {
 		return nil, err

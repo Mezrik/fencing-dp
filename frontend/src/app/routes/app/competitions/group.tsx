@@ -1,5 +1,5 @@
 import { BasicPageLayout } from '@/components/layouts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -13,17 +13,20 @@ import {
   useCompetitionGroup,
 } from '@/features/competitions/api/get-group';
 import {
-  getCompetitionsGroupsQueryOptions,
-  useCompetitionsGroups,
-} from '@/features/competitions/api/get-groups';
-import { mapParticipantsByGroup } from '@/features/competitions/helpers';
+  mapParticipantsByCompetitorId,
+  mapParticipantsByGroup,
+} from '@/features/competitions/helpers';
 import {
   getParticipantsQueryOptions,
   useParticipants,
 } from '@/features/competitors/api/get-participants';
+import { getMatchesQueryOptions, useMatches } from '@/features/matches/api/get-matches';
+import { MatchCard } from '@/features/matches/components/match-card';
+import { MatchPreview } from '@/features/matches/components/match-preview';
 import { t } from '@lingui/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { CZ } from 'country-flag-icons/react/3x2';
+import { ComponentProps, useState } from 'react';
 import { LoaderFunctionArgs, useParams } from 'react-router-dom';
 
 export const groupLoader =
@@ -34,24 +37,29 @@ export const groupLoader =
 
     const query = getCompetitionGroupQueryOptions(competitionId, groupId);
     const participantQuery = getParticipantsQueryOptions(competitionId);
+    const matchesQuery = getMatchesQueryOptions(groupId);
 
     return (
       (queryClient.getQueryData(query.queryKey) ?? (await queryClient.fetchQuery(query))) &&
       (queryClient.getQueryData(participantQuery.queryKey) ??
-        (await queryClient.fetchQuery(participantQuery)))
+        (await queryClient.fetchQuery(participantQuery))) &&
+      (queryClient.getQueryData(matchesQuery.queryKey) ??
+        (await queryClient.fetchQuery(matchesQuery)))
     );
   };
 
 export const GroupRoute = () => {
   const params = useParams();
+  const [showMatchPreview, setShowMatchPreview] = useState<UUID | null>(null);
 
   const groupId = params.groupId as string;
   const competitionId = params.competitionId as string;
 
   const groupQuery = useCompetitionGroup({ groupId, competitionId });
   const participantQuery = useParticipants({ competitionId });
+  const matchesQuery = useMatches({ groupId });
 
-  if (groupQuery.isLoading) {
+  if (groupQuery.isLoading || participantQuery.isLoading || matchesQuery.isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -62,6 +70,8 @@ export const GroupRoute = () => {
   }
 
   const participantsByGroup = mapParticipantsByGroup(participantQuery.data ?? []);
+
+  const participantsByCompetitorId = mapParticipantsByCompetitorId(participantQuery.data ?? []);
 
   return (
     <BasicPageLayout title={group.name} subtitle={t`Group`}>
@@ -94,13 +104,41 @@ export const GroupRoute = () => {
             </Table>
           </CardContent>
         </Card>
-        <Card className="col-span-9 lg:col-span-5">
-          <CardHeader>
-            <CardTitle>{t`Matches`}</CardTitle>
-          </CardHeader>
-          <CardContent></CardContent>
+        <Card className="col-span-9 lg:col-span-5 pt-6">
+          <CardContent>
+            <h3 className="text-lg font-semibold mb-2 text-primary-foreground">{t`Round 1`}</h3>
+            {matchesQuery.data?.map((match) => {
+              const one = participantsByCompetitorId?.[match.participantOneId];
+              const two = participantsByCompetitorId?.[match.participantTwoId];
+              return (
+                one &&
+                two && (
+                  <MatchCard
+                    key={match.id}
+                    match={match}
+                    participantOne={{ ...one.competitor, points: 1 }}
+                    participantTwo={{ ...two.competitor, points: 0 }}
+                    onClick={() => setShowMatchPreview(match.id)}
+                  />
+                )
+              );
+            })}
+          </CardContent>
         </Card>
       </div>
+      <MatchPreview
+        matchId={showMatchPreview ?? ''}
+        participantsById={Object.values(participantsByCompetitorId).reduce(
+          (acc, participant) => {
+            acc[participant.competitor.id] = participant.competitor;
+
+            return acc;
+          },
+          {} as ComponentProps<typeof MatchPreview>['participantsById'],
+        )}
+        onOpenChange={() => setShowMatchPreview(null)}
+        open={!!showMatchPreview}
+      />
     </BasicPageLayout>
   );
 };

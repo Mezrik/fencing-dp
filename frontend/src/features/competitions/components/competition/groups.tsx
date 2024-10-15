@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { useCompetitionsGroups } from '../../api/get-groups';
 import { useParticipants } from '@/features/competitors/api/get-participants';
-import { CompetitionParticipant } from '@/generated/server';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { pathnames } from '@/app/pathnames';
 import { mapParticipantsByGroup } from '../../helpers';
+import { Trans } from '@lingui/macro';
 
 type GroupsProps = {
   competitionId: UUID;
@@ -26,8 +26,11 @@ const Groups: FC<GroupsProps> = ({ competitionId }) => {
       {groupsQuery.data?.map((group) => (
         <Link to={pathnames.buildCompetitionGroupPath(group.id, competitionId)} key={group.id}>
           <Card className="col-span-4 sm:col-span-2 md:col-span-1 hover:bg-gray-50 transition-colors">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle>{group.name}</CardTitle>
+              <CardDescription>
+                <Trans>Piste: {group.pisteNumber}</Trans>
+              </CardDescription>
             </CardHeader>
 
             <CardContent>

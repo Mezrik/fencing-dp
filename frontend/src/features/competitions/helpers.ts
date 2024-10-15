@@ -57,3 +57,11 @@ export const mapParticipantsByGroup = (participants: CompetitionParticipant[]) =
 
   return participantsByGroup;
 };
+
+export const mapParticipantsByCompetitorId = (participants: CompetitionParticipant[]) => {
+  return participants.reduce<Record<UUID, CompetitionParticipant>>((acc, participant) => {
+    acc[participant.competitor.id] = participant;
+
+    return acc;
+  }, {});
+};
