@@ -6,18 +6,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/form';
-import { dynamicActivate, locales } from '@/i18n';
+import { locales, LocaleSwitchContext } from '@/i18n';
 import { t } from '@lingui/macro';
 import { QueryClient } from '@tanstack/react-query';
+import { useContext } from 'react';
 
 export const settingsLoader = (queryClient: QueryClient) => async () => {};
 
 export const SettingsRoute = () => {
+  const localizationContext = useContext(LocaleSwitchContext);
+
   return (
     <BasicPageLayout title={t`Settings`}>
       <Select
         onValueChange={(value) => {
-          dynamicActivate(value as keyof typeof locales);
+          localizationContext?.activate(value as keyof typeof locales);
         }}
       >
         <SelectTrigger>

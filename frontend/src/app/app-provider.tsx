@@ -1,13 +1,11 @@
-import { FC, useEffect, useState } from 'react';
-import { I18nProvider } from '@lingui/react';
-import { i18n } from '@lingui/core';
+import { FC, useState } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { defaultLocale, dynamicActivate } from '@/i18n';
 import { queryConfig } from '@/lib/react-query';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
+import { LocalizationProvider } from '@/i18n';
 
 export const AppProvider: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [queryClient] = useState(
@@ -17,12 +15,8 @@ export const AppProvider: FC<{ children?: React.ReactNode }> = ({ children }) =>
       }),
   );
 
-  useEffect(() => {
-    void dynamicActivate(defaultLocale);
-  }, []);
-
   return (
-    <I18nProvider i18n={i18n}>
+    <LocalizationProvider>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
@@ -31,6 +25,6 @@ export const AppProvider: FC<{ children?: React.ReactNode }> = ({ children }) =>
           </TooltipProvider>
         </QueryClientProvider>
       </HelmetProvider>
-    </I18nProvider>
+    </LocalizationProvider>
   );
 };
