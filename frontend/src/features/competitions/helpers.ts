@@ -39,6 +39,19 @@ export const getGenderIcon = (gender: GenderEnum) => {
   }
 };
 
+export const getGenderAbbrv = (gender: GenderEnum) => {
+  switch (gender) {
+    case GenderEnum.male:
+      return t`M`;
+    case GenderEnum.female:
+      return t`F`;
+    case GenderEnum.mixed:
+      return t`-`;
+    default:
+      return '???';
+  }
+};
+
 export const mapParticipantsByGroup = (participants: CompetitionParticipant[]) => {
   const participantsByGroup = participants.reduce<Record<UUID, CompetitionParticipant[]>>(
     (acc, participant) => {

@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getGenderIcon } from '@/features/competitions/helpers';
+import { getGenderAbbrv, getGenderIcon } from '@/features/competitions/helpers';
 import { CompetitorResult } from '@/generated/server';
 import { formatUIDate } from '@/utils/date';
 import { Trans } from '@lingui/macro';
@@ -36,14 +36,13 @@ export const CompetitorsTable: FC<{ data: CompetitorResult[] }> = ({ data }) => 
       </TableHeader>
       <TableBody>
         {data?.map((comp) => {
-          const GenderIcon = getGenderIcon(comp.gender);
           return (
             <TableRow key={comp.id}>
               <TableCell>
                 {comp.firstname} {comp.surname}
               </TableCell>
               <TableCell>{comp.club.name}</TableCell>
-              <TableCell>{GenderIcon && <GenderIcon className="text-primary" />}</TableCell>
+              <TableCell>{getGenderAbbrv(comp.gender)}</TableCell>
               <TableCell>{comp.license}</TableCell>
               <TableCell>{formatUIDate(comp.birthdate)}</TableCell>
             </TableRow>
