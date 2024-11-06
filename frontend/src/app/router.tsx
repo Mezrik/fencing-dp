@@ -68,6 +68,20 @@ export const createAppRouter = (queryClient: QueryClient) => {
             return competitorsLoader(queryClient)();
           },
         },
+        {
+          path: pathnames.settingsPath,
+          lazy: async () => {
+            const { SettingsRoute } = await import('./routes/app/settings');
+            return { Component: SettingsRoute };
+          },
+        },
+        {
+          path: pathnames.docsPath,
+          lazy: async () => {
+            const { DocumentationRoute } = await import('./routes/app/documentation');
+            return { Component: DocumentationRoute };
+          },
+        },
       ],
     },
     {

@@ -14,6 +14,10 @@ const dashboardPath = '';
 
 const competitorsPath = '/competitors';
 
+const settingsPath = '/settings';
+
+const docsPath = '/docs';
+
 export const pathnames = {
   competitionsPath,
   competitionPath,
@@ -22,4 +26,6 @@ export const pathnames = {
   buildCompetitionGroupPath,
   dashboardPath,
   competitorsPath,
+  settingsPath,
+  docsPath,
 };

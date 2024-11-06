@@ -26,12 +26,12 @@ const menuItems: AsideMenuItemProps[] = [
   },
   {
     name: t`Documentation`,
-    to: '',
+    to: pathnames.docsPath,
     icon: Book,
   },
   {
     name: t`Settings`,
-    to: '',
+    to: pathnames.settingsPath,
     icon: Settings2,
   },
 ];
