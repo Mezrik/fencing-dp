@@ -186,6 +186,26 @@ paths:
       responses:
         '200':
           description: todo
+
+  /competitors/import:
+    post:
+      tags:
+        - Competitor
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file to upload.
+              
+      responses:
+        '200':
+          description: todo
           
 
 

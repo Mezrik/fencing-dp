@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/Mezrik/fencing-dp/internal/common/util"
 	"github.com/Mezrik/fencing-dp/internal/competitor/domain/entities"
@@ -49,7 +50,7 @@ func (repo InMemoryCompetitorRepository) FindAll() ([]*entities.Competitor, erro
 
 		competitors = append(
 			competitors,
-			entities.UnmarshalCompetitor(c.ID, c.Firstname, c.Surname, entities.GenderEnum(c.Gender), *club, c.License, c.LicenseFie, c.Birthdate, c.CreatedAt, util.GetTimePtr(c.UpdatedAt)),
+			entities.UnmarshalCompetitor(c.ID, c.Firstname, c.Surname, entities.GenderEnum(c.Gender), club, c.License, c.LicenseFie, util.GetTimePtr(c.Birthdate), c.CreatedAt, util.GetTimePtr(c.UpdatedAt)),
 		)
 
 	}
@@ -65,17 +66,17 @@ func (repo InMemoryCompetitorRepository) FindById(id uuid.UUID) (*entities.Compe
 		return nil, err
 	}
 
-	club := entities.UnmarshalClub(competitorModel.ClubID, competitorModel.Club.Name, competitorModel.Club.CreatedAt, util.GetTimePtr(competitorModel.Club.UpdatedAt))
+	club := entities.UnmarshalClub(*competitorModel.ClubID, competitorModel.Club.Name, competitorModel.Club.CreatedAt, util.GetTimePtr(competitorModel.Club.UpdatedAt))
 
 	competitor := entities.UnmarshalCompetitor(
 		competitorModel.ID,
 		competitorModel.Firstname,
 		competitorModel.Surname,
 		entities.GenderEnum(competitorModel.Gender),
-		*club,
+		club,
 		competitorModel.License,
 		competitorModel.LicenseFie,
-		competitorModel.Birthdate,
+		util.GetTimePtr(competitorModel.Birthdate),
 		competitorModel.CreatedAt,
 		util.GetTimePtr(competitorModel.UpdatedAt),
 	)
@@ -97,7 +98,7 @@ func (repo InMemoryCompetitorRepository) FindAllByCompetitionId(competitionId uu
 
 	for _, p := range participantModels {
 
-		club := entities.UnmarshalClub(p.Competitor.ClubID, p.Competitor.Club.Name, p.Competitor.Club.CreatedAt, util.GetTimePtr(p.Competitor.Club.UpdatedAt))
+		club := entities.UnmarshalClub(*p.Competitor.ClubID, p.Competitor.Club.Name, p.Competitor.Club.CreatedAt, util.GetTimePtr(p.Competitor.Club.UpdatedAt))
 
 		participants = append(
 			participants,
@@ -108,10 +109,10 @@ func (repo InMemoryCompetitorRepository) FindAllByCompetitionId(competitionId uu
 					p.Competitor.Firstname,
 					p.Competitor.Surname,
 					entities.GenderEnum(p.Competitor.Gender),
-					*club,
+					club,
 					p.Competitor.License,
 					p.Competitor.LicenseFie,
-					p.Competitor.Birthdate,
+					util.GetTimePtr(p.Competitor.Birthdate),
 					p.Competitor.CreatedAt,
 					util.GetTimePtr(p.Competitor.UpdatedAt),
 				),
@@ -137,7 +138,7 @@ func (repo InMemoryCompetitorRepository) AssignCompetitor(competitorId uuid.UUID
 		return err
 	}
 
-	club := entities.UnmarshalClub(competitorModel.ClubID, competitorModel.Club.Name, competitorModel.Club.CreatedAt, util.GetTimePtr(competitorModel.Club.UpdatedAt))
+	club := entities.UnmarshalClub(*competitorModel.ClubID, competitorModel.Club.Name, competitorModel.Club.CreatedAt, util.GetTimePtr(competitorModel.Club.UpdatedAt))
 
 	participant, err := entities.NewParticipant(
 		entities.UnmarshalCompetitor(
@@ -145,10 +146,10 @@ func (repo InMemoryCompetitorRepository) AssignCompetitor(competitorId uuid.UUID
 			competitorModel.Firstname,
 			competitorModel.Surname,
 			entities.GenderEnum(competitorModel.Gender),
-			*club,
+			club,
 			competitorModel.License,
 			competitorModel.LicenseFie,
-			competitorModel.Birthdate,
+			util.GetTimePtr(competitorModel.Birthdate),
 			competitorModel.CreatedAt,
 			&competitorModel.UpdatedAt.Time,
 		),
@@ -174,9 +175,12 @@ func (repo InMemoryCompetitorRepository) marshalCompetitor(c *entities.Competito
 		Surname:   c.Surname(),
 		Firstname: c.FirstName(),
 		Gender:    string(c.Gender()),
-		ClubID:    c.Club().ID,
+		ClubID:    &c.Club().ID,
 		License:   c.License(),
-		Birthdate: c.Birthdate(),
+		Birthdate: sql.NullTime{
+			Valid: c.Birthdate() != nil,
+			Time:  *c.Birthdate(),
+		},
 	}
 	return competitorModel, nil
 }

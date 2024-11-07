@@ -13,13 +13,13 @@ import (
 )
 
 type CreateCompetitor struct {
-	Surname    string    `json:"surname"`
-	Firstname  string    `json:"firstname"`
-	ClubID     uuid.UUID `json:"clubId" ts_type:"UUID"`
-	Gender     string    `json:"gender"`
-	License    string    `json:"license"`
-	LicenseFie *string   `json:"licenseFie"`
-	Birthdate  time.Time `json:"birthdate"`
+	Surname    string     `json:"surname"`
+	Firstname  string     `json:"firstname"`
+	ClubID     *uuid.UUID `json:"clubId" ts_type:"UUID"`
+	Gender     string     `json:"gender"`
+	License    *string    `json:"license"`
+	LicenseFie *string    `json:"licenseFie"`
+	Birthdate  *time.Time `json:"birthdate"`
 }
 
 type CreateCompetitorHandler decorator.CommandHandler[CreateCompetitor]
@@ -38,17 +38,20 @@ func NewCreateCompetitorHandler(repo repositories.CompetitorRepo, clubRepo repos
 }
 
 func (h createCompetitiorHandler) Handle(ctx context.Context, command CreateCompetitor) (err error) {
+	var club *entities.Club
 
-	club, err := h.clubRepo.FindById(command.ClubID)
-	if err != nil {
-		return errors.NewIncorrectInputError("Club not found", "club-not-found")
+	if command.ClubID != nil {
+		club, err = h.clubRepo.FindById(*command.ClubID)
+		if err != nil {
+			return errors.NewIncorrectInputError("Club not found", "club-not-found")
+		}
 	}
 
 	competitor, err := entities.NewCompetitor(
 		command.Firstname,
 		command.Surname,
 		entities.GenderEnum(command.Gender),
-		*club,
+		club,
 		command.License,
 		command.LicenseFie,
 		command.Birthdate,

@@ -13,10 +13,10 @@ type CompetitorModel struct {
 	UpdatedAt  sql.NullTime `db:"updated_at"`
 	Surname    string       `db:"surname"`
 	Firstname  string       `db:"firstname"`
-	ClubID     uuid.UUID    `db:"club_id"`
-	Club       ClubModel    `db:"club"`
+	ClubID     *uuid.UUID   `db:"club_id"`
+	Club       *ClubModel   `db:"club"`
 	Gender     string       `db:"gender"`
-	License    string       `db:"license"`
+	License    *string      `db:"license"`
 	LicenseFie *string      `db:"license_fie"`
-	Birthdate  time.Time    `db:"birthdate"`
+	Birthdate  sql.NullTime `db:"birthdate"`
 }

@@ -57,3 +57,18 @@ func (s Server) PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.
 
 	render.Respond(w, r, http.StatusOK)
 }
+
+func (s Server) PostCompetitorsImport(w http.ResponseWriter, r *http.Request) {
+	r.ParseMultipartForm(10 << 20)
+
+	file, _, err := r.FormFile("file")
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	defer file.Close()
+
+	err = s.competitor.Commands.ImportCompetitor.Handle(r.Context(), command.ImportCompetitor{File: file})
+}

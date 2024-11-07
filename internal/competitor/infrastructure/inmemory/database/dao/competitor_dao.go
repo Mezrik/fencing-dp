@@ -11,9 +11,9 @@ type CompetitorDao struct {
 }
 
 func (c *CompetitorDao) Create(competitor models.CompetitorModel) error {
-	_, err := c.DB.NamedExec(`
-    INSERT INTO competitors (
-      id, 
+	query := `
+		INSERT INTO competitions (
+			id, 
       created_at, 
       updated_at, 
       surname, 
@@ -23,18 +23,22 @@ func (c *CompetitorDao) Create(competitor models.CompetitorModel) error {
       license, 
       license_fie, 
       birthdate
-    ) VALUES (
-      :id, 
-      :created_at, 
-      :updated_at, 
-      :surname, 
-      :firstname, 
-      :gender, 
-      :club_id, 
-      :license, 
-      :license_fie, 
-      :birthdate
-    )`, competitor)
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`
+
+	_, err := c.DB.Exec(
+		query,
+		competitor.ID,
+		competitor.CreatedAt,
+		competitor.UpdatedAt,
+		competitor.Surname,
+		competitor.Firstname,
+		competitor.Gender,
+		competitor.ClubID,
+		competitor.License,
+		competitor.LicenseFie,
+		competitor.Birthdate,
+	)
 
 	return err
 }

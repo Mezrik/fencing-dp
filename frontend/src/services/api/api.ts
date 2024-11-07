@@ -41,6 +41,8 @@ export interface Api {
   GetParticipants(competitionId: UUID): Promise<Array<CompetitionParticipant>>;
 
   AssignParticipant(competitorId: UUID, competitionId: UUID): Promise<void>;
+
+  ImportCompetitor(file: File): Promise<void>;
 }
 
 export const api: Api = import.meta.env.MODE === 'desktop' ? new DesktopApi() : new RestApi();

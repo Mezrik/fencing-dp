@@ -63,11 +63,12 @@ type CompetitionGroup struct {
 
 // CompetitionParticipant defines model for CompetitionParticipant.
 type CompetitionParticipant struct {
-	CompetitionId    openapi_types.UUID `json:"competitionId"`
-	Competitor       CompetitorResult   `json:"competitor"`
-	DeploymentNumber *int               `json:"deploymentNumber,omitempty"`
-	Points           *float32           `json:"points,omitempty"`
-	StartingPosition *int               `json:"startingPosition,omitempty"`
+	CompetitionId    openapi_types.UUID  `json:"competitionId"`
+	Competitor       CompetitorResult    `json:"competitor"`
+	DeploymentNumber *int                `json:"deploymentNumber,omitempty"`
+	GroupId          *openapi_types.UUID `json:"groupId,omitempty"`
+	Points           *float32            `json:"points,omitempty"`
+	StartingPosition *int                `json:"startingPosition,omitempty"`
 }
 
 // CompetitionResult defines model for CompetitionResult.
@@ -157,6 +158,12 @@ type WeaponResult struct {
 	Name string             `json:"name"`
 }
 
+// PostCompetitorsImportMultipartBody defines parameters for PostCompetitorsImport.
+type PostCompetitorsImportMultipartBody struct {
+	// File The CSV file to upload.
+	File *openapi_types.File `json:"file,omitempty"`
+}
+
 // PostCompetitionsJSONRequestBody defines body for PostCompetitions for application/json ContentType.
 type PostCompetitionsJSONRequestBody = CreateCompetitionCommand
 
@@ -165,6 +172,9 @@ type PostCompetitorsJSONRequestBody = CreateCompetitorCommand
 
 // PostCompetitorsAssignParticipantJSONRequestBody defines body for PostCompetitorsAssignParticipant for application/json ContentType.
 type PostCompetitorsAssignParticipantJSONRequestBody = AssignCompetitorRequest
+
+// PostCompetitorsImportMultipartRequestBody defines body for PostCompetitorsImport for multipart/form-data ContentType.
+type PostCompetitorsImportMultipartRequestBody PostCompetitorsImportMultipartBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -201,6 +211,9 @@ type ServerInterface interface {
 
 	// (POST /competitors/assign-participant)
 	PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request)
+
+	// (POST /competitors/import)
+	PostCompetitorsImport(w http.ResponseWriter, r *http.Request)
 
 	// (GET /matches/{groupId}/all)
 	GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request, groupId openapi_types.UUID)
@@ -265,6 +278,11 @@ func (_ Unimplemented) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *
 
 // (POST /competitors/assign-participant)
 func (_ Unimplemented) PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (POST /competitors/import)
+func (_ Unimplemented) PostCompetitorsImport(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -505,6 +523,21 @@ func (siw *ServerInterfaceWrapper) PostCompetitorsAssignParticipant(w http.Respo
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// PostCompetitorsImport operation middleware
+func (siw *ServerInterfaceWrapper) PostCompetitorsImport(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCompetitorsImport(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 // GetMatchesGroupIdAll operation middleware
 func (siw *ServerInterfaceWrapper) GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -702,6 +735,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/competitors/assign-participant", wrapper.PostCompetitorsAssignParticipant)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/competitors/import", wrapper.PostCompetitorsImport)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/matches/{groupId}/all", wrapper.GetMatchesGroupIdAll)

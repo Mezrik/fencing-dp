@@ -13,9 +13,9 @@ type Competitor struct {
 	Firstname  string              `json:"firstname"`
 	Club       Club                `json:"club"`
 	Gender     entities.GenderEnum `json:"gender"`
-	License    string              `json:"license"`
+	License    *string             `json:"license"`
 	LicenseFie *string             `json:"licenseFie"`
-	Birthdate  time.Time           `json:"birthdate"`
+	Birthdate  *time.Time          `json:"birthdate"`
 }
 
 func ToCompetitorQueryFromEntity(c *entities.Competitor) *Competitor {

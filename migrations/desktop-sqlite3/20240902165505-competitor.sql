@@ -13,10 +13,10 @@ create table if not exists competitors (
   created_at datetime not null,
   updated_at datetime,
   gender text check(gender in ("male", "female", "mixed")) not null,
-  club_id text not null constraint competitors_clubs_fk,
-  license text not null,
+  club_id text constraint competitors_clubs_fk,
+  license text,
   license_fie text,
-  birthdate date not null
+  birthdate date
 );
 
 create table if not exists participating_competitors (

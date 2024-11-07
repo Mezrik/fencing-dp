@@ -68,4 +68,8 @@ export class DesktopApi implements Api {
   AssignParticipant(competitorId: UUID, competitionId: UUID): Promise<void> {
     return AssignCompetitor(competitorId, competitionId);
   }
+
+  ImportCompetitor(): Promise<void> {
+    return Promise.resolve();
+  }
 }

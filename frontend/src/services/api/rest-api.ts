@@ -22,6 +22,7 @@ import {
   getMatchesGroupIdAll,
   getCompetitorsAllCompetitionId,
   postCompetitorsAssignParticipant,
+  postCompetitorsImport,
 } from '@/generated/server';
 import { Api } from './api';
 
@@ -76,5 +77,9 @@ export class RestApi implements Api {
 
   AssignParticipant(competitorId: UUID, competitionId: UUID): Promise<void> {
     return postCompetitorsAssignParticipant({ competitionId, competitorId });
+  }
+
+  ImportCompetitor(file: File): Promise<void> {
+    return postCompetitorsImport({ file: new Blob([file]) });
   }
 }
