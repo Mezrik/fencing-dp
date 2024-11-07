@@ -34,13 +34,12 @@ import {
 } from '@/features/competitors/api/assign-participant';
 import { useCompetitors } from '@/features/competitors/api/get-competitors';
 import { useToast } from '@/hooks/ui/use-toast';
-import { t, Trans } from '@lingui/macro';
+import { msg, t, Trans } from '@lingui/macro';
+import { useLingui } from '@lingui/react';
 import { FC } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 
 const FORM_ID = 'assign-competitor-form';
-
-const TITLE = t`Assign Competitor`;
 
 type AssignParticipantProps = {
   open: boolean;
@@ -53,6 +52,7 @@ export const AssignParticipantForm: FC<{ onSubmit: () => void; competitionId: UU
   competitionId,
 }) => {
   const { toast } = useToast();
+  const { _ } = useLingui();
 
   const competitorsQuery = useCompetitors();
 
@@ -99,7 +99,7 @@ export const AssignParticipantForm: FC<{ onSubmit: () => void; competitionId: UU
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={t`Select a competitor`} />
+                      <SelectValue placeholder={_(msg`Select a competitor`)} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -121,11 +121,13 @@ export const AssignParticipantForm: FC<{ onSubmit: () => void; competitionId: UU
 };
 
 export const AssignParticipantDrawer: FC<AssignParticipantProps> = (props) => {
+  const { _ } = useLingui();
+
   return (
     <Drawer open={props.open} onOpenChange={props.onOpenChange}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{TITLE}</DrawerTitle>
+          <DrawerTitle>{_(msg`Assign Competitor`)}</DrawerTitle>
         </DrawerHeader>
 
         <div className="p-4 pb-0">
@@ -151,11 +153,17 @@ export const AssignParticipantDrawer: FC<AssignParticipantProps> = (props) => {
 };
 
 export const AssignParticipantDialog: FC<AssignParticipantProps> = (props) => {
+  const { _ } = useLingui();
+
   return (
-    <Dialog open={props.open} onOpenChange={props.onOpenChange} aria-describedby={TITLE}>
+    <Dialog
+      open={props.open}
+      onOpenChange={props.onOpenChange}
+      aria-describedby={_(msg`Assign Competitor`)}
+    >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{TITLE}</DialogTitle>
+          <DialogTitle>{_(msg`Assign Competitor`)}</DialogTitle>
         </DialogHeader>
 
         <AssignParticipantForm

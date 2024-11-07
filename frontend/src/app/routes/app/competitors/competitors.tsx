@@ -6,7 +6,8 @@ import {
   useCompetitors,
 } from '@/features/competitors/api/get-competitors';
 import { CompetitorsTable } from '@/features/competitors/components/competitors-table';
-import { t, Trans } from '@lingui/macro';
+import { msg, Trans } from '@lingui/macro';
+import { useLingui } from '@lingui/react';
 import { QueryClient } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 
@@ -17,19 +18,20 @@ export const competitorsLoader = (queryClient: QueryClient) => async () => {
 };
 
 export const CompetitorsRoute = () => {
+  const { _ } = useLingui();
   const competitorsQuery = useCompetitors({});
 
   if (competitorsQuery.isLoading) {
-    return <BasicPageLayout title={t`Competitors`}>Loading...</BasicPageLayout>;
+    return <BasicPageLayout title={_(msg`Competitors`)}>Loading...</BasicPageLayout>;
   }
 
   if (!competitorsQuery.data || competitorsQuery.data.length <= 0) {
-    return <BasicPageLayout title={t`Competitors`}>No competitors found</BasicPageLayout>;
+    return <BasicPageLayout title={_(msg`Competitors`)}>No competitors found</BasicPageLayout>;
   }
 
   return (
     <BasicPageLayout
-      title={t`Competitors`}
+      title={_(msg`Competitors`)}
       actions={
         <Button className="gap-2" variant="default">
           <PlusIcon className="size-4" />
@@ -41,7 +43,7 @@ export const CompetitorsRoute = () => {
       className="flex flex-col min-h-0"
     >
       <div className="mb-4">
-        <InputBase placeholder={t`Type here to search`} className="max-w-56" />
+        <InputBase placeholder={_(msg`Type here to search`)} className="max-w-56" />
       </div>
       <div className="flex-grow overflow-y-auto">
         <CompetitorsTable data={competitorsQuery.data} />

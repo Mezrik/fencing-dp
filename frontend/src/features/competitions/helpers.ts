@@ -1,26 +1,27 @@
 import { MenGenderIcon, MixedGenderIcon, WomenGenderIcon } from '@/assets/icons';
+import { I18n } from '@lingui/core';
 import { CompetitionParticipant, CompetitionTypeEnum, GenderEnum } from '@/generated/server';
-import { t } from '@lingui/macro';
+import { msg } from '@lingui/macro';
 
-export const getCompetionTypeCaption = (competitionType: CompetitionTypeEnum) => {
+export const getCompetionTypeCaption = (competitionType: CompetitionTypeEnum, _: I18n['_']) => {
   switch (competitionType) {
     case CompetitionTypeEnum.national:
-      return t`National`;
+      return _(msg`National`);
     case CompetitionTypeEnum.international:
-      return t`International`;
+      return _(msg`International`);
     default:
       return '???';
   }
 };
 
-export const getGenderCaption = (gender: GenderEnum) => {
+export const getGenderCaption = (gender: GenderEnum, _: I18n['_']) => {
   switch (gender) {
     case GenderEnum.male:
-      return t`Men`;
+      return _(msg`Men`);
     case GenderEnum.female:
-      return t`Women`;
+      return _(msg`Women`);
     case GenderEnum.mixed:
-      return t`Mixed`;
+      return _(msg`Mixed`);
     default:
       return '???';
   }
@@ -39,14 +40,14 @@ export const getGenderIcon = (gender: GenderEnum) => {
   }
 };
 
-export const getGenderAbbrv = (gender: GenderEnum) => {
+export const getGenderAbbrv = (gender: GenderEnum, _: I18n['_']) => {
   switch (gender) {
     case GenderEnum.male:
-      return t`M`;
+      return _(msg`M`);
     case GenderEnum.female:
-      return t`F`;
+      return _(msg`F`);
     case GenderEnum.mixed:
-      return t`-`;
+      return _(msg`-`);
     default:
       return '???';
   }

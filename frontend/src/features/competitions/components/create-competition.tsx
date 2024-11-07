@@ -17,7 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { t, Trans } from '@lingui/macro';
+import { msg, Trans } from '@lingui/macro';
+import { I18n } from '@lingui/core';
 import { useToast } from '@/hooks/ui/use-toast';
 import { createCompetitionInputSchema, useCreateCompetition } from '../api/create-competition';
 import {
@@ -45,44 +46,44 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/utils/class-names';
 import { formatUIDate } from '@/utils/date';
+import { useLingui } from '@lingui/react';
 
 type CreateCompetitionProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-const TITLE = t`Create Competition`;
-
 const FORM_ID = 'create-competition-form';
 
-const COMPETITION_TYPE_OPTIONS: RadioOption[] = [
+const getCompetitionTypeOptions = (_: I18n['_']): RadioOption[] => [
   {
-    label: getCompetionTypeCaption(CompetitionTypeEnum.international),
+    label: getCompetionTypeCaption(CompetitionTypeEnum.international, _),
     value: CompetitionTypeEnum.international,
   },
   {
-    label: getCompetionTypeCaption(CompetitionTypeEnum.national),
+    label: getCompetionTypeCaption(CompetitionTypeEnum.national, _),
     value: CompetitionTypeEnum.national,
   },
 ];
 
-const GENDER_OPTIONS: RadioOption[] = [
+const getGenderOptions = (_: I18n['_']): RadioOption[] => [
   {
-    label: getGenderCaption(GenderEnum.male),
+    label: getGenderCaption(GenderEnum.male, _),
     value: GenderEnum.male,
   },
   {
-    label: getGenderCaption(GenderEnum.female),
+    label: getGenderCaption(GenderEnum.female, _),
     value: GenderEnum.female,
   },
   {
-    label: getGenderCaption(GenderEnum.mixed),
+    label: getGenderCaption(GenderEnum.mixed, _),
     value: GenderEnum.mixed,
   },
 ];
 
 export const CreateCompetitionForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
   const { toast } = useToast();
+  const { _ } = useLingui();
 
   const categoriesQuery = useCompetitionCategories();
   const weaponsQuery = useWeapons();
@@ -110,35 +111,35 @@ export const CreateCompetitionForm: FC<{ onSubmit: () => void }> = ({ onSubmit }
       {({ register, formState, control }) => (
         <>
           <Input
-            label={t`Competition name`}
+            label={_(msg`Competition name`)}
             error={formState.errors['name']}
             registration={register('name')}
           />
 
           <Input
-            label={t`Organizer name`}
+            label={_(msg`Organizer name`)}
             error={formState.errors['organizerName']}
             registration={register('organizerName')}
           />
 
           <Input
-            label={t`Federation name`}
+            label={_(msg`Federation name`)}
             error={formState.errors['federationName']}
             registration={register('federationName')}
           />
 
           <fieldset className="flex gap-12">
             <RadioGroupFormField
-              label={t`Competition type`}
+              label={_(msg`Competition type`)}
               name="competitionType"
               control={control}
-              options={COMPETITION_TYPE_OPTIONS}
+              options={getCompetitionTypeOptions(_)}
             />
             <RadioGroupFormField
-              label={t`Gender`}
+              label={_(msg`Gender`)}
               name="gender"
               control={control}
-              options={GENDER_OPTIONS}
+              options={getGenderOptions(_)}
             />
           </fieldset>
 
@@ -250,11 +251,13 @@ export const CreateCompetitionForm: FC<{ onSubmit: () => void }> = ({ onSubmit }
 };
 
 export const CreateCompetitionDrawer: FC<CreateCompetitionProps> = (props) => {
+  const { _ } = useLingui();
+
   return (
     <Drawer open={props.open} onOpenChange={props.onOpenChange}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{TITLE}</DrawerTitle>
+          <DrawerTitle>{_(msg`Create Competition`)}</DrawerTitle>
         </DrawerHeader>
 
         <div className="p-4 pb-0">
@@ -277,11 +280,13 @@ export const CreateCompetitionDrawer: FC<CreateCompetitionProps> = (props) => {
 };
 
 export const CreateCompetitionDialog: FC<CreateCompetitionProps> = (props) => {
+  const { _ } = useLingui();
+
   return (
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{TITLE}</DialogTitle>
+          <DialogTitle>{_(msg`Create Competition`)}</DialogTitle>
         </DialogHeader>
 
         <CreateCompetitionForm onSubmit={() => props.onOpenChange(false)} />

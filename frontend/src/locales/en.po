@@ -187,6 +187,10 @@ msgstr ""
 msgid "International"
 msgstr ""
 
+#: src/app/routes/app/settings.tsx:24
+msgid "Language"
+msgstr ""
+
 #: src/features/competitors/components/competitors-table.tsx:30
 msgid "License"
 msgstr ""
@@ -284,7 +288,7 @@ msgstr ""
 msgid "Select a competitor"
 msgstr ""
 
-#: src/app/routes/app/settings.tsx:24
+#: src/app/routes/app/settings.tsx:33
 msgid "Select a language"
 msgstr ""
 
@@ -304,7 +308,7 @@ msgstr ""
 msgid "Select correct weapon"
 msgstr ""
 
-#: src/app/routes/app/settings.tsx:17
+#: src/app/routes/app/settings.tsx:21
 #: src/components/layouts/app-shell/aside-menu.tsx:33
 msgid "Settings"
 msgstr ""

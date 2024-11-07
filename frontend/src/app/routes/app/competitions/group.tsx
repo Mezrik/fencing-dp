@@ -23,7 +23,8 @@ import {
 import { getMatchesQueryOptions, useMatches } from '@/features/matches/api/get-matches';
 import { MatchCard } from '@/features/matches/components/match-card';
 import { MatchPreview } from '@/features/matches/components/match-preview';
-import { t } from '@lingui/macro';
+import { msg } from '@lingui/macro';
+import { useLingui } from '@lingui/react';
 import { QueryClient } from '@tanstack/react-query';
 import { CZ } from 'country-flag-icons/react/3x2';
 import { ComponentProps, useState } from 'react';
@@ -49,6 +50,7 @@ export const groupLoader =
   };
 
 export const GroupRoute = () => {
+  const { _ } = useLingui();
   const params = useParams();
   const [showMatchPreview, setShowMatchPreview] = useState<UUID | null>(null);
 
@@ -74,24 +76,24 @@ export const GroupRoute = () => {
   const participantsByCompetitorId = mapParticipantsByCompetitorId(participantQuery.data ?? []);
 
   return (
-    <BasicPageLayout title={group.name} subtitle={t`Group`}>
+    <BasicPageLayout title={group.name} subtitle={_(msg`Group`)}>
       <div className="grid grid-cols-9 gap-4">
         <Card className="pt-6 col-span-9 lg:col-span-4">
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-20">{t`Nation`}</TableHead>
-                  <TableHead>{t`Name`}</TableHead>
-                  <TableHead>{t`Deployment No.`}</TableHead>
-                  <TableHead>{t`Points`}</TableHead>
+                  <TableHead className="w-20">{_(msg`Nation`)}</TableHead>
+                  <TableHead>{_(msg`Name`)}</TableHead>
+                  <TableHead>{_(msg`Deployment No.`)}</TableHead>
+                  <TableHead>{_(msg`Points`)}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {participantsByGroup?.[group.id]?.map((participant) => (
                   <TableRow>
                     <TableCell>
-                      <CZ title={t`Czech Republic`} className="size-6" />
+                      <CZ title={_(msg`Czech Republic`)} className="size-6" />
                     </TableCell>
                     <TableCell>
                       {participant.competitor.firstname} {participant.competitor.surname}
@@ -106,7 +108,9 @@ export const GroupRoute = () => {
         </Card>
         <Card className="col-span-9 lg:col-span-5 pt-6">
           <CardContent>
-            <h3 className="text-lg font-semibold mb-2 text-primary-foreground">{t`Round 1`}</h3>
+            <h3 className="text-lg font-semibold mb-2 text-primary-foreground">
+              {_(msg`Round 1`)}
+            </h3>
             {matchesQuery.data?.map((match) => {
               const one = participantsByCompetitorId?.[match.participantOneId];
               const two = participantsByCompetitorId?.[match.participantTwoId];

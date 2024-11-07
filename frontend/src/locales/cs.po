@@ -187,6 +187,10 @@ msgstr "Pomoc"
 msgid "International"
 msgstr "Mezinárodní"
 
+#: src/app/routes/app/settings.tsx:24
+msgid "Language"
+msgstr "Jazyk"
+
 #: src/features/competitors/components/competitors-table.tsx:30
 msgid "License"
 msgstr "Licence"
@@ -278,55 +282,55 @@ msgstr "Kolo 1"
 
 #: src/features/competitions/components/competition/overview.tsx:28
 msgid "Scope of competition"
-msgstr ""
+msgstr "Působnost souteže"
 
 #: src/features/competitors/components/participant/assign-participant.tsx:102
 msgid "Select a competitor"
-msgstr ""
+msgstr "Vyberte soutěžící"
 
-#: src/app/routes/app/settings.tsx:24
+#: src/app/routes/app/settings.tsx:33
 msgid "Select a language"
 msgstr "Vyberte jazyk"
 
 #: src/features/competitions/api/create-competition.ts:10
 msgid "Select correct category"
-msgstr ""
+msgstr "Vyberte správnou kategorii"
 
 #: src/features/competitors/api/assign-participant.ts:9
 msgid "Select correct competition"
-msgstr ""
+msgstr "Vyberte správnou soutěž"
 
 #: src/features/competitors/api/assign-participant.ts:10
 msgid "Select correct competitor"
-msgstr ""
+msgstr "Vyberte správného soutěžícího"
 
 #: src/features/competitions/api/create-competition.ts:17
 msgid "Select correct weapon"
-msgstr ""
+msgstr "Vyberte správnou zbraň"
 
-#: src/app/routes/app/settings.tsx:17
+#: src/app/routes/app/settings.tsx:21
 #: src/components/layouts/app-shell/aside-menu.tsx:33
 msgid "Settings"
 msgstr "Nastavení"
 
 #: src/app/routes/not-found.tsx:12
 msgid "Sorry, the page you are looking for does not exist."
-msgstr ""
+msgstr "Omlouváme se, stránka kterou hledáte neexistuje."
 
 #: src/features/competitions/components/create-competition.tsx:266
 #: src/features/competitions/components/create-competition.tsx:291
 #: src/features/competitors/components/participant/assign-participant.tsx:140
 #: src/features/competitors/components/participant/assign-participant.tsx:168
 msgid "Submit"
-msgstr ""
+msgstr "Odeslat"
 
 #: src/app/routes/app/competitors/competitors.tsx:44
 msgid "Type here to search"
-msgstr ""
+msgstr "Vyhledejte zde"
 
 #: src/features/competitions/components/recent-competitions.tsx:28
 msgid "View"
-msgstr ""
+msgstr "Zobrazit"
 
 #: src/features/matches/components/match-preview.tsx:58
 msgid "vs"
@@ -335,7 +339,7 @@ msgstr ""
 #: src/features/competitions/components/competition/overview.tsx:32
 #: src/features/competitions/components/create-competition.tsx:181
 msgid "Weapon"
-msgstr ""
+msgstr "Zbraň"
 
 #: src/features/competitions/helpers.ts:21
 msgid "Women"

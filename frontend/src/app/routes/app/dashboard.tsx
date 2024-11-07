@@ -2,7 +2,8 @@ import { BasicPageLayout } from '@/components/layouts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getCompetitionsQueryOptions } from '@/features/competitions/api/get-competitions';
 import { RecentCompetitions } from '@/features/competitions/components/recent-competitions';
-import { t, Trans } from '@lingui/macro';
+import { msg, Trans } from '@lingui/macro';
+import { useLingui } from '@lingui/react';
 import { QueryClient } from '@tanstack/react-query';
 
 export const dashboardLoader = (queryClient: QueryClient) => async () => {
@@ -12,8 +13,10 @@ export const dashboardLoader = (queryClient: QueryClient) => async () => {
 };
 
 export const DashboardRoute = () => {
+  const { _ } = useLingui();
+
   return (
-    <BasicPageLayout title={t`Dashboard`}>
+    <BasicPageLayout title={_(msg`Dashboard`)}>
       <Card className="col-span-3">
         <CardHeader>
           <CardTitle>

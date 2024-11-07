@@ -6,7 +6,8 @@ import {
 } from '@/features/competitions/api/get-competitions';
 import { CompetitionCard } from '@/features/competitions/components/competition-card';
 import { CreateCompetition } from '@/features/competitions/components/create-competition';
-import { t, Trans } from '@lingui/macro';
+import { msg, Trans } from '@lingui/macro';
+import { useLingui } from '@lingui/react';
 import { QueryClient } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -18,19 +19,20 @@ export const competitionsLoader = (queryClient: QueryClient) => async () => {
 };
 
 export const CompetitionsRoute = () => {
+  const { _ } = useLingui();
   const [showCreate, setShowCreate] = useState(false);
 
   const competitionsQuery = useCompetitions({});
 
   if (competitionsQuery.isLoading) {
-    return <BasicPageLayout title={t`Competitions`}>Loading...</BasicPageLayout>;
+    return <BasicPageLayout title={_(msg`Competitions`)}>Loading...</BasicPageLayout>;
   }
 
   const competitions = competitionsQuery.data ?? [];
 
   return (
     <BasicPageLayout
-      title={t`Competitions`}
+      title={_(msg`Competitions`)}
       actions={
         <Button className="gap-2" variant="default" onClick={() => setShowCreate(true)}>
           <PlusIcon className="size-4" />

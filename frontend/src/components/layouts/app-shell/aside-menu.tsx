@@ -1,11 +1,13 @@
 import { Book, LifeBuoy, Settings2, SquareUser, Swords, Circle, Users } from 'lucide-react';
+import { I18n } from '@lingui/core';
 import { ComponentProps, ComponentType, FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { t } from '@lingui/macro';
+import { msg, t } from '@lingui/macro';
 import { pathnames } from '@/app/pathnames';
 import { cn } from '@/utils/class-names';
 import { NavLink } from 'react-router-dom';
+import { useLingui } from '@lingui/react';
 
 type AsideMenuItemProps = {
   name: string;
@@ -13,24 +15,24 @@ type AsideMenuItemProps = {
   icon: ComponentType<ComponentProps<'svg'>>;
 };
 
-const menuItems: AsideMenuItemProps[] = [
+const getMenuItems = (_: I18n['_']): AsideMenuItemProps[] => [
   {
-    name: t`Competitions`,
+    name: _(msg`Competitions`),
     to: pathnames.competitionsPath,
     icon: Swords,
   },
   {
-    name: t`Competitors`,
+    name: _(msg`Competitors`),
     to: pathnames.competitorsPath,
     icon: Users,
   },
   {
-    name: t`Documentation`,
+    name: _(msg`Documentation`),
     to: pathnames.docsPath,
     icon: Book,
   },
   {
-    name: t`Settings`,
+    name: _(msg`Settings`),
     to: pathnames.settingsPath,
     icon: Settings2,
   },
@@ -62,6 +64,9 @@ const AsideMenuItem: FC<AsideMenuItemProps> = ({ name, to, icon }) => {
 };
 
 export const AsideMenu: FC<{ children?: React.ReactNode }> = () => {
+  const { _ } = useLingui();
+  const menuItems = getMenuItems(_);
+
   return (
     <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
       <div className="border-b p-2">
@@ -75,8 +80,8 @@ export const AsideMenu: FC<{ children?: React.ReactNode }> = () => {
         ))}
       </nav>
       <nav className="mt-auto grid gap-1 p-2">
-        <AsideMenuItem to="" name={t`Help`} icon={LifeBuoy} />
-        <AsideMenuItem to="" name={t`Account`} icon={SquareUser} />
+        <AsideMenuItem to="" name={_(msg`Help`)} icon={LifeBuoy} />
+        <AsideMenuItem to="" name={_(msg`Account`)} icon={SquareUser} />
       </nav>
     </aside>
   );

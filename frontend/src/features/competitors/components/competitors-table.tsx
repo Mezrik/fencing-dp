@@ -10,9 +10,12 @@ import { getGenderAbbrv, getGenderIcon } from '@/features/competitions/helpers';
 import { CompetitorResult } from '@/generated/server';
 import { formatUIDate } from '@/utils/date';
 import { Trans } from '@lingui/macro';
+import { useLingui } from '@lingui/react';
 import { FC } from 'react';
 
 export const CompetitorsTable: FC<{ data: CompetitorResult[] }> = ({ data }) => {
+  const { _ } = useLingui();
+
   return (
     <Table>
       <TableHeader>
@@ -42,7 +45,7 @@ export const CompetitorsTable: FC<{ data: CompetitorResult[] }> = ({ data }) => 
                 {comp.firstname} {comp.surname}
               </TableCell>
               <TableCell>{comp.club.name}</TableCell>
-              <TableCell>{getGenderAbbrv(comp.gender)}</TableCell>
+              <TableCell>{getGenderAbbrv(comp.gender, _)}</TableCell>
               <TableCell>{comp.license}</TableCell>
               <TableCell>{formatUIDate(comp.birthdate)}</TableCell>
             </TableRow>

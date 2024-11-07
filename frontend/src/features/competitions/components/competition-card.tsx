@@ -14,10 +14,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { formatUIDate } from '@/utils/date';
 import { Separator } from '@/components/ui/separator';
 import { ClockIcon, UsersRound, ZapIcon } from 'lucide-react';
-import { t } from '@lingui/macro';
+import { msg } from '@lingui/macro';
 import { Chip } from '@/components/ui/chip';
 import { Link } from 'react-router-dom';
 import { pathnames } from '@/app/pathnames';
+import { useLingui } from '@lingui/react';
 
 type CompetitionCard = {
   competitionId: UUID;
@@ -34,6 +35,8 @@ export const CompetitionCard: FC<CompetitionCard> = ({
   weapon,
   competitionId,
 }) => {
+  const { _ } = useLingui();
+
   const GenderIcon = gender ? getGenderIcon(gender) : null;
   return (
     <div>
@@ -46,7 +49,7 @@ export const CompetitionCard: FC<CompetitionCard> = ({
                 <TooltipTrigger asChild>
                   <GenderIcon className="size-5 text-primary" />
                 </TooltipTrigger>
-                <TooltipContent>{getGenderCaption(gender)}</TooltipContent>
+                <TooltipContent>{getGenderCaption(gender, _)}</TooltipContent>
               </Tooltip>
             )}
           </CardTitle>
@@ -59,9 +62,9 @@ export const CompetitionCard: FC<CompetitionCard> = ({
         <CardContent>
           {/* TODO: Show dynamic competition statistics */}
           <div className="flex gap-2 flex-wrap">
-            <Chip Icon={ZapIcon} label={t`Matches`} text="1/40" />
-            <Chip Icon={ClockIcon} label={t`Average match time`} text="1:32" />
-            <Chip Icon={UsersRound} label={t`Participants`} text="3" />
+            <Chip Icon={ZapIcon} label={_(msg`Matches`)} text="1/40" />
+            <Chip Icon={ClockIcon} label={_(msg`Average match time`)} text="1:32" />
+            <Chip Icon={UsersRound} label={_(msg`Participants`)} text="3" />
           </div>
         </CardContent>
         <CardFooter className="justify-between">

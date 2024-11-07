@@ -6,12 +6,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Overview } from '@/features/competitions/components/competition';
 
-import { t, Trans } from '@lingui/macro';
+import { msg, Trans } from '@lingui/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { LoaderFunctionArgs, useParams } from 'react-router-dom';
 import Groups from '@/features/competitions/components/competition/groups';
 import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLingui } from '@lingui/react';
 
 export const competitionLoader =
   (queryClient: QueryClient) =>
@@ -24,6 +25,7 @@ export const competitionLoader =
   };
 
 export const CompetitionRoute = () => {
+  const { _ } = useLingui();
   const params = useParams();
 
   const competitionId = params.competitionId as string;
@@ -44,7 +46,7 @@ export const CompetitionRoute = () => {
   return (
     <BasicPageLayout
       title={competition.name}
-      subtitle={t`Competition`}
+      subtitle={_(msg`Competition`)}
       actions={
         <Button className="gap-2" variant="default">
           <PencilIcon className="size-4" />
