@@ -11,7 +11,7 @@ type Competitor struct {
 	ID         uuid.UUID           `json:"id" ts_type:"UUID"`
 	Surname    string              `json:"surname"`
 	Firstname  string              `json:"firstname"`
-	Club       Club                `json:"club"`
+	Club       *Club               `json:"club"`
 	Gender     entities.GenderEnum `json:"gender"`
 	License    *string             `json:"license"`
 	LicenseFie *string             `json:"licenseFie"`
@@ -19,15 +19,27 @@ type Competitor struct {
 }
 
 func ToCompetitorQueryFromEntity(c *entities.Competitor) *Competitor {
+	var club *Club
+
+	if c.Club() != nil {
+		club = &Club{ID: c.Club().ID, Name: c.Club().Name()}
+	}
+
+	var birthdate *time.Time
+
+	if c.Birthdate().IsZero() {
+		birthdate = nil
+	}
+
 	return &Competitor{
 		ID:         c.ID,
 		Surname:    c.Surname(),
 		Firstname:  c.FirstName(),
-		Club:       Club{ID: c.Club().ID, Name: c.Club().Name()},
+		Club:       club,
 		Gender:     c.Gender(),
 		License:    c.License(),
 		LicenseFie: c.LicenseFie(),
-		Birthdate:  c.Birthdate(),
+		Birthdate:  birthdate,
 	}
 }
 

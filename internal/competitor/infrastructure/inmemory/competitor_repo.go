@@ -3,6 +3,7 @@ package inmemory
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/Mezrik/fencing-dp/internal/common/util"
 	"github.com/Mezrik/fencing-dp/internal/competitor/domain/entities"
@@ -46,7 +47,11 @@ func (repo InMemoryCompetitorRepository) FindAll() ([]*entities.Competitor, erro
 	competitors := make([]*entities.Competitor, 0, len(competitorModels))
 
 	for _, c := range competitorModels {
-		club := entities.UnmarshalClub(c.Club.ID, c.Club.Name, c.Club.CreatedAt, util.GetTimePtr(c.Club.UpdatedAt))
+		var club *entities.Club
+
+		if c.Club != nil {
+			club = entities.UnmarshalClub(c.Club.ID, c.Club.Name, c.Club.CreatedAt, util.GetTimePtr(c.Club.UpdatedAt))
+		}
 
 		competitors = append(
 			competitors,
@@ -170,16 +175,33 @@ func (repo InMemoryCompetitorRepository) AssignCompetitor(competitorId uuid.UUID
 }
 
 func (repo InMemoryCompetitorRepository) marshalCompetitor(c *entities.Competitor) (*models.CompetitorModel, error) {
+	var clubID *uuid.UUID
+
+	if c.Club() != nil {
+		clubID = &c.Club().ID
+	}
+
+	var updatedAt time.Time
+
+	if c.UpdatedAt != nil {
+		updatedAt = *c.UpdatedAt
+	}
+
 	competitorModel := &models.CompetitorModel{
 		ID:        c.ID,
 		Surname:   c.Surname(),
 		Firstname: c.FirstName(),
 		Gender:    string(c.Gender()),
-		ClubID:    &c.Club().ID,
+		ClubID:    clubID,
 		License:   c.License(),
 		Birthdate: sql.NullTime{
-			Valid: c.Birthdate() != nil,
+			Valid: c.Birthdate().IsZero(),
 			Time:  *c.Birthdate(),
+		},
+		CreatedAt: c.CreatedAt,
+		UpdatedAt: sql.NullTime{
+			Valid: updatedAt.IsZero(),
+			Time:  updatedAt,
 		},
 	}
 	return competitorModel, nil

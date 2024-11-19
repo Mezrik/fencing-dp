@@ -33,6 +33,8 @@ func main() {
 
 	logger := logrus.NewEntry(logrus.StandardLogger())
 
+	logger.Logger.SetFormatter(&logrus.TextFormatter{})
+
 	db, _ := database.NewConnection(logger, ctx, migrations.SQLiteMigrations)
 
 	competitionRepository := competitionRepositories.NewInMemoryCompetitionRepository(ctx, db)

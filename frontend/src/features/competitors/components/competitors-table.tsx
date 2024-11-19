@@ -44,10 +44,10 @@ export const CompetitorsTable: FC<{ data: CompetitorResult[] }> = ({ data }) => 
               <TableCell>
                 {comp.firstname} {comp.surname}
               </TableCell>
-              <TableCell>{comp.club.name}</TableCell>
+              <TableCell>{comp.club?.name}</TableCell>
               <TableCell>{getGenderAbbrv(comp.gender, _)}</TableCell>
               <TableCell>{comp.license}</TableCell>
-              <TableCell>{formatUIDate(comp.birthdate)}</TableCell>
+              <TableCell>{comp.birthdate ? formatUIDate(comp.birthdate) : '-'}</TableCell>
             </TableRow>
           );
         })}

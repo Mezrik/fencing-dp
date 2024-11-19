@@ -370,7 +370,6 @@ components:
         - surname
         - firstname
         - gender
-        - clubId
         - license
         - birthdate
       properties:
@@ -403,9 +402,6 @@ components:
         - surname
         - firstname
         - gender
-        - club
-        - license
-        - birthdate
       properties:
         id:
           type: string

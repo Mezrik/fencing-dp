@@ -59,10 +59,18 @@ func (h importCompetitiorHandler) Handle(ctx context.Context, command ImportComp
 			}
 		}
 
+		var gender string
+
+		if len(o.Text("Gender")) > 0 {
+			gender = o.Text("Gender")
+		} else {
+			gender = "mixed"
+		}
+
 		competitor, err := entities.NewCompetitor(
 			o.Text("Firstname"),
 			o.Text("Surname"),
-			entities.GenderEnum(o.Text("Gender")),
+			entities.GenderEnum(gender),
 			club,
 			&license,
 			&licenseFie,

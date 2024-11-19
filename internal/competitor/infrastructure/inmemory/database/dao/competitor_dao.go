@@ -12,7 +12,7 @@ type CompetitorDao struct {
 
 func (c *CompetitorDao) Create(competitor models.CompetitorModel) error {
 	query := `
-		INSERT INTO competitions (
+		INSERT INTO competitors (
 			id, 
       created_at, 
       updated_at, 
@@ -46,11 +46,11 @@ func (c *CompetitorDao) Create(competitor models.CompetitorModel) error {
 func (c *CompetitorDao) FindAll() ([]*models.CompetitorModel, error) {
 	query := `
     SELECT
-      clb.name as "club.name",
-      clb.id as "club.id",
+      COALESCE(clb.name, '') "club.name",
+      COALESCE(clb.id, '') "club.id",
       c.*
     FROM competitors c
-    JOIN clubs clb ON c.club_id = clb.id
+    LEFT JOIN clubs clb ON c.club_id = clb.id
   `
 
 	var competitorModels []*models.CompetitorModel
@@ -59,6 +59,12 @@ func (c *CompetitorDao) FindAll() ([]*models.CompetitorModel, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	for i := range competitorModels {
+		if competitorModels[i].ClubID == nil {
+			competitorModels[i].Club = nil
+		}
 	}
 
 	return competitorModels, nil
