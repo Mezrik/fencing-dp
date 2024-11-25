@@ -1,4 +1,5 @@
 import { BasicPageLayout } from '@/components/layouts';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { InputBase } from '@/components/ui/form';
 import {
@@ -24,6 +25,7 @@ export const CompetitorsRoute = () => {
   const competitorsQuery = useCompetitors({});
 
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleImportClose = () => {
     setImportDialogOpen(false);
@@ -33,6 +35,16 @@ export const CompetitorsRoute = () => {
   if (competitorsQuery.isLoading) {
     return <BasicPageLayout title={_(msg`Competitors`)}>Loading...</BasicPageLayout>;
   }
+
+  const competitorsMissingData =
+    competitorsQuery.data?.reduce((acc, comp) => {
+      if (comp.hasMissingInfo) return acc + 1;
+      return acc;
+    }, 0) ?? 0;
+
+  const filteredData = competitorsQuery.data?.filter((comp) => {
+    return `${comp.firstname} ${comp.surname}`.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <BasicPageLayout
@@ -59,11 +71,22 @@ export const CompetitorsRoute = () => {
         <Trans>No competitors found</Trans>
       ) : (
         <>
-          <div className="mb-4">
-            <InputBase placeholder={_(msg`Type here to search`)} className="max-w-56" />
+          <div className="mb-4 flex justify-between items-center">
+            <InputBase
+              placeholder={_(msg`Type here to search`)}
+              className="max-w-56"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+
+            {competitorsMissingData > 0 && (
+              <Badge className="ml-2" variant="destructive">
+                <Trans>{competitorsMissingData} competitors are missing info</Trans>
+              </Badge>
+            )}
           </div>
           <div className="flex-grow overflow-y-auto">
-            <CompetitorsTable data={competitorsQuery.data} />
+            <CompetitorsTable data={filteredData ?? []} />
           </div>
         </>
       )}

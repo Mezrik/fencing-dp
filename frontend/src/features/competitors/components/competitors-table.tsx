@@ -6,11 +6,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getGenderAbbrv, getGenderIcon } from '@/features/competitions/helpers';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getGenderAbbrv } from '@/features/competitions/helpers';
 import { CompetitorResult } from '@/generated/server';
 import { formatUIDate } from '@/utils/date';
 import { Trans } from '@lingui/macro';
 import { useLingui } from '@lingui/react';
+import { CircleAlert } from 'lucide-react';
 import { FC } from 'react';
 
 export const CompetitorsTable: FC<{ data: CompetitorResult[] }> = ({ data }) => {
@@ -41,8 +43,22 @@ export const CompetitorsTable: FC<{ data: CompetitorResult[] }> = ({ data }) => 
         {data?.map((comp) => {
           return (
             <TableRow key={comp.id}>
-              <TableCell>
-                {comp.firstname} {comp.surname}
+              <TableCell className="flex items-center gap-2">
+                <span>
+                  {comp.firstname} {comp.surname}
+                </span>
+                {comp.hasMissingInfo && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="p-0.5 rounded-full bg-destructive">
+                        <CircleAlert className="size-4 text-white" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <Trans>Missing info</Trans>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </TableCell>
               <TableCell>{comp.club?.name}</TableCell>
               <TableCell>{getGenderAbbrv(comp.gender, _)}</TableCell>
