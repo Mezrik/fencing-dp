@@ -9,6 +9,7 @@ import {
   Match,
   MatchDetail,
   CompetitionParticipant,
+  UpdateCompetitorCommand,
 } from '@/generated/server';
 import { DesktopApi } from './desktop-api';
 import { RestApi } from './rest-api';
@@ -29,6 +30,8 @@ export interface Api {
   GetCompetitors(): Promise<Array<CompetitorResult>>;
 
   CreateCompetitor(data: CreateCompetitorCommand): Promise<void>;
+
+  UpdateCompetitor(id: UUID, data: UpdateCompetitorCommand): Promise<void>;
 
   GetCompetitionsGroups(competitionId: UUID): Promise<Array<CompetitionGroup>>;
 

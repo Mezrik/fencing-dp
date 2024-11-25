@@ -18,6 +18,12 @@ func (a *Admin) CreateCompetitor(competitor command.CreateCompetitor) error {
 	return err
 }
 
+func (a *Admin) UpdateCompetitor(competitor command.UpdateCompetitor) error {
+	err := a.competitors.Commands.UpdateCompetitor.Handle(a.ctx, competitor)
+
+	return err
+}
+
 func (a *Admin) GetParticipants(competitionId uuid.UUID) []*query.Participant {
 	participants, _ := a.competitors.Queries.AllParticipants.Handle(a.ctx, query.AllParticipants{CompetitionId: competitionId})
 
