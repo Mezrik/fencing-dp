@@ -8,14 +8,15 @@ import (
 )
 
 type Competitor struct {
-	ID         uuid.UUID           `json:"id" ts_type:"UUID"`
-	Surname    string              `json:"surname"`
-	Firstname  string              `json:"firstname"`
-	Club       *Club               `json:"club"`
-	Gender     entities.GenderEnum `json:"gender"`
-	License    *string             `json:"license"`
-	LicenseFie *string             `json:"licenseFie"`
-	Birthdate  *time.Time          `json:"birthdate"`
+	ID             uuid.UUID           `json:"id" ts_type:"UUID"`
+	Surname        string              `json:"surname"`
+	Firstname      string              `json:"firstname"`
+	Club           *Club               `json:"club"`
+	Gender         entities.GenderEnum `json:"gender"`
+	License        *string             `json:"license"`
+	LicenseFie     *string             `json:"licenseFie"`
+	Birthdate      *time.Time          `json:"birthdate"`
+	HasMissingInfo bool                `json:"hasMissingInfo"`
 }
 
 func ToCompetitorQueryFromEntity(c *entities.Competitor) *Competitor {
@@ -32,14 +33,15 @@ func ToCompetitorQueryFromEntity(c *entities.Competitor) *Competitor {
 	}
 
 	return &Competitor{
-		ID:         c.ID,
-		Surname:    c.Surname(),
-		Firstname:  c.FirstName(),
-		Club:       club,
-		Gender:     c.Gender(),
-		License:    c.License(),
-		LicenseFie: c.LicenseFie(),
-		Birthdate:  birthdate,
+		ID:             c.ID,
+		Surname:        c.Surname(),
+		Firstname:      c.FirstName(),
+		Club:           club,
+		Gender:         c.Gender(),
+		License:        c.License(),
+		LicenseFie:     c.LicenseFie(),
+		Birthdate:      birthdate,
+		HasMissingInfo: c.HasMissingInfo(),
 	}
 }
 

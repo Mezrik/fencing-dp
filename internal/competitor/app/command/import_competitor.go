@@ -66,7 +66,7 @@ func (h importCompetitiorHandler) Handle(ctx context.Context, command ImportComp
 		if len(o.Text("Gender")) > 0 {
 			gender = o.Text("Gender")
 		} else {
-			gender = "mixed"
+			gender = entities.Unset.TSName()
 		}
 
 		competitor, err := entities.NewCompetitor(

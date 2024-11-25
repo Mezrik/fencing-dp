@@ -426,6 +426,8 @@ components:
         birthdate:
           type: string
           example: "2024-01-01"
+        hasMissingInfo:
+          type: boolean
 
     ClubResult: 
       type: object

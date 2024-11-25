@@ -14,6 +14,7 @@ const (
 	Male   GenderEnum = "male"
 	Female GenderEnum = "female"
 	Mixed  GenderEnum = "mixed"
+	Unset  GenderEnum = "unset"
 )
 
 func (g GenderEnum) TSName() string {
@@ -24,6 +25,8 @@ func (g GenderEnum) TSName() string {
 		return "female"
 	case Mixed:
 		return "mixed"
+	case Unset:
+		return "unset"
 	default:
 		return "???"
 	}
@@ -99,4 +102,8 @@ func (c Competitor) LicenseFie() *string {
 
 func (c Competitor) Birthdate() *time.Time {
 	return c.birthdate
+}
+
+func (c Competitor) HasMissingInfo() bool {
+	return c.license == nil || c.birthdate == nil || c.club == nil || c.gender == Unset
 }
