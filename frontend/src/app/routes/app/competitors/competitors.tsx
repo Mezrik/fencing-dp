@@ -15,6 +15,7 @@ import {
 } from '@/features/competitors/api/get-competitors';
 import { useImportCompetitor } from '@/features/competitors/api/import-competitor';
 import { CompetitorsTable } from '@/features/competitors/components/competitors-table';
+import { ImportCompetitorsDialog } from '@/features/competitors/components/dialog/import-competitors';
 import { useToast } from '@/hooks/ui/use-toast';
 import { msg, Trans } from '@lingui/macro';
 import { useLingui } from '@lingui/react';
@@ -30,21 +31,9 @@ export const competitorsLoader = (queryClient: QueryClient) => async () => {
 
 export const CompetitorsRoute = () => {
   const { _ } = useLingui();
-  const { toast } = useToast();
   const competitorsQuery = useCompetitors({});
 
   const [importDialogOpen, setImportDialogOpen] = useState(false);
-  const [importedFile, setImportedFile] = useState<File | null>(null);
-  const importCompetitorMutation = useImportCompetitor({
-    mutationConfig: {
-      onSuccess: () => {
-        toast({
-          description: _(msg`Competitor imported successfully`),
-          variant: 'success',
-        });
-      },
-    },
-  });
 
   if (competitorsQuery.isLoading) {
     return <BasicPageLayout title={_(msg`Competitors`)}>Loading...</BasicPageLayout>;
@@ -84,33 +73,7 @@ export const CompetitorsRoute = () => {
         </>
       )}
 
-      <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{_(msg`Import competitors`)}</DialogTitle>
-          </DialogHeader>
-
-          <InputBase
-            placeholder="Picture"
-            type="file"
-            accept="text/csv, application/csv"
-            onChange={(event) => setImportedFile(event.target.files && event.target.files[0])}
-          />
-
-          <DialogFooter>
-            <Button
-              onClick={() =>
-                importedFile && importCompetitorMutation.mutate({ data: { file: importedFile } })
-              }
-            >
-              <Trans>Import</Trans>
-            </Button>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ImportCompetitorsDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} />
     </BasicPageLayout>
   );
 };

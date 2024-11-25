@@ -1,10 +1,14 @@
 import { getPostCompetitorsImportUrl } from '@/generated/server';
 import { MutationConfig } from '@/lib/react-query';
+import { t } from '@lingui/macro';
 import { useMutation } from '@tanstack/react-query';
+import { z } from 'zod';
 
-export type ImportCompetitorInput = {
-  file: File;
-};
+export const importCompetitorInputSchema = z.object({
+  file: z.instanceof(File, { message: t`File is required` }),
+});
+
+export type ImportCompetitorInput = z.infer<typeof importCompetitorInputSchema>;
 
 export const importCompetitor = async ({ data }: { data: ImportCompetitorInput }) => {
   const formData = new FormData();
