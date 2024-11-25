@@ -36,6 +36,8 @@ func NewImportCompetitorHandler(repo repositories.CompetitorRepo, clubRepo repos
 func (h importCompetitiorHandler) Handle(ctx context.Context, command ImportCompetitor) (err error) {
 	o := util.NewCsvScanner(command.File)
 
+	competitors := []*entities.Competitor{}
+
 	for o.Scan() {
 		var club *entities.Club
 
@@ -81,9 +83,13 @@ func (h importCompetitiorHandler) Handle(ctx context.Context, command ImportComp
 			return err
 		}
 
-		if err := h.repo.Create(competitor); err != nil {
-			return err
-		}
+		competitors = append(competitors, competitor)
+	}
+
+	err = h.repo.BatchCreate(competitors)
+
+	if err != nil {
+		return err
 	}
 
 	return nil

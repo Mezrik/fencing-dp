@@ -35,6 +35,24 @@ func (repo InMemoryCompetitorRepository) Create(competior *entities.Competitor) 
 	return dao.Create(*competitorModel)
 }
 
+func (repo InMemoryCompetitorRepository) BatchCreate(competitors []*entities.Competitor) error {
+	dao := &dao.CompetitorDao{DB: repo.db}
+
+	competitorModels := make([]models.CompetitorModel, 0, len(competitors))
+
+	for _, c := range competitors {
+		competitorModel, err := repo.marshalCompetitor(c)
+
+		if err != nil {
+			return err
+		}
+
+		competitorModels = append(competitorModels, *competitorModel)
+	}
+
+	return dao.BatchCreate(competitorModels)
+}
+
 func (repo InMemoryCompetitorRepository) FindAll() ([]*entities.Competitor, error) {
 	dao := &dao.CompetitorDao{DB: repo.db}
 

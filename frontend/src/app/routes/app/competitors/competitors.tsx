@@ -1,22 +1,12 @@
 import { BasicPageLayout } from '@/components/layouts';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { InputBase } from '@/components/ui/form';
 import {
   getCompetitorsQueryOptions,
   useCompetitors,
 } from '@/features/competitors/api/get-competitors';
-import { useImportCompetitor } from '@/features/competitors/api/import-competitor';
 import { CompetitorsTable } from '@/features/competitors/components/competitors-table';
 import { ImportCompetitorsDialog } from '@/features/competitors/components/dialog/import-competitors';
-import { useToast } from '@/hooks/ui/use-toast';
 import { msg, Trans } from '@lingui/macro';
 import { useLingui } from '@lingui/react';
 import { QueryClient } from '@tanstack/react-query';
@@ -34,6 +24,11 @@ export const CompetitorsRoute = () => {
   const competitorsQuery = useCompetitors({});
 
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+
+  const handleImportClose = () => {
+    setImportDialogOpen(false);
+    competitorsQuery.refetch();
+  };
 
   if (competitorsQuery.isLoading) {
     return <BasicPageLayout title={_(msg`Competitors`)}>Loading...</BasicPageLayout>;
@@ -73,7 +68,11 @@ export const CompetitorsRoute = () => {
         </>
       )}
 
-      <ImportCompetitorsDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} />
+      <ImportCompetitorsDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+        onImportSuccess={handleImportClose}
+      />
     </BasicPageLayout>
   );
 };

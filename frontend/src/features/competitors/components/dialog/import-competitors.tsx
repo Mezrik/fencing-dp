@@ -17,6 +17,7 @@ import { toast } from '@/hooks/ui/use-toast';
 type ImportCompetitorsProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onImportSuccess: () => void;
 };
 
 const FORM_ID = 'import-competitor-form';
@@ -28,9 +29,11 @@ export const ImportCompetitorsDialog: FC<ImportCompetitorsProps> = (props) => {
     mutationConfig: {
       onSuccess: () => {
         toast({
-          description: _(msg`Competitor imported successfully`),
+          description: _(msg`Competitor(s) imported successfully`),
           variant: 'success',
         });
+
+        props.onImportSuccess();
       },
     },
   });

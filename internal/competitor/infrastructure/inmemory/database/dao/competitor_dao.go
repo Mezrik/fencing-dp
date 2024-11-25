@@ -43,6 +43,27 @@ func (c *CompetitorDao) Create(competitor models.CompetitorModel) error {
 	return err
 }
 
+func (c *CompetitorDao) BatchCreate(competitors []models.CompetitorModel) error {
+	query := `
+		INSERT INTO competitors (
+			id, 
+      created_at, 
+      updated_at, 
+      surname, 
+      firstname, 
+      gender, 
+      club_id, 
+      license, 
+      license_fie, 
+      birthdate
+		) VALUES (:id, :created_at, :updated_at, :surname, :firstname, :gender, :club_id, :license, :license_fie, :birthdate)
+		`
+
+	_, err := c.DB.NamedExec(query, competitors)
+
+	return err
+}
+
 func (c *CompetitorDao) FindAll() ([]*models.CompetitorModel, error) {
 	query := `
     SELECT
