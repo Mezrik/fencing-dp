@@ -42,20 +42,12 @@ export const CompetitorsRoute = () => {
           description: _(msg`Competitor imported successfully`),
           variant: 'success',
         });
-
-        setImportDialogOpen(false);
-
-        competitorsQuery.refetch();
       },
     },
   });
 
   if (competitorsQuery.isLoading) {
     return <BasicPageLayout title={_(msg`Competitors`)}>Loading...</BasicPageLayout>;
-  }
-
-  if (!competitorsQuery.data || competitorsQuery.data.length <= 0) {
-    return <BasicPageLayout title={_(msg`Competitors`)}>No competitors found</BasicPageLayout>;
   }
 
   return (
@@ -79,12 +71,18 @@ export const CompetitorsRoute = () => {
       }
       className="flex flex-col min-h-0"
     >
-      <div className="mb-4">
-        <InputBase placeholder={_(msg`Type here to search`)} className="max-w-56" />
-      </div>
-      <div className="flex-grow overflow-y-auto">
-        <CompetitorsTable data={competitorsQuery.data} />
-      </div>
+      {!competitorsQuery.data || competitorsQuery.data.length <= 0 ? (
+        <Trans>No competitors found</Trans>
+      ) : (
+        <>
+          <div className="mb-4">
+            <InputBase placeholder={_(msg`Type here to search`)} className="max-w-56" />
+          </div>
+          <div className="flex-grow overflow-y-auto">
+            <CompetitorsTable data={competitorsQuery.data} />
+          </div>
+        </>
+      )}
 
       <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
         <DialogContent>
