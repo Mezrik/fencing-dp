@@ -14,6 +14,7 @@ type Service struct {
 
 type Commands struct {
 	CreateCompetitor  command.CreateCompetitorHandler
+	UpdateCompetitor  command.UpdateCompetitorHandler
 	AssignParticipant command.AssignParticipantHandler
 	ImportCompetitor  command.ImportCompetitorHandler
 }
@@ -28,6 +29,7 @@ func NewCompetitorService(competitorRepo repositories.CompetitorRepo, clubRepo r
 	return Service{
 		Commands: Commands{
 			CreateCompetitor:  command.NewCreateCompetitorHandler(competitorRepo, clubRepo, logger),
+			UpdateCompetitor:  command.NewUpdateCompetitorHandler(competitorRepo, clubRepo, logger),
 			AssignParticipant: command.NewAssignParticipantHandler(competitorRepo, logger),
 			ImportCompetitor:  command.NewImportCompetitorHandler(competitorRepo, clubRepo, logger),
 		},

@@ -34,6 +34,33 @@ func (s Server) PostCompetitors(w http.ResponseWriter, r *http.Request) {
 	render.Respond(w, r, http.StatusOK)
 }
 
+func (s Server) PutCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
+	var competitor command.UpdateCompetitor
+
+	if err := json.NewDecoder(r.Body).Decode(&competitor); err != nil {
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := s.competitor.Commands.UpdateCompetitor.Handle(r.Context(),
+		command.UpdateCompetitor{
+			ID:         id,
+			Firstname:  competitor.Firstname,
+			Surname:    competitor.Surname,
+			License:    competitor.License,
+			LicenseFie: competitor.LicenseFie,
+			Birthdate:  competitor.Birthdate,
+			Gender:     string(competitor.Gender),
+		})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	render.Respond(w, r, http.StatusOK)
+}
+
 func (s Server) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
 	participants, _ := s.competitor.Queries.AllParticipants.Handle(r.Context(), query.AllParticipants{CompetitionId: id})
 
@@ -71,4 +98,9 @@ func (s Server) PostCompetitorsImport(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	err = s.competitor.Commands.ImportCompetitor.Handle(r.Context(), command.ImportCompetitor{File: file})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

@@ -53,6 +53,18 @@ func (repo InMemoryCompetitorRepository) BatchCreate(competitors []*entities.Com
 	return dao.BatchCreate(competitorModels)
 }
 
+func (repo InMemoryCompetitorRepository) Update(competitor *entities.Competitor) error {
+	dao := &dao.CompetitorDao{DB: repo.db}
+
+	competitorModel, err := repo.marshalCompetitor(competitor)
+
+	if err != nil {
+		return err
+	}
+
+	return dao.Update(*competitorModel)
+}
+
 func (repo InMemoryCompetitorRepository) FindAll() ([]*entities.Competitor, error) {
 	dao := &dao.CompetitorDao{DB: repo.db}
 

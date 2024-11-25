@@ -64,6 +64,26 @@ func (c *CompetitorDao) BatchCreate(competitors []models.CompetitorModel) error 
 	return err
 }
 
+func (c *CompetitorDao) Update(competitor models.CompetitorModel) error {
+	query := `
+		UPDATE competitors
+		SET
+			updated_at = :updated_at,
+			surname = :surname,
+			firstname = :firstname,
+			gender = :gender,
+			club_id = :club_id,
+			license = :license,
+			license_fie = :license_fie,
+			birthdate = :birthdate
+		WHERE id = :id
+	`
+
+	_, err := c.DB.NamedExec(query, competitor)
+
+	return err
+}
+
 func (c *CompetitorDao) FindAll() ([]*models.CompetitorModel, error) {
 	query := `
     SELECT

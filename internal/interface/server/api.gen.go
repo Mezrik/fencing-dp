@@ -89,14 +89,15 @@ type CompetitionTypeEnum string
 
 // CompetitorResult defines model for CompetitorResult.
 type CompetitorResult struct {
-	Birthdate  string             `json:"birthdate"`
-	Club       ClubResult         `json:"club"`
-	Firstname  string             `json:"firstname"`
-	Gender     GenderEnum         `json:"gender"`
-	Id         openapi_types.UUID `json:"id"`
-	License    string             `json:"license"`
-	LicenseFie *string            `json:"licenseFie,omitempty"`
-	Surname    string             `json:"surname"`
+	Birthdate      *string            `json:"birthdate,omitempty"`
+	Club           *ClubResult        `json:"club,omitempty"`
+	Firstname      string             `json:"firstname"`
+	Gender         GenderEnum         `json:"gender"`
+	HasMissingInfo *bool              `json:"hasMissingInfo,omitempty"`
+	Id             openapi_types.UUID `json:"id"`
+	License        *string            `json:"license,omitempty"`
+	LicenseFie     *string            `json:"licenseFie,omitempty"`
+	Surname        string             `json:"surname"`
 }
 
 // CreateCompetitionCommand defines model for CreateCompetitionCommand.
@@ -113,13 +114,13 @@ type CreateCompetitionCommand struct {
 
 // CreateCompetitorCommand defines model for CreateCompetitorCommand.
 type CreateCompetitorCommand struct {
-	Birthdate  string             `json:"birthdate"`
-	ClubId     openapi_types.UUID `json:"clubId"`
-	Firstname  string             `json:"firstname"`
-	Gender     GenderEnum         `json:"gender"`
-	License    string             `json:"license"`
-	LicenseFie *string            `json:"licenseFie,omitempty"`
-	Surname    string             `json:"surname"`
+	Birthdate  string              `json:"birthdate"`
+	ClubId     *openapi_types.UUID `json:"clubId,omitempty"`
+	Firstname  string              `json:"firstname"`
+	Gender     GenderEnum          `json:"gender"`
+	License    string              `json:"license"`
+	LicenseFie *string             `json:"licenseFie,omitempty"`
+	Surname    string              `json:"surname"`
 }
 
 // GenderEnum defines model for GenderEnum.
@@ -152,6 +153,17 @@ type MatchStateItem struct {
 	PointTo *openapi_types.UUID `json:"pointTo,omitempty"`
 }
 
+// UpdateCompetitorCommand defines model for UpdateCompetitorCommand.
+type UpdateCompetitorCommand struct {
+	Birthdate  string              `json:"birthdate"`
+	ClubId     *openapi_types.UUID `json:"clubId,omitempty"`
+	Firstname  string              `json:"firstname"`
+	Gender     GenderEnum          `json:"gender"`
+	License    string              `json:"license"`
+	LicenseFie *string             `json:"licenseFie,omitempty"`
+	Surname    string              `json:"surname"`
+}
+
 // WeaponResult defines model for WeaponResult.
 type WeaponResult struct {
 	Id   openapi_types.UUID `json:"id"`
@@ -175,6 +187,9 @@ type PostCompetitorsAssignParticipantJSONRequestBody = AssignCompetitorRequest
 
 // PostCompetitorsImportMultipartRequestBody defines body for PostCompetitorsImport for multipart/form-data ContentType.
 type PostCompetitorsImportMultipartRequestBody PostCompetitorsImportMultipartBody
+
+// PutCompetitorsCompetitorIdJSONRequestBody defines body for PutCompetitorsCompetitorId for application/json ContentType.
+type PutCompetitorsCompetitorIdJSONRequestBody = UpdateCompetitorCommand
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -214,6 +229,9 @@ type ServerInterface interface {
 
 	// (POST /competitors/import)
 	PostCompetitorsImport(w http.ResponseWriter, r *http.Request)
+
+	// (PUT /competitors/{competitorId})
+	PutCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request, competitorId openapi_types.UUID)
 
 	// (GET /matches/{groupId}/all)
 	GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request, groupId openapi_types.UUID)
@@ -283,6 +301,11 @@ func (_ Unimplemented) PostCompetitorsAssignParticipant(w http.ResponseWriter, r
 
 // (POST /competitors/import)
 func (_ Unimplemented) PostCompetitorsImport(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (PUT /competitors/{competitorId})
+func (_ Unimplemented) PutCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request, competitorId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -538,6 +561,32 @@ func (siw *ServerInterfaceWrapper) PostCompetitorsImport(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// PutCompetitorsCompetitorId operation middleware
+func (siw *ServerInterfaceWrapper) PutCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "competitorId" -------------
+	var competitorId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "competitorId", chi.URLParam(r, "competitorId"), &competitorId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "competitorId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutCompetitorsCompetitorId(w, r, competitorId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 // GetMatchesGroupIdAll operation middleware
 func (siw *ServerInterfaceWrapper) GetMatchesGroupIdAll(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -738,6 +787,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/competitors/import", wrapper.PostCompetitorsImport)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/competitors/{competitorId}", wrapper.PutCompetitorsCompetitorId)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/matches/{groupId}/all", wrapper.GetMatchesGroupIdAll)

@@ -107,3 +107,35 @@ func (c Competitor) Birthdate() *time.Time {
 func (c Competitor) HasMissingInfo() bool {
 	return c.license == nil || c.birthdate == nil || c.club == nil || c.gender == Unset
 }
+
+func (c *Competitor) SetFirstname(s string) {
+	c.firstname = s
+}
+
+func (c *Competitor) SetSurname(s string) {
+	c.surname = s
+}
+
+func (c *Competitor) SetGender(g GenderEnum) {
+	c.gender = g
+}
+
+func (c *Competitor) SetClub(club *Club) {
+	c.club = club
+}
+
+func (c *Competitor) SetLicense(license *string) {
+	c.license = license
+}
+
+func (c *Competitor) SetLicenseFie(license_fie *string) {
+	c.license_fie = license_fie
+}
+
+func (c *Competitor) SetBirthdate(birthdate *time.Time) {
+	c.birthdate = birthdate
+}
+
+func (c *Competitor) SetUpdatedAt(updatedAt time.Time) {
+	c.UpdatedAt = &updatedAt
+}
