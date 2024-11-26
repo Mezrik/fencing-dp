@@ -25,18 +25,23 @@ export const updateCompetitor = ({ data, id }: { data: updateCompetitorInput; id
 
 type UseUpdateCompetitorOptions = {
   mutationConfig?: MutationConfig<typeof updateCompetitor>;
+  noRefetch?: boolean;
 };
 
-export const useUpdateCompetitor = ({ mutationConfig }: UseUpdateCompetitorOptions = {}) => {
+export const useUpdateCompetitor = ({
+  mutationConfig,
+  noRefetch,
+}: UseUpdateCompetitorOptions = {}) => {
   const queryClient = useQueryClient();
 
   const { onSuccess, ...rest } = mutationConfig || {};
 
   return useMutation({
     onSuccess: (...args) => {
-      queryClient.invalidateQueries({
-        queryKey: getCompetitorsQueryOptions().queryKey,
-      });
+      !noRefetch &&
+        queryClient.invalidateQueries({
+          queryKey: getCompetitorsQueryOptions().queryKey,
+        });
       onSuccess?.(...args);
     },
     ...rest,

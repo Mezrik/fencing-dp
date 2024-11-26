@@ -183,6 +183,11 @@ const Form = <
   defaultValues,
 }: FormProps<TFormValues, Schema>) => {
   const form = useForm({ ...options, resolver: zodResolver(schema), defaultValues });
+
+  React.useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues]);
+
   return (
     <FormProvider {...form}>
       <form className={cn('space-y-6', className)} onSubmit={form.handleSubmit(onSubmit)} id={id}>
