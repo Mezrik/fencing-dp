@@ -7,6 +7,7 @@ import {
   useCompetitors,
 } from '@/features/competitors/api/get-competitors';
 import { CompetitorsTable } from '@/features/competitors/components/competitors-table';
+import { CreateCompetitor } from '@/features/competitors/components/dialog/create-competitor';
 import { ImportCompetitorsDialog } from '@/features/competitors/components/dialog/import-competitors';
 import { msg, Trans } from '@lingui/macro';
 import { useLingui } from '@lingui/react';
@@ -25,6 +26,7 @@ export const CompetitorsRoute = () => {
   const competitorsQuery = useCompetitors({});
 
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleImportClose = () => {
@@ -57,7 +59,7 @@ export const CompetitorsRoute = () => {
               <Trans>Import competitors</Trans>
             </span>
           </Button>
-          <Button className="gap-2" variant="secondary">
+          <Button className="gap-2" variant="secondary" onClick={() => setCreateDialogOpen(true)}>
             <PlusIcon className="size-4" />
             <span className="hidden sm:inline">
               <Trans>Add competitor</Trans>
@@ -96,6 +98,8 @@ export const CompetitorsRoute = () => {
         onOpenChange={setImportDialogOpen}
         onImportSuccess={handleImportClose}
       />
+
+      <CreateCompetitor open={createDialogOpen} onOpenChange={setCreateDialogOpen} />
     </BasicPageLayout>
   );
 };

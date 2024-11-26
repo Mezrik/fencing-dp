@@ -225,12 +225,12 @@ func (repo InMemoryCompetitorRepository) marshalCompetitor(c *entities.Competito
 		ClubID:    clubID,
 		License:   c.License(),
 		Birthdate: sql.NullTime{
-			Valid: c.Birthdate().IsZero(),
+			Valid: !c.Birthdate().IsZero(),
 			Time:  *c.Birthdate(),
 		},
 		CreatedAt: c.CreatedAt,
 		UpdatedAt: sql.NullTime{
-			Valid: updatedAt.IsZero(),
+			Valid: !updatedAt.IsZero(),
 			Time:  updatedAt,
 		},
 	}

@@ -28,8 +28,8 @@ func ToCompetitorQueryFromEntity(c *entities.Competitor) *Competitor {
 
 	var birthdate *time.Time
 
-	if c.Birthdate().IsZero() {
-		birthdate = nil
+	if c.Birthdate() != nil && !c.Birthdate().IsZero() {
+		birthdate = c.Birthdate()
 	}
 
 	return &Competitor{

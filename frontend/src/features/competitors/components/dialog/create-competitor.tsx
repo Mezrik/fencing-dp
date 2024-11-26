@@ -15,9 +15,12 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { Trans } from '@lingui/macro';
+import { msg, Trans } from '@lingui/macro';
 import { useLingui } from '@lingui/react';
 import { FC } from 'react';
+import { useCreateCompetitor } from '../../api/create-competitor';
+import { useMediaQuery } from 'usehooks-ts';
+import { CompetitorEditForm } from '../forms/competitor-edit-form';
 
 const FORM_ID = 'create-competitor-form';
 
@@ -26,7 +29,18 @@ type CreateCompetitorProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-const CreateCompetitorForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {};
+const CreateCompetitorForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
+  const createCompetitorMutation = useCreateCompetitor();
+
+  return (
+    <CompetitorEditForm
+      onSubmit={(values) => {
+        createCompetitorMutation.mutate({ data: values });
+        onSubmit();
+      }}
+    />
+  );
+};
 
 export const CreateCompetitorDrawer: FC<CreateCompetitorProps> = (props) => {
   const { _ } = useLingui();
@@ -35,7 +49,7 @@ export const CreateCompetitorDrawer: FC<CreateCompetitorProps> = (props) => {
     <Drawer open={props.open} onOpenChange={props.onOpenChange}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{_(msg`Create Competition`)}</DrawerTitle>
+          <DrawerTitle>{_(msg`Create Competitor`)}</DrawerTitle>
         </DrawerHeader>
 
         <div className="p-4 pb-0">
@@ -64,7 +78,7 @@ export const CreateCompetitorDialog: FC<CreateCompetitorProps> = (props) => {
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{_(msg`Create Competition`)}</DialogTitle>
+          <DialogTitle>{_(msg`Create Competitor`)}</DialogTitle>
         </DialogHeader>
 
         <CreateCompetitorForm onSubmit={() => props.onOpenChange(false)} />

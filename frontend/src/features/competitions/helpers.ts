@@ -14,14 +14,14 @@ export const getCompetionTypeCaption = (competitionType: CompetitionTypeEnum, _:
   }
 };
 
-export const getGenderCaption = (gender: GenderEnum, _: I18n['_']) => {
+export const getGenderCaption = (gender: GenderEnum, _: I18n['_'], plural = true) => {
   switch (gender) {
     case GenderEnum.male:
-      return _(msg`Men`);
+      return plural ? _(msg`Men`) : _(msg`Man`);
     case GenderEnum.female:
-      return _(msg`Women`);
+      return plural ? _(msg`Women`) : _(msg`Woman`);
     case GenderEnum.mixed:
-      return _(msg`Mixed`);
+      return plural ? _(msg`Mixed`) : _(msg`Other`);
     default:
       return '???';
   }

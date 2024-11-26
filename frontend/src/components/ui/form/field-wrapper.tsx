@@ -14,9 +14,9 @@ type FieldWrapperProps = {
 export type FieldWrapperPassThroughProps = Omit<FieldWrapperProps, 'className' | 'children'>;
 
 export const FieldWrapper: FC<FieldWrapperProps> = (props) => {
-  const { label, error, children } = props;
+  const { label, error, children, className } = props;
   return (
-    <div>
+    <div className={className}>
       <Label>
         {label}
         <div className="mt-1">{children}</div>

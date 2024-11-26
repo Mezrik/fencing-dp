@@ -105,7 +105,7 @@ func (c Competitor) Birthdate() *time.Time {
 }
 
 func (c Competitor) HasMissingInfo() bool {
-	return c.license == nil || c.birthdate == nil || c.club == nil || c.gender == Unset
+	return c.license == nil || c.birthdate == nil || c.gender == Unset // || c.club == nil
 }
 
 func (c *Competitor) SetFirstname(s string) {
