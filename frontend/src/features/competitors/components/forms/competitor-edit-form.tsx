@@ -23,8 +23,6 @@ import { formatUIDate } from '@/utils/date';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 
-const FORM_ID = 'create-competitor-form';
-
 export const editCompetitorInputSchema = z.object({
   firstname: z.string().min(1, t`Firstname is required`),
   surname: z.string().min(1, t`Surname is required`),
@@ -52,13 +50,24 @@ const getGenderOptions = (_: I18n['_']): RadioOption[] => [
 
 type CompetitorEditFormProps = {
   onSubmit: (values: z.infer<typeof editCompetitorInputSchema>) => void;
+  formID: string;
+  defaultValues?: Partial<z.infer<typeof editCompetitorInputSchema>>;
 };
 
-export const CompetitorEditForm: FC<CompetitorEditFormProps> = ({ onSubmit }) => {
+export const CompetitorEditForm: FC<CompetitorEditFormProps> = ({
+  onSubmit,
+  formID,
+  defaultValues,
+}) => {
   const { _ } = useLingui();
 
   return (
-    <Form id={FORM_ID} onSubmit={onSubmit} schema={editCompetitorInputSchema}>
+    <Form
+      id={formID}
+      onSubmit={onSubmit}
+      schema={editCompetitorInputSchema}
+      defaultValues={defaultValues}
+    >
       {({ register, formState, control }) => (
         <>
           <fieldset className="flex gap-4">

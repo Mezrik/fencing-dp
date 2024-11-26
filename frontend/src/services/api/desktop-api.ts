@@ -13,6 +13,7 @@ import {
   GetParticipants,
   AssignCompetitor,
   UpdateCompetitor,
+  GetCompetitor,
 } from '@/generated/wailsjs/go/desktop/Admin';
 import { command, query } from '@/generated/wailsjs/go/models';
 import { Api } from './api';
@@ -48,6 +49,10 @@ export class DesktopApi implements Api {
 
   GetCompetitors(): Promise<Array<query.Competitor>> {
     return GetCompetitors();
+  }
+
+  GetCompetitor(id: UUID): Promise<query.Competitor> {
+    return GetCompetitor(id);
   }
 
   GetCompetitionsGroups(competitionId: UUID): Promise<Array<query.Group>> {

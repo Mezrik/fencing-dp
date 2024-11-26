@@ -12,6 +12,12 @@ func (a *Admin) GetCompetitors() []*query.Competitor {
 	return competitors
 }
 
+func (a *Admin) GetCompetitor(id uuid.UUID) *query.Competitor {
+	competitor, _ := a.competitors.Queries.GetCompetitor.Handle(a.ctx, query.GetCompetitor{ID: id})
+
+	return competitor
+}
+
 func (a *Admin) CreateCompetitor(competitor command.CreateCompetitor) error {
 	err := a.competitors.Commands.CreateCompetitor.Handle(a.ctx, competitor)
 

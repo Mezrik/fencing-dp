@@ -16,6 +16,12 @@ func (s Server) GetCompetitors(w http.ResponseWriter, r *http.Request) {
 	render.Respond(w, r, competitors)
 }
 
+func (s Server) GetCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
+	competitor, _ := s.competitor.Queries.GetCompetitor.Handle(r.Context(), query.GetCompetitor{ID: id})
+
+	render.Respond(w, r, competitor)
+}
+
 func (s Server) PostCompetitors(w http.ResponseWriter, r *http.Request) {
 	var competitor command.CreateCompetitor
 

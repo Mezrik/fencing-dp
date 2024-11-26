@@ -29,6 +29,8 @@ export interface Api {
 
   GetCompetitors(): Promise<Array<CompetitorResult>>;
 
+  GetCompetitor(id: UUID): Promise<CompetitorResult>;
+
   CreateCompetitor(data: CreateCompetitorCommand): Promise<void>;
 
   UpdateCompetitor(id: UUID, data: UpdateCompetitorCommand): Promise<void>;

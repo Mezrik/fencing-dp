@@ -22,6 +22,7 @@ type Commands struct {
 type Queries struct {
 	AllCompetitors  query.AllCompetitorsHandler
 	AllParticipants query.AllParticipantsHandler
+	GetCompetitor   query.GetCompetitorHandler
 }
 
 func NewCompetitorService(competitorRepo repositories.CompetitorRepo, clubRepo repositories.ClubRepo, logger *logrus.Entry) Service {
@@ -36,6 +37,7 @@ func NewCompetitorService(competitorRepo repositories.CompetitorRepo, clubRepo r
 		Queries: Queries{
 			AllCompetitors:  query.NewAllCompetitionsHandler(competitorRepo, clubRepo, logger),
 			AllParticipants: query.NewAllParticipantsHandler(competitorRepo, logger),
+			GetCompetitor:   query.NewGetCompetitorHandler(competitorRepo, clubRepo, logger),
 		},
 	}
 }

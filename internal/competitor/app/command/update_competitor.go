@@ -63,7 +63,7 @@ func (h updateCompetitiorHandler) Handle(ctx context.Context, command UpdateComp
 
 	competitor.SetUpdatedAt(time.Now())
 
-	if err := h.repo.Create(competitor); err != nil {
+	if err := h.repo.Update(competitor); err != nil {
 		return err
 	}
 

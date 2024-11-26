@@ -101,7 +101,11 @@ func (repo InMemoryCompetitorRepository) FindById(id uuid.UUID) (*entities.Compe
 		return nil, err
 	}
 
-	club := entities.UnmarshalClub(*competitorModel.ClubID, competitorModel.Club.Name, competitorModel.Club.CreatedAt, util.GetTimePtr(competitorModel.Club.UpdatedAt))
+	var club *entities.Club
+
+	if competitorModel.Club != nil {
+		club = entities.UnmarshalClub(*competitorModel.ClubID, competitorModel.Club.Name, competitorModel.Club.CreatedAt, util.GetTimePtr(competitorModel.Club.UpdatedAt))
+	}
 
 	competitor := entities.UnmarshalCompetitor(
 		competitorModel.ID,

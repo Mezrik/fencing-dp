@@ -4,6 +4,7 @@ import { Slot } from '@radix-ui/react-slot';
 import {
   Controller,
   ControllerProps,
+  DefaultValues,
   FieldPath,
   FieldValues,
   FormProvider,
@@ -166,6 +167,7 @@ type FormProps<TFormValues extends FieldValues, Schema> = {
   children: (methods: UseFormReturn<TFormValues>) => React.ReactNode;
   options?: UseFormProps<TFormValues>;
   id?: string;
+  defaultValues?: DefaultValues<TFormValues>;
 };
 
 const Form = <
@@ -178,8 +180,9 @@ const Form = <
   options,
   id,
   schema,
+  defaultValues,
 }: FormProps<TFormValues, Schema>) => {
-  const form = useForm({ ...options, resolver: zodResolver(schema) });
+  const form = useForm({ ...options, resolver: zodResolver(schema), defaultValues });
   return (
     <FormProvider {...form}>
       <form className={cn('space-y-6', className)} onSubmit={form.handleSubmit(onSubmit)} id={id}>

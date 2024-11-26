@@ -2,6 +2,7 @@ import {
   CompetitionCategoryResult,
   CompetitionResult,
   CreateCompetitionCommand,
+  getCompetitorsCompetitorId,
   getCompetitions,
   getCompetitionsCategories,
   postCompetitions,
@@ -51,6 +52,10 @@ export class RestApi implements Api {
 
   GetCompetitors(): Promise<Array<CompetitorResult>> {
     return getCompetitors();
+  }
+
+  GetCompetitor(id: UUID): Promise<CompetitorResult> {
+    return getCompetitorsCompetitorId(id);
   }
 
   CreateCompetitor(data: CreateCompetitorCommand): Promise<void> {

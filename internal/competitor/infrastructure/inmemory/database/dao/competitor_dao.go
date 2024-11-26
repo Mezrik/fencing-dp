@@ -114,11 +114,12 @@ func (c *CompetitorDao) FindAll() ([]*models.CompetitorModel, error) {
 func (c *CompetitorDao) FindById(id uuid.UUID) (*models.CompetitorModel, error) {
 	query := `
     SELECT
-      clb.name as "club.name",
-      clb.id as "club.id",
+      COALESCE(clb.name, '') "club.name",
+      COALESCE(clb.id, '') "club.id",
       c.*
     FROM competitors c
-    JOIN clubs clb ON c.club_id = clb.id
+    LEFT JOIN clubs clb ON c.club_id = clb.id
+		WHERE c.id = ?
     `
 
 	var competitorModel models.CompetitorModel
@@ -127,6 +128,10 @@ func (c *CompetitorDao) FindById(id uuid.UUID) (*models.CompetitorModel, error) 
 
 	if err != nil {
 		return nil, err
+	}
+
+	if competitorModel.ClubID == nil {
+		competitorModel.Club = nil
 	}
 
 	return &competitorModel, nil

@@ -230,6 +230,9 @@ type ServerInterface interface {
 	// (POST /competitors/import)
 	PostCompetitorsImport(w http.ResponseWriter, r *http.Request)
 
+	// (GET /competitors/{competitorId})
+	GetCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request, competitorId openapi_types.UUID)
+
 	// (PUT /competitors/{competitorId})
 	PutCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request, competitorId openapi_types.UUID)
 
@@ -301,6 +304,11 @@ func (_ Unimplemented) PostCompetitorsAssignParticipant(w http.ResponseWriter, r
 
 // (POST /competitors/import)
 func (_ Unimplemented) PostCompetitorsImport(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /competitors/{competitorId})
+func (_ Unimplemented) GetCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request, competitorId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -561,6 +569,32 @@ func (siw *ServerInterfaceWrapper) PostCompetitorsImport(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// GetCompetitorsCompetitorId operation middleware
+func (siw *ServerInterfaceWrapper) GetCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "competitorId" -------------
+	var competitorId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "competitorId", chi.URLParam(r, "competitorId"), &competitorId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "competitorId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCompetitorsCompetitorId(w, r, competitorId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 // PutCompetitorsCompetitorId operation middleware
 func (siw *ServerInterfaceWrapper) PutCompetitorsCompetitorId(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -787,6 +821,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/competitors/import", wrapper.PostCompetitorsImport)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/competitors/{competitorId}", wrapper.GetCompetitorsCompetitorId)
 	})
 	r.Group(func(r chi.Router) {
 		r.Put(options.BaseURL+"/competitors/{competitorId}", wrapper.PutCompetitorsCompetitorId)

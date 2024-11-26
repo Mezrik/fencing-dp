@@ -34,6 +34,7 @@ const CreateCompetitorForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
 
   return (
     <CompetitorEditForm
+      formID={FORM_ID}
       onSubmit={(values) => {
         createCompetitorMutation.mutate({ data: values });
         onSubmit();
