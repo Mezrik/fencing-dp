@@ -1,11 +1,11 @@
-import type { LinguiConfig } from "@lingui/conf";
+import type { LinguiConfig } from '@lingui/conf';
 
 const config: LinguiConfig = {
-  locales: ["en", "cs"],
+  locales: ['en', 'cs'],
   catalogs: [
     {
-      path: "<rootDir>/src/locales/{locale}",
-      include: ["src"],
+      path: '<rootDir>/src/locales/{locale}',
+      include: ['src'],
     },
   ],
 };
