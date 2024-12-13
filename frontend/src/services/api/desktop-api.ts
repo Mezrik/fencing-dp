@@ -11,7 +11,7 @@ import {
   GetMatch,
   GetMatches,
   GetParticipants,
-  AssignCompetitor,
+  AssignCompetitors,
   UpdateCompetitor,
   GetCompetitor,
 } from '@/generated/wailsjs/go/desktop/Admin';
@@ -75,8 +75,8 @@ export class DesktopApi implements Api {
     return GetParticipants(competitionId);
   }
 
-  AssignParticipant(competitorId: UUID, competitionId: UUID): Promise<void> {
-    return AssignCompetitor(competitorId, competitionId);
+  AssignParticipants(competitorIds: UUID[], competitionId: UUID): Promise<void> {
+    return AssignCompetitors(competitorIds, competitionId);
   }
 
   ImportCompetitor(): Promise<void> {

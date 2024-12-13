@@ -15,31 +15,20 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/form';
-import {
-  assignParticipantInputSchema,
-  useAssignParticipant,
+  assignParticipantsInputSchema,
+  useAssignParticipants,
 } from '@/features/competitors/api/assign-participant';
 import { useCompetitors } from '@/features/competitors/api/get-competitors';
 import { useToast } from '@/hooks/ui/use-toast';
-import { msg, t, Trans } from '@lingui/macro';
+import { msg, Trans } from '@lingui/macro';
 import { useLingui } from '@lingui/react';
 import { FC } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
+import { ParticipantDualList } from './participant-dual-list';
 
-const FORM_ID = 'assign-competitor-form';
+const FORM_ID = 'assign-competitors-form';
 
 type AssignParticipantProps = {
   open: boolean;
@@ -47,7 +36,7 @@ type AssignParticipantProps = {
   competitionId: UUID;
 };
 
-export const AssignParticipantForm: FC<{ onSubmit: () => void; competitionId: UUID }> = ({
+export const AssignParticipantsForm: FC<{ onSubmit: () => void; competitionId: UUID }> = ({
   onSubmit,
   competitionId,
 }) => {
@@ -56,18 +45,18 @@ export const AssignParticipantForm: FC<{ onSubmit: () => void; competitionId: UU
 
   const competitorsQuery = useCompetitors();
 
-  const assignParticipantMutation = useAssignParticipant({
+  const assignParticipantMutation = useAssignParticipants({
     mutationConfig: {
       onSuccess: () => {
         toast({
-          description: 'Competitor assigned successfully',
+          description: 'Competitors assigned successfully',
           variant: 'success',
         });
       },
     },
   });
 
-  if (competitorsQuery.isLoading) {
+  if (competitorsQuery.isLoading || !competitionId) {
     return <div>Loading...</div>;
   }
 
@@ -78,42 +67,32 @@ export const AssignParticipantForm: FC<{ onSubmit: () => void; competitionId: UU
         assignParticipantMutation.mutate({ data: values });
         onSubmit();
       }}
-      schema={assignParticipantInputSchema}
+      schema={assignParticipantsInputSchema}
       options={{
         defaultValues: {
           competitionId: competitionId,
-          competitorId: '',
+          competitorIds: [] as UUID[],
         },
       }}
     >
-      {({ control }) => (
+      {({ control, register }) => (
         <>
           <FormField
             control={control}
-            name="competitorId"
+            name="competitorIds"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  <Trans>Competitor</Trans>
-                </FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={_(msg`Select a competitor`)} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {competitorsQuery.data?.map((w) => (
-                      <SelectItem value={w.id} key={w.id}>
-                        {w.firstname} {w.surname}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <ParticipantDualList
+                  options={competitorsQuery.data || []}
+                  onChange={field.onChange}
+                  selected={field.value ?? []}
+                />
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <input type="hidden" {...register('competitionId')} />
         </>
       )}
     </Form>
@@ -131,7 +110,7 @@ export const AssignParticipantDrawer: FC<AssignParticipantProps> = (props) => {
         </DrawerHeader>
 
         <div className="p-4 pb-0">
-          <AssignParticipantForm
+          <AssignParticipantsForm
             onSubmit={() => props.onOpenChange(false)}
             competitionId={props.competitionId}
           />
@@ -161,12 +140,12 @@ export const AssignParticipantDialog: FC<AssignParticipantProps> = (props) => {
       onOpenChange={props.onOpenChange}
       aria-describedby={_(msg`Assign Competitor`)}
     >
-      <DialogContent>
+      <DialogContent size="lg">
         <DialogHeader>
           <DialogTitle>{_(msg`Assign Competitor`)}</DialogTitle>
         </DialogHeader>
 
-        <AssignParticipantForm
+        <AssignParticipantsForm
           onSubmit={() => props.onOpenChange(false)}
           competitionId={props.competitionId}
         />

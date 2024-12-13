@@ -66,7 +66,9 @@ export const CompetitorEditForm: FC<CompetitorEditFormProps> = ({
       id={formID}
       onSubmit={onSubmit}
       schema={editCompetitorInputSchema}
-      defaultValues={defaultValues}
+      options={{
+        defaultValues,
+      }}
     >
       {({ register, formState, control }) => (
         <>

@@ -45,7 +45,7 @@ export interface Api {
 
   GetParticipants(competitionId: UUID): Promise<Array<CompetitionParticipant>>;
 
-  AssignParticipant(competitorId: UUID, competitionId: UUID): Promise<void>;
+  AssignParticipants(competitorId: UUID[], competitionId: UUID): Promise<void>;
 
   ImportCompetitor(file: File): Promise<void>;
 }

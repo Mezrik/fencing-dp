@@ -5,22 +5,22 @@ import { getParticipantsQueryOptions } from './get-participants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { t } from '@lingui/macro';
 
-export const assignParticipantInputSchema = z.object({
+export const assignParticipantsInputSchema = z.object({
   competitionId: z.string().uuid(t`Select correct competition`),
-  competitorId: z.string().uuid(t`Select correct competitor`),
+  competitorIds: z.array(z.string().uuid(t`Select correct competitor`)),
 });
 
-export type AssignParticipantInput = z.infer<typeof assignParticipantInputSchema>;
+export type AssignParticipantInput = z.infer<typeof assignParticipantsInputSchema>;
 
-export const assignParticipant = ({ data }: { data: AssignParticipantInput }) => {
-  return api.AssignParticipant(data.competitorId, data.competitionId);
+export const assignParticipants = ({ data }: { data: AssignParticipantInput }) => {
+  return api.AssignParticipants(data.competitorIds, data.competitionId);
 };
 
 type UseAssignParticipantOptions = {
-  mutationConfig?: MutationConfig<typeof assignParticipant>;
+  mutationConfig?: MutationConfig<typeof assignParticipants>;
 };
 
-export const useAssignParticipant = ({ mutationConfig }: UseAssignParticipantOptions = {}) => {
+export const useAssignParticipants = ({ mutationConfig }: UseAssignParticipantOptions = {}) => {
   const queryClient = useQueryClient();
 
   const { onSuccess, ...rest } = mutationConfig || {};
@@ -29,11 +29,11 @@ export const useAssignParticipant = ({ mutationConfig }: UseAssignParticipantOpt
     onSuccess: (...args) => {
       const [, { data }] = args;
       queryClient.invalidateQueries({
-        queryKey: getParticipantsQueryOptions(data.competitorId).queryKey,
+        queryKey: getParticipantsQueryOptions(data.competitionId).queryKey,
       });
       onSuccess?.(...args);
     },
     ...rest,
-    mutationFn: assignParticipant,
+    mutationFn: assignParticipants,
   });
 };

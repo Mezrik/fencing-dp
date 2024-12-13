@@ -167,7 +167,6 @@ type FormProps<TFormValues extends FieldValues, Schema> = {
   children: (methods: UseFormReturn<TFormValues>) => React.ReactNode;
   options?: UseFormProps<TFormValues>;
   id?: string;
-  defaultValues?: DefaultValues<TFormValues>;
 };
 
 const Form = <
@@ -180,13 +179,12 @@ const Form = <
   options,
   id,
   schema,
-  defaultValues,
 }: FormProps<TFormValues, Schema>) => {
-  const form = useForm({ ...options, resolver: zodResolver(schema), defaultValues });
+  const form = useForm({ ...options, resolver: zodResolver(schema) });
 
   React.useEffect(() => {
-    form.reset(defaultValues);
-  }, [defaultValues]);
+    options?.defaultValues && form.reset(options?.defaultValues as DefaultValues<TFormValues>);
+  }, [options?.defaultValues]);
 
   return (
     <FormProvider {...form}>

@@ -22,7 +22,7 @@ import {
   getMatchesMatchId,
   getMatchesGroupIdAll,
   getCompetitorsAllCompetitionId,
-  postCompetitorsAssignParticipant,
+  postCompetitorsAssignParticipants,
   postCompetitorsImport,
   UpdateCompetitorCommand,
   putCompetitorsCompetitorId,
@@ -86,8 +86,8 @@ export class RestApi implements Api {
     return getCompetitorsAllCompetitionId(competitionId);
   }
 
-  AssignParticipant(competitorId: UUID, competitionId: UUID): Promise<void> {
-    return postCompetitorsAssignParticipant({ competitionId, competitorId });
+  AssignParticipants(competitorIds: UUID[], competitionId: UUID): Promise<void> {
+    return postCompetitorsAssignParticipants({ competitionId, participantIds: competitorIds });
   }
 
   ImportCompetitor(file: File): Promise<void> {
