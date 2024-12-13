@@ -217,7 +217,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/CompetitionParticipant"
 
-  /competitors/assign-participant:
+  /competitors/assign-participants:
     post:
       tags:
         - Competitor
@@ -648,13 +648,14 @@ components:
       type: object
       required:
         - competitionId
-        - competitorId
+        - participantIds
       properties:
         competitionId:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426614174000
-        competitorId:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
+        participantIds:
+          type: array
+          items:
+            type: string
+            format: uuid

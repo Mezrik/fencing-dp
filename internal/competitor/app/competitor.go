@@ -13,10 +13,10 @@ type Service struct {
 }
 
 type Commands struct {
-	CreateCompetitor  command.CreateCompetitorHandler
-	UpdateCompetitor  command.UpdateCompetitorHandler
-	AssignParticipant command.AssignParticipantHandler
-	ImportCompetitor  command.ImportCompetitorHandler
+	CreateCompetitor   command.CreateCompetitorHandler
+	UpdateCompetitor   command.UpdateCompetitorHandler
+	AssignParticipants command.AssignParticipantsHandler
+	ImportCompetitor   command.ImportCompetitorHandler
 }
 
 type Queries struct {
@@ -29,10 +29,10 @@ func NewCompetitorService(competitorRepo repositories.CompetitorRepo, clubRepo r
 
 	return Service{
 		Commands: Commands{
-			CreateCompetitor:  command.NewCreateCompetitorHandler(competitorRepo, clubRepo, logger),
-			UpdateCompetitor:  command.NewUpdateCompetitorHandler(competitorRepo, clubRepo, logger),
-			AssignParticipant: command.NewAssignParticipantHandler(competitorRepo, logger),
-			ImportCompetitor:  command.NewImportCompetitorHandler(competitorRepo, clubRepo, logger),
+			CreateCompetitor:   command.NewCreateCompetitorHandler(competitorRepo, clubRepo, logger),
+			UpdateCompetitor:   command.NewUpdateCompetitorHandler(competitorRepo, clubRepo, logger),
+			AssignParticipants: command.NewAssignParticipantsHandler(competitorRepo, logger),
+			ImportCompetitor:   command.NewImportCompetitorHandler(competitorRepo, clubRepo, logger),
 		},
 		Queries: Queries{
 			AllCompetitors:  query.NewAllCompetitionsHandler(competitorRepo, clubRepo, logger),

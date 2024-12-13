@@ -37,8 +37,8 @@ const (
 
 // AssignCompetitorRequest defines model for AssignCompetitorRequest.
 type AssignCompetitorRequest struct {
-	CompetitionId openapi_types.UUID `json:"competitionId"`
-	CompetitorId  openapi_types.UUID `json:"competitorId"`
+	CompetitionId openapi_types.UUID   `json:"competitionId"`
+	CompetitorIds []openapi_types.UUID `json:"competitorIds"`
 }
 
 // ClubResult defines model for ClubResult.
@@ -182,8 +182,8 @@ type PostCompetitionsJSONRequestBody = CreateCompetitionCommand
 // PostCompetitorsJSONRequestBody defines body for PostCompetitors for application/json ContentType.
 type PostCompetitorsJSONRequestBody = CreateCompetitorCommand
 
-// PostCompetitorsAssignParticipantJSONRequestBody defines body for PostCompetitorsAssignParticipant for application/json ContentType.
-type PostCompetitorsAssignParticipantJSONRequestBody = AssignCompetitorRequest
+// PostCompetitorsAssignParticipantsJSONRequestBody defines body for PostCompetitorsAssignParticipants for application/json ContentType.
+type PostCompetitorsAssignParticipantsJSONRequestBody = AssignCompetitorRequest
 
 // PostCompetitorsImportMultipartRequestBody defines body for PostCompetitorsImport for multipart/form-data ContentType.
 type PostCompetitorsImportMultipartRequestBody PostCompetitorsImportMultipartBody
@@ -224,8 +224,8 @@ type ServerInterface interface {
 	// (GET /competitors/all/{competitionId})
 	GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
 
-	// (POST /competitors/assign-participant)
-	PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request)
+	// (POST /competitors/assign-participants)
+	PostCompetitorsAssignParticipants(w http.ResponseWriter, r *http.Request)
 
 	// (POST /competitors/import)
 	PostCompetitorsImport(w http.ResponseWriter, r *http.Request)
@@ -297,8 +297,8 @@ func (_ Unimplemented) GetCompetitorsAllCompetitionId(w http.ResponseWriter, r *
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (POST /competitors/assign-participant)
-func (_ Unimplemented) PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request) {
+// (POST /competitors/assign-participants)
+func (_ Unimplemented) PostCompetitorsAssignParticipants(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -539,12 +539,12 @@ func (siw *ServerInterfaceWrapper) GetCompetitorsAllCompetitionId(w http.Respons
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostCompetitorsAssignParticipant operation middleware
-func (siw *ServerInterfaceWrapper) PostCompetitorsAssignParticipant(w http.ResponseWriter, r *http.Request) {
+// PostCompetitorsAssignParticipants operation middleware
+func (siw *ServerInterfaceWrapper) PostCompetitorsAssignParticipants(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostCompetitorsAssignParticipant(w, r)
+		siw.Handler.PostCompetitorsAssignParticipants(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -817,7 +817,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/competitors/all/{competitionId}", wrapper.GetCompetitorsAllCompetitionId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/competitors/assign-participant", wrapper.PostCompetitorsAssignParticipant)
+		r.Post(options.BaseURL+"/competitors/assign-participants", wrapper.PostCompetitorsAssignParticipants)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/competitors/import", wrapper.PostCompetitorsImport)

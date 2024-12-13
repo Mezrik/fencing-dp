@@ -10,7 +10,7 @@ type ParticipantDao struct {
 	DB *sqlx.DB
 }
 
-func (dao *ParticipantDao) Create(participant *models.ParticipantModel) error {
+func (dao *ParticipantDao) Create(participant models.ParticipantModel) error {
 	_, err := dao.DB.Exec(` INSERT INTO participating_competitors (
 		competitor_id,
 		competition_id,
@@ -21,6 +21,22 @@ func (dao *ParticipantDao) Create(participant *models.ParticipantModel) error {
 		?, ?, ?, ?, ?
 	)
 	`, participant.CompetitorID, participant.CompetitionID, participant.DeploymentNumber, participant.Points, participant.StartingPosition)
+
+	return err
+}
+
+func (c *ParticipantDao) BatchCreate(participants []models.ParticipantModel) error {
+	query := `
+		INSERT INTO participating_competitors (
+			competitor_id,
+			competition_id,
+			deployment_number,
+			points,
+			starting_position
+		) VALUES (:competitor_id, :competition_id, :deployment_number, :points, :starting_position)
+		`
+
+	_, err := c.DB.NamedExec(query, participants)
 
 	return err
 }

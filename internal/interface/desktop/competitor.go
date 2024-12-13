@@ -36,8 +36,8 @@ func (a *Admin) GetParticipants(competitionId uuid.UUID) []*query.Participant {
 	return participants
 }
 
-func (a *Admin) AssignCompetitor(competitorId uuid.UUID, competitionId uuid.UUID) error {
-	err := a.competitors.Commands.AssignParticipant.Handle(a.ctx, command.AssignParticipant{CompetitionId: competitionId, ParticipantId: competitorId})
+func (a *Admin) AssignCompetitors(competitorIds []uuid.UUID, competitionId uuid.UUID) error {
+	err := a.competitors.Commands.AssignParticipants.Handle(a.ctx, command.AssignParticipants{CompetitionId: competitionId, ParticipantIds: competitorIds})
 
 	return err
 }

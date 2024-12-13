@@ -205,7 +205,56 @@ func (repo InMemoryCompetitorRepository) AssignCompetitor(competitorId uuid.UUID
 		return err
 	}
 
-	return participantDao.Create(participantModel)
+	return participantDao.Create(*participantModel)
+}
+
+func (repo InMemoryCompetitorRepository) AssignCompetitors(competitorIds []uuid.UUID, competitionId uuid.UUID) error {
+	participantDao := &dao.ParticipantDao{DB: repo.db}
+
+	competitorDao := &dao.CompetitorDao{DB: repo.db}
+
+	participants := make([]models.ParticipantModel, 0, len(competitorIds))
+
+	for _, c := range competitorIds {
+		competitorModel, err := competitorDao.FindById(c)
+
+		if err != nil {
+			return err
+		}
+
+		club := entities.UnmarshalClub(*competitorModel.ClubID, competitorModel.Club.Name, competitorModel.Club.CreatedAt, util.GetTimePtr(competitorModel.Club.UpdatedAt))
+
+		participant, err := entities.NewParticipant(
+			entities.UnmarshalCompetitor(
+				competitorModel.ID,
+				competitorModel.Firstname,
+				competitorModel.Surname,
+				entities.GenderEnum(competitorModel.Gender),
+				club,
+				competitorModel.License,
+				competitorModel.LicenseFie,
+				util.GetTimePtr(competitorModel.Birthdate),
+				competitorModel.CreatedAt,
+				&competitorModel.UpdatedAt.Time,
+			),
+			competitionId,
+		)
+
+		if err != nil {
+			return err
+		}
+
+		participantModel, err := repo.marshalParticipant(participant)
+
+		if err != nil {
+
+			return err
+		}
+
+		participants = append(participants, *participantModel)
+	}
+
+	return participantDao.BatchCreate(participants)
 }
 
 func (repo InMemoryCompetitorRepository) marshalCompetitor(c *entities.Competitor) (*models.CompetitorModel, error) {
