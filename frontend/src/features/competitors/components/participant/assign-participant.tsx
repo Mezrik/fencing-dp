@@ -27,6 +27,7 @@ import { useLingui } from '@lingui/react';
 import { FC } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 import { ParticipantDualList } from './participant-dual-list';
+import { useParticipants } from '../../api/get-participants';
 
 const FORM_ID = 'assign-competitors-form';
 
@@ -34,12 +35,14 @@ type AssignParticipantProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   competitionId: UUID;
+  selectedParticipantIds: UUID[];
 };
 
-export const AssignParticipantsForm: FC<{ onSubmit: () => void; competitionId: UUID }> = ({
-  onSubmit,
-  competitionId,
-}) => {
+export const AssignParticipantsForm: FC<{
+  onSubmit: () => void;
+  competitionId: UUID;
+  selectedParticipantIds: UUID[];
+}> = ({ onSubmit, competitionId, selectedParticipantIds }) => {
   const { toast } = useToast();
   const { _ } = useLingui();
 
@@ -71,7 +74,7 @@ export const AssignParticipantsForm: FC<{ onSubmit: () => void; competitionId: U
       options={{
         defaultValues: {
           competitionId: competitionId,
-          competitorIds: [] as UUID[],
+          competitorIds: selectedParticipantIds as UUID[],
         },
       }}
     >
@@ -106,13 +109,14 @@ export const AssignParticipantDrawer: FC<AssignParticipantProps> = (props) => {
     <Drawer open={props.open} onOpenChange={props.onOpenChange}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{_(msg`Assign Competitor`)}</DrawerTitle>
+          <DrawerTitle>{_(msg`Assign Competitors`)}</DrawerTitle>
         </DrawerHeader>
 
         <div className="p-4 pb-0">
           <AssignParticipantsForm
             onSubmit={() => props.onOpenChange(false)}
             competitionId={props.competitionId}
+            selectedParticipantIds={props.selectedParticipantIds}
           />
         </div>
 
@@ -138,16 +142,17 @@ export const AssignParticipantDialog: FC<AssignParticipantProps> = (props) => {
     <Dialog
       open={props.open}
       onOpenChange={props.onOpenChange}
-      aria-describedby={_(msg`Assign Competitor`)}
+      aria-describedby={_(msg`Assign Competitors`)}
     >
       <DialogContent size="lg">
         <DialogHeader>
-          <DialogTitle>{_(msg`Assign Competitor`)}</DialogTitle>
+          <DialogTitle>{_(msg`Assign Competitors`)}</DialogTitle>
         </DialogHeader>
 
         <AssignParticipantsForm
           onSubmit={() => props.onOpenChange(false)}
           competitionId={props.competitionId}
+          selectedParticipantIds={props.selectedParticipantIds}
         />
 
         <DialogFooter>
@@ -165,12 +170,18 @@ export const AssignParticipantDialog: FC<AssignParticipantProps> = (props) => {
   );
 };
 
-export const AssignParticipant: FC<AssignParticipantProps> = (props) => {
+export const AssignParticipant: FC<Omit<AssignParticipantProps, 'selectedParticipantIds'>> = (
+  props,
+) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
+  const participantsQuery = useParticipants({ competitionId: props.competitionId });
+  const selectedParticipantIds =
+    participantsQuery.data?.map((participant) => participant.competitor.id) || [];
+
   if (isDesktop) {
-    return <AssignParticipantDialog {...props} />;
+    return <AssignParticipantDialog {...props} selectedParticipantIds={selectedParticipantIds} />;
   }
 
-  return <AssignParticipantDrawer {...props} />;
+  return <AssignParticipantDrawer {...props} selectedParticipantIds={selectedParticipantIds} />;
 };

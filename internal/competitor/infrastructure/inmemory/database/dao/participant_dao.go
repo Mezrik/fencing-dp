@@ -97,3 +97,19 @@ func (dao *ParticipantDao) FindAll(competitionId uuid.UUID) ([]*models.Participa
 
 	return participantModels, nil
 }
+
+func (dao *ParticipantDao) Delete(competitorIds []uuid.UUID, competitionId uuid.UUID) error {
+	query, args, err := sqlx.In(
+		`DELETE FROM participating_competitors WHERE competitor_id IN (?) AND competition_id = ?`,
+		competitorIds, competitionId,
+	)
+	if err != nil {
+		return err
+	}
+
+	query = dao.DB.Rebind(query)
+
+	_, err = dao.DB.Exec(query, args...)
+
+	return err
+}

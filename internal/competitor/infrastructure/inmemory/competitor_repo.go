@@ -3,6 +3,7 @@ package inmemory
 import (
 	"context"
 	"database/sql"
+	"slices"
 	"time"
 
 	"github.com/Mezrik/fencing-dp/internal/common/util"
@@ -213,9 +214,32 @@ func (repo InMemoryCompetitorRepository) AssignCompetitors(competitorIds []uuid.
 
 	competitorDao := &dao.CompetitorDao{DB: repo.db}
 
-	participants := make([]models.ParticipantModel, 0, len(competitorIds))
+	toCreate := make([]models.ParticipantModel, 0)
+	toRemove := make([]uuid.UUID, 0)
+
+	currentParticipants, err := participantDao.FindAll(competitionId)
+
+	currentParticipantsIds := make([]uuid.UUID, 0, len(currentParticipants))
+
+	for _, p := range currentParticipants {
+		currentParticipantsIds = append(currentParticipantsIds, p.CompetitorID)
+	}
+
+	for _, c := range currentParticipantsIds {
+		if !slices.Contains(competitorIds, c) {
+			toRemove = append(toRemove, c)
+		}
+	}
+
+	if err != nil {
+		return err
+	}
 
 	for _, c := range competitorIds {
+		if slices.Contains(currentParticipantsIds, c) {
+			continue
+		}
+
 		competitorModel, err := competitorDao.FindById(c)
 
 		if err != nil {
@@ -251,10 +275,22 @@ func (repo InMemoryCompetitorRepository) AssignCompetitors(competitorIds []uuid.
 			return err
 		}
 
-		participants = append(participants, *participantModel)
+		toCreate = append(toCreate, *participantModel)
 	}
 
-	return participantDao.BatchCreate(participants)
+	if len(toRemove) > 0 {
+		err = participantDao.Delete(toRemove, competitionId)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if len(toCreate) > 0 {
+		return participantDao.BatchCreate(toCreate)
+	}
+
+	return nil
 }
 
 func (repo InMemoryCompetitorRepository) marshalCompetitor(c *entities.Competitor) (*models.CompetitorModel, error) {
