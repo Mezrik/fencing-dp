@@ -57,6 +57,8 @@ func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Comp
 		entities.GenderEnum(c.Gender),
 		*weapon,
 		c.Date,
+		nil,
+		[]*entities.GroupRound{},
 	)
 
 	return competition, nil
@@ -77,7 +79,21 @@ func (repo InMemoryCompetitionRepository) FindAll() ([]*entities.Competition, er
 		category := entities.UnmarshalCompetitionCategory(c.Category.ID, c.Category.Name, c.Category.CreatedAt, util.GetTimePtr(c.Category.UpdatedAt))
 		weapon := entities.UnmarshalWeapon(c.Weapon.ID, c.Weapon.Name, c.Weapon.CreatedAt, util.GetTimePtr(c.Weapon.UpdatedAt))
 
-		competitions = append(competitions, entities.UnmarshalCompetition(c.ID, c.CreatedAt, util.GetTimePtr(c.UpdatedAt), c.Name, c.OrganizerName, c.FederationName, entities.CompetitionTypeEnum(c.CompetitionType), *category, entities.GenderEnum(c.Gender), *weapon, c.Date))
+		competitions = append(competitions, entities.UnmarshalCompetition(
+			c.ID,
+			c.CreatedAt,
+			util.GetTimePtr(c.UpdatedAt),
+			c.Name,
+			c.OrganizerName,
+			c.FederationName,
+			entities.CompetitionTypeEnum(c.CompetitionType),
+			*category,
+			entities.GenderEnum(c.Gender),
+			*weapon,
+			c.Date,
+			nil,
+			[]*entities.GroupRound{},
+		))
 	}
 
 	return competitions, nil
@@ -157,7 +173,7 @@ func (repo InMemoryCompetitionRepository) FindAllWeapons() ([]*entities.Weapon, 
 	return weapons, nil
 }
 
-func (repo InMemoryCompetitionRepository) FindAllGroups(competitionId uuid.UUID) ([]*entities.CompetitionGroup, error) {
+func (repo InMemoryCompetitionRepository) FindAllGroups(competitionId uuid.UUID) ([]*entities.Group, error) {
 	dao := &dao.CompetitionGroupDao{DB: repo.db}
 
 	competitionGroupModels, err := dao.FindAll(competitionId)
@@ -166,7 +182,7 @@ func (repo InMemoryCompetitionRepository) FindAllGroups(competitionId uuid.UUID)
 		return nil, err
 	}
 
-	competitionGroups := make([]*entities.CompetitionGroup, 0, len(competitionGroupModels))
+	competitionGroups := make([]*entities.Group, 0, len(competitionGroupModels))
 
 	for _, c := range competitionGroupModels {
 		competitionGroups = append(competitionGroups, entities.UnmarshalCompetitionGroup(c.ID, c.Name, util.GetInt64Ptr(c.PisteNumber), c.CreatedAt, util.GetTimePtr(c.UpdatedAt), competitionId))
@@ -175,7 +191,7 @@ func (repo InMemoryCompetitionRepository) FindAllGroups(competitionId uuid.UUID)
 	return competitionGroups, nil
 }
 
-func (repo InMemoryCompetitionRepository) FindGroupById(id uuid.UUID) (*entities.CompetitionGroup, error) {
+func (repo InMemoryCompetitionRepository) FindGroupById(id uuid.UUID) (*entities.Group, error) {
 	dao := &dao.CompetitionGroupDao{DB: repo.db}
 
 	competitionGroupModel, err := dao.FindById(id)

@@ -12,7 +12,7 @@ type Group struct {
 	CompetitionID uuid.UUID `json:"competitionId" ts_type:"UUID"`
 }
 
-func ToGroupQueryFromEntity(group *entities.CompetitionGroup) *Group {
+func ToGroupQueryFromEntity(group *entities.Group) *Group {
 	return &Group{
 		ID:            group.ID,
 		Name:          group.Name(),
@@ -21,7 +21,7 @@ func ToGroupQueryFromEntity(group *entities.CompetitionGroup) *Group {
 	}
 }
 
-func ToGroupQueryListFromEntities(groups []*entities.CompetitionGroup) []*Group {
+func ToGroupQueryListFromEntities(groups []*entities.Group) []*Group {
 	groupList := make([]*Group, 0, len(groups))
 	for _, group := range groups {
 		groupList = append(groupList, ToGroupQueryFromEntity(group))

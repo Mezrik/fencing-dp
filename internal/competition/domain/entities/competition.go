@@ -33,6 +33,8 @@ type Competition struct {
 	gender          GenderEnum
 	weapon          Weapon
 	date            time.Time
+	parameters      *CompetitionParameters
+	groupRounds     []*GroupRound
 }
 
 func (g GenderEnum) TSName() string {
@@ -77,7 +79,21 @@ func NewCompetition(name string, orgName string, fedName string, comptType Compe
 	}, nil
 }
 
-func UnmarshalCompetition(id uuid.UUID, createdAt time.Time, updatedAt *time.Time, name string, orgName string, fedName string, comptType CompetitionTypeEnum, category CompetitionCategory, gender GenderEnum, weapon Weapon, date time.Time) *Competition {
+func UnmarshalCompetition(
+	id uuid.UUID,
+	createdAt time.Time,
+	updatedAt *time.Time,
+	name string,
+	orgName string,
+	fedName string,
+	comptType CompetitionTypeEnum,
+	category CompetitionCategory,
+	gender GenderEnum,
+	weapon Weapon,
+	date time.Time,
+	parameters *CompetitionParameters,
+	groupRounds []*GroupRound,
+) *Competition {
 	return &Competition{
 		Entity:          common.Entity{ID: id, CreatedAt: createdAt, UpdatedAt: updatedAt},
 		name:            name,
@@ -88,6 +104,26 @@ func UnmarshalCompetition(id uuid.UUID, createdAt time.Time, updatedAt *time.Tim
 		gender:          gender,
 		weapon:          weapon,
 		date:            date,
+		parameters:      parameters,
+		groupRounds:     groupRounds,
+	}
+}
+
+func (c *Competition) SetParameters(parameters *CompetitionParameters, groupRoundsCount int) {
+	c.parameters = parameters
+
+	if c.groupRounds == nil || len(c.groupRounds) <= 0 {
+		c.groupRounds = make([]*GroupRound, 0)
+
+		for i := 0; i < groupRoundsCount; i++ {
+			participants := parameters.expectedParticipants
+
+			if len(c.groupRounds) > 0 {
+				participants = c.groupRounds[i-1].NumberOfAdvancers()
+			}
+
+			c.groupRounds = append(c.groupRounds, NewGroupRound(c.ID, i+1, participants, []ShiftCriteria{Club}, 80))
+		}
 	}
 }
 
@@ -121,4 +157,12 @@ func (c Competition) Weapon() Weapon {
 
 func (c Competition) Date() time.Time {
 	return c.date
+}
+
+func (c Competition) Parameters() *CompetitionParameters {
+	return c.parameters
+}
+
+func (c Competition) GroupRounds() []*GroupRound {
+	return c.groupRounds
 }
