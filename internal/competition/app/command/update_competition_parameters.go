@@ -18,6 +18,7 @@ type UpdateCompetitionParameters struct {
 	GroupHits                  int                     `json:"group_hits"`
 	EliminationHits            int                     `json:"elimination_hits"`
 	QualificationBasedOnRounds int                     `json:"qualification_based_on_rounds"`
+	RoundsCount                int                     `json:"rounds_count"`
 }
 
 type UpdateCompetitionParametersHandler decorator.CommandHandler[UpdateCompetitionParameters]
@@ -54,7 +55,7 @@ func (h updateCompetitionParametersHandler) Handle(ctx context.Context, cmd Upda
 		cmd.QualificationBasedOnRounds,
 	)
 
-	competition.SetParameters(parameters, len(competition.GroupRounds()))
+	competition.SetParameters(parameters, cmd.RoundsCount)
 
 	// Save the updated competition
 	err = h.repo.Update(competition)

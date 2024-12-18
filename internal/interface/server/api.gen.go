@@ -161,6 +161,18 @@ type MatchStateItem struct {
 	PointTo *openapi_types.UUID `json:"pointTo,omitempty"`
 }
 
+// UpdateCompetitionCommand defines model for UpdateCompetitionCommand.
+type UpdateCompetitionCommand struct {
+	CategoryId      openapi_types.UUID  `json:"categoryId"`
+	CompetitionType CompetitionTypeEnum `json:"competitionType"`
+	Date            string              `json:"date"`
+	FederationName  string              `json:"federationName"`
+	Gender          GenderEnum          `json:"gender"`
+	Name            string              `json:"name"`
+	OrganizerName   string              `json:"organizerName"`
+	WeaponId        openapi_types.UUID  `json:"weaponId"`
+}
+
 // UpdateCompetitionParametersCommand defines model for UpdateCompetitionParametersCommand.
 type UpdateCompetitionParametersCommand struct {
 	DeploymentType             DeploymentTypeEnum `json:"deploymentType"`
@@ -168,6 +180,7 @@ type UpdateCompetitionParametersCommand struct {
 	ExpectedParticipants       int                `json:"expectedParticipants"`
 	GroupHits                  int                `json:"groupHits"`
 	QualificationBasedOnRounds int                `json:"qualificationBasedOnRounds"`
+	RoundsCount                int                `json:"roundsCount"`
 }
 
 // UpdateCompetitorCommand defines model for UpdateCompetitorCommand.
@@ -195,6 +208,9 @@ type PostCompetitorsImportMultipartBody struct {
 
 // PostCompetitionsJSONRequestBody defines body for PostCompetitions for application/json ContentType.
 type PostCompetitionsJSONRequestBody = CreateCompetitionCommand
+
+// PutCompetitionsCompetitionIdJSONRequestBody defines body for PutCompetitionsCompetitionId for application/json ContentType.
+type PutCompetitionsCompetitionIdJSONRequestBody = UpdateCompetitionCommand
 
 // PutCompetitionsCompetitionIdParametersJSONRequestBody defines body for PutCompetitionsCompetitionIdParameters for application/json ContentType.
 type PutCompetitionsCompetitionIdParametersJSONRequestBody = UpdateCompetitionParametersCommand
@@ -228,6 +244,9 @@ type ServerInterface interface {
 
 	// (GET /competitions/{competitionId})
 	GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
+
+	// (PUT /competitions/{competitionId})
+	PutCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
 
 	// (GET /competitions/{competitionId}/groups)
 	GetCompetitionsCompetitionIdGroups(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
@@ -292,6 +311,11 @@ func (_ Unimplemented) GetCompetitionsWeapons(w http.ResponseWriter, r *http.Req
 
 // (GET /competitions/{competitionId})
 func (_ Unimplemented) GetCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (PUT /competitions/{competitionId})
+func (_ Unimplemented) PutCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -441,6 +465,32 @@ func (siw *ServerInterfaceWrapper) GetCompetitionsCompetitionId(w http.ResponseW
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetCompetitionsCompetitionId(w, r, competitionId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PutCompetitionsCompetitionId operation middleware
+func (siw *ServerInterfaceWrapper) PutCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "competitionId" -------------
+	var competitionId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "competitionId", chi.URLParam(r, "competitionId"), &competitionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "competitionId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutCompetitionsCompetitionId(w, r, competitionId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -854,6 +904,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions/{competitionId}", wrapper.GetCompetitionsCompetitionId)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/competitions/{competitionId}", wrapper.PutCompetitionsCompetitionId)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions/{competitionId}/groups", wrapper.GetCompetitionsCompetitionIdGroups)

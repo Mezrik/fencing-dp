@@ -88,3 +88,23 @@ func (s Server) PutCompetitionsCompetitionIdParameters(w http.ResponseWriter, r 
 
 	render.Respond(w, r, http.StatusOK)
 }
+
+func (s Server) PutCompetitionsCompetitionId(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
+	var competition command.UpdateCompetitionCommand
+
+	if err := json.NewDecoder(r.Body).Decode(&competition); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	competition.ID = id
+
+	err := s.competition.Commands.UpdateCompetition.Handle(r.Context(), competition)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	render.Respond(w, r, http.StatusOK)
+}

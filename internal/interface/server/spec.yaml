@@ -77,6 +77,27 @@ paths:
               schema:
                 $ref: "#/components/schemas/CompetitionResult"
 
+    put:
+      tags:
+        - Competition
+      parameters:
+        - in: path
+          name: competitionId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCompetitionCommand"
+      responses:
+        '200':
+          description: todo
+
   /competitions/{competitionId}/groups:
     get:
       tags:
@@ -125,6 +146,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CompetitionGroup"
+    
 
   /competitions/{competitionId}/parameters:
     put:
@@ -694,6 +716,7 @@ components:
         - groupHits
         - eliminationHits
         - qualificationBasedOnRounds
+        - roundsCount
       properties:
         expectedParticipants:
           type: integer
@@ -709,7 +732,45 @@ components:
         qualificationBasedOnRounds:
           type: integer
           example: 3
+        roundsCount:
+          type: integer
+          example: 3
     
     DeploymentTypeEnum:
       type: string
       enum: [deployment]
+
+    UpdateCompetitionCommand:
+      type: object
+      required:
+        - name
+        - organizerName
+        - federationName
+        - date
+        - competitionType
+        - gender
+        - categoryId
+        - weaponId
+      properties:
+        name:
+          type: string
+          example: "Test Open 2024"
+        organizerName:
+          type: string
+          example: "SC Praha"
+        federationName:
+          type: string
+          example: "CSS"
+        date: 
+          type: string
+          example: "2024-01-01"
+        competitionType: 
+          $ref: "#/components/schemas/CompetitionTypeEnum"
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        categoryId:
+          type: string
+          format: uuid
+        weaponId:
+          type: string
+          format: uuid

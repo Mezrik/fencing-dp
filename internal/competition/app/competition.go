@@ -15,6 +15,7 @@ type Service struct {
 type Commands struct {
 	CreateCompetition           command.CreateCompetitionHandler
 	UpdateCompetitionParameters command.UpdateCompetitionParametersHandler
+	UpdateCompetition           command.UpdateCompetitionHandler
 }
 
 type Queries struct {
@@ -32,6 +33,7 @@ func NewCompetitionService(competitionRepo repositories.CompetitionRepository, l
 		Commands: Commands{
 			CreateCompetition:           command.NewCreateCompetitionHandler(competitionRepo, logger),
 			UpdateCompetitionParameters: command.NewUpdateCompetitionParametersHandler(competitionRepo, logger),
+			UpdateCompetition:           command.NewUpdateCompetitionHandler(competitionRepo, logger),
 		},
 		Queries: Queries{
 			AllCompetitions: query.NewAllCompetitionsHandler(competitionRepo, logger),

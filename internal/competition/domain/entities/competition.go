@@ -166,3 +166,39 @@ func (c Competition) Parameters() *CompetitionParameters {
 func (c Competition) GroupRounds() []*GroupRound {
 	return c.groupRounds
 }
+
+func (c *Competition) SetName(name string) {
+	c.name = name
+}
+
+func (c *Competition) SetOrganizerName(orgName string) {
+	c.organizerName = orgName
+}
+
+func (c *Competition) SetFederationName(fedName string) {
+	c.federationName = fedName
+}
+
+func (c *Competition) SetCompetitionType(comptType CompetitionTypeEnum) {
+	c.competitionType = comptType
+}
+
+func (c *Competition) SetCategory(category CompetitionCategory) {
+	c.category = category
+}
+
+func (c *Competition) SetGender(gender GenderEnum) {
+	c.gender = gender
+}
+
+func (c *Competition) SetWeapon(weapon Weapon) {
+	c.weapon = weapon
+}
+
+func (c *Competition) SetDate(date time.Time) {
+	c.date = date
+}
+
+func (c *Competition) SetGroupRounds(groupRounds []*GroupRound) {
+	c.groupRounds = groupRounds
+}

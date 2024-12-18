@@ -53,3 +53,9 @@ func (a *Admin) UpdateCompetitionParameters(updateParams command.UpdateCompetiti
 
 	return err
 }
+
+func (a *Admin) UpdateCompetition(competition command.UpdateCompetitionCommand) error {
+	err := a.competitions.Commands.UpdateCompetition.Handle(a.ctx, competition)
+
+	return err
+}
