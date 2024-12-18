@@ -47,3 +47,9 @@ func (a *Admin) GetGroup(id uuid.UUID) *query.Group {
 
 	return group
 }
+
+func (a *Admin) UpdateCompetitionParameters(updateParams command.UpdateCompetitionParameters) error {
+	err := a.competitions.Commands.UpdateCompetitionParameters.Handle(a.ctx, updateParams)
+
+	return err
+}

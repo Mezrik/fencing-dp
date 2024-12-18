@@ -68,3 +68,23 @@ func (s Server) GetCompetitionsCompetitionIdGroupsGroupId(w http.ResponseWriter,
 
 	render.Respond(w, r, group)
 }
+
+func (s Server) PutCompetitionsCompetitionIdParameters(w http.ResponseWriter, r *http.Request, competitionId uuid.UUID) {
+	var competitionParametersModel command.UpdateCompetitionParameters
+
+	if err := json.NewDecoder(r.Body).Decode(&competitionParametersModel); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	competitionParametersModel.CompetitionID = competitionId
+
+	err := s.competition.Commands.UpdateCompetitionParameters.Handle(r.Context(), competitionParametersModel)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	render.Respond(w, r, http.StatusOK)
+}

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"strings"
 
 	"github.com/Mezrik/fencing-dp/internal/common/util"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/entities"
@@ -212,6 +213,55 @@ func (repo InMemoryCompetitionRepository) FindGroupById(id uuid.UUID) (*entities
 	return competitionGroup, nil
 }
 
+func (repo InMemoryCompetitionRepository) Update(competition *entities.Competition) error {
+	compDao := &dao.CompetitionDao{DB: repo.db}
+	competitionParametersDao := &dao.CompetitionParametersDao{DB: repo.db}
+	competitionGroupRoundDao := &dao.CompetitionGroupRoundDao{DB: repo.db}
+
+	competitionModel, err := repo.marshalCompetition(competition)
+
+	if err != nil {
+		return err
+	}
+
+	parameters, err := competitionParametersDao.FindById(competitionModel.Parameters.ID)
+
+	if err != nil {
+		return err
+	}
+
+	if parameters == nil {
+		err = competitionParametersDao.Create(&competitionModel.Parameters)
+	} else {
+		err = competitionParametersDao.Update(&competitionModel.Parameters)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	for _, round := range competition.GroupRounds() {
+		roundModel := models.CompetitionGroupRoundModel{
+			ID:                       round.ID,
+			CreatedAt:                round.CreatedAt,
+			Number:                   round.Number(),
+			CompetitionID:            round.CompetitionID(),
+			ParticipantStartingCount: round.ParticipantsStartingCount(),
+			NumberOfGroups:           round.NumberOfGroups(),
+			ParticipantsInGroups:     round.ParticipantsInGroups(),
+			ShiftCriteria:            strings.Join(shiftCriteriaToStrings(round.ShiftCriteria()), ","),
+			NumberOfAdvancers:        round.NumberOfAdvancers(),
+		}
+
+		err = competitionGroupRoundDao.Create(&roundModel)
+		if err != nil {
+			return err
+		}
+	}
+
+	return compDao.Update(competitionModel)
+}
+
 func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) (*models.CompetitionModel, error) {
 	competitionModel := &models.CompetitionModel{
 		ID:              c.ID,
@@ -227,4 +277,12 @@ func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competi
 	}
 
 	return competitionModel, nil
+}
+
+func shiftCriteriaToStrings(criteria []entities.ShiftCriteria) []string {
+	strs := make([]string, len(criteria))
+	for i, c := range criteria {
+		strs[i] = string(c)
+	}
+	return strs
 }

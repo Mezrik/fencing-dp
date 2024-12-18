@@ -103,7 +103,25 @@ func (dao *CompetitionDao) FindAll() ([]*models.CompetitionModel, error) {
 }
 
 func (dao *CompetitionDao) Update(competition *models.CompetitionModel) error {
-	return nil
+	query := `
+		UPDATE competition
+		SET
+			updated_at = :updated_at,
+			weapon_id = :weapon_id,
+			category_id = :category_id,
+			name = :name,
+			organizer_name = :organizer_name,
+			federation_name = :federation_name,
+			competition_type = :competition_type,
+			gender = :gender,
+			date = :date
+			parameters_id = :parameters_id
+		WHERE id = :id
+	`
+
+	_, err := dao.DB.NamedExec(query, competition)
+
+	return err
 }
 
 func (dao *CompetitionDao) Delete(id uuid.UUID) error {

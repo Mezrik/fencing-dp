@@ -18,6 +18,11 @@ const (
 	National      CompetitionTypeEnum = "national"
 )
 
+// Defines values for DeploymentTypeEnum.
+const (
+	Deployment DeploymentTypeEnum = "deployment"
+)
+
 // Defines values for GenderEnum.
 const (
 	Female GenderEnum = "female"
@@ -37,8 +42,8 @@ const (
 
 // AssignCompetitorRequest defines model for AssignCompetitorRequest.
 type AssignCompetitorRequest struct {
-	CompetitionId openapi_types.UUID   `json:"competitionId"`
-	CompetitorIds []openapi_types.UUID `json:"competitorIds"`
+	CompetitionId  openapi_types.UUID   `json:"competitionId"`
+	ParticipantIds []openapi_types.UUID `json:"participantIds"`
 }
 
 // ClubResult defines model for ClubResult.
@@ -123,6 +128,9 @@ type CreateCompetitorCommand struct {
 	Surname    string              `json:"surname"`
 }
 
+// DeploymentTypeEnum defines model for DeploymentTypeEnum.
+type DeploymentTypeEnum string
+
 // GenderEnum defines model for GenderEnum.
 type GenderEnum string
 
@@ -153,6 +161,15 @@ type MatchStateItem struct {
 	PointTo *openapi_types.UUID `json:"pointTo,omitempty"`
 }
 
+// UpdateCompetitionParametersCommand defines model for UpdateCompetitionParametersCommand.
+type UpdateCompetitionParametersCommand struct {
+	DeploymentType             DeploymentTypeEnum `json:"deploymentType"`
+	EliminationHits            int                `json:"eliminationHits"`
+	ExpectedParticipants       int                `json:"expectedParticipants"`
+	GroupHits                  int                `json:"groupHits"`
+	QualificationBasedOnRounds int                `json:"qualificationBasedOnRounds"`
+}
+
 // UpdateCompetitorCommand defines model for UpdateCompetitorCommand.
 type UpdateCompetitorCommand struct {
 	Birthdate  string              `json:"birthdate"`
@@ -178,6 +195,9 @@ type PostCompetitorsImportMultipartBody struct {
 
 // PostCompetitionsJSONRequestBody defines body for PostCompetitions for application/json ContentType.
 type PostCompetitionsJSONRequestBody = CreateCompetitionCommand
+
+// PutCompetitionsCompetitionIdParametersJSONRequestBody defines body for PutCompetitionsCompetitionIdParameters for application/json ContentType.
+type PutCompetitionsCompetitionIdParametersJSONRequestBody = UpdateCompetitionParametersCommand
 
 // PostCompetitorsJSONRequestBody defines body for PostCompetitors for application/json ContentType.
 type PostCompetitorsJSONRequestBody = CreateCompetitorCommand
@@ -214,6 +234,9 @@ type ServerInterface interface {
 
 	// (GET /competitions/{competitionId}/groups/{groupId})
 	GetCompetitionsCompetitionIdGroupsGroupId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID, groupId openapi_types.UUID)
+
+	// (PUT /competitions/{competitionId}/parameters)
+	PutCompetitionsCompetitionIdParameters(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID)
 
 	// (GET /competitors)
 	GetCompetitors(w http.ResponseWriter, r *http.Request)
@@ -279,6 +302,11 @@ func (_ Unimplemented) GetCompetitionsCompetitionIdGroups(w http.ResponseWriter,
 
 // (GET /competitions/{competitionId}/groups/{groupId})
 func (_ Unimplemented) GetCompetitionsCompetitionIdGroupsGroupId(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID, groupId openapi_types.UUID) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (PUT /competitions/{competitionId}/parameters)
+func (_ Unimplemented) PutCompetitionsCompetitionIdParameters(w http.ResponseWriter, r *http.Request, competitionId openapi_types.UUID) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -474,6 +502,32 @@ func (siw *ServerInterfaceWrapper) GetCompetitionsCompetitionIdGroupsGroupId(w h
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetCompetitionsCompetitionIdGroupsGroupId(w, r, competitionId, groupId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PutCompetitionsCompetitionIdParameters operation middleware
+func (siw *ServerInterfaceWrapper) PutCompetitionsCompetitionIdParameters(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "competitionId" -------------
+	var competitionId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "competitionId", chi.URLParam(r, "competitionId"), &competitionId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "competitionId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutCompetitionsCompetitionIdParameters(w, r, competitionId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -806,6 +860,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitions/{competitionId}/groups/{groupId}", wrapper.GetCompetitionsCompetitionIdGroupsGroupId)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/competitions/{competitionId}/parameters", wrapper.PutCompetitionsCompetitionIdParameters)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/competitors", wrapper.GetCompetitors)

@@ -3,6 +3,7 @@ package entities
 import (
 	"github.com/Mezrik/fencing-dp/internal/common"
 	"github.com/google/uuid"
+	"golang.org/x/exp/slices"
 )
 
 type ShiftCriteria string
@@ -20,7 +21,7 @@ type GroupRound struct {
 	participantsStartingCount int
 
 	numberOfGroups       int
-	participantsInGroups []int
+	participantsInGroups int
 
 	shiftCriteria []ShiftCriteria
 
@@ -36,7 +37,7 @@ func NewGroupRound(competitionID uuid.UUID, number int, participantsStartingCoun
 		number:                    number,
 		participantsStartingCount: participantsStartingCount,
 		numberOfGroups:            recommendedSize.groupsCount,
-		participantsInGroups:      recommendedSize.groupSizes,
+		participantsInGroups:      slices.Max(recommendedSize.groupSizes),
 		shiftCriteria:             shiftCriteria,
 		numberOfAdvancers:         participantsStartingCount * advancingPercent / 100,
 	}
@@ -58,7 +59,7 @@ func (c *GroupRound) NumberOfGroups() int {
 	return c.numberOfGroups
 }
 
-func (c *GroupRound) ParticipantsInGroups() []int {
+func (c *GroupRound) ParticipantsInGroups() int {
 	return c.participantsInGroups
 }
 

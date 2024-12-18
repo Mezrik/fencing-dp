@@ -125,6 +125,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CompetitionGroup"
+
+  /competitions/{competitionId}/parameters:
+    put:
+      tags:
+        - Competition
+      parameters:
+        - in: path
+          name: competitionId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCompetitionParametersCommand"
+      responses:
+        '200':
+          description: Competition parameters updated successfully
+        '404':
+          description: Competition not found
+        '422':
+          description: Invalid request
                 
   /competitors:
     get:
@@ -659,3 +685,31 @@ components:
           items:
             type: string
             format: uuid
+
+    UpdateCompetitionParametersCommand:
+      type: object
+      required:
+        - expectedParticipants
+        - deploymentType
+        - groupHits
+        - eliminationHits
+        - qualificationBasedOnRounds
+      properties:
+        expectedParticipants:
+          type: integer
+          example: 100
+        deploymentType:
+          $ref: "#/components/schemas/DeploymentTypeEnum"
+        groupHits:
+          type: integer
+          example: 5
+        eliminationHits:
+          type: integer
+          example: 15
+        qualificationBasedOnRounds:
+          type: integer
+          example: 3
+    
+    DeploymentTypeEnum:
+      type: string
+      enum: [deployment]
