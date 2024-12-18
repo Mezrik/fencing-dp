@@ -346,6 +346,7 @@ func (repo InMemoryCompetitorRepository) marshalParticipant(c *entities.Particip
 		DeploymentNumber: c.DeploymentNumber(),
 		Points:           c.Points(),
 		StartingPosition: c.StartingPosition(),
+		GroupID:          c.GroupId(),
 	}
 
 	return participantModel, nil

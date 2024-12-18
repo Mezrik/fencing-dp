@@ -36,7 +36,7 @@ func NewCompetitionService(competitionRepo repositories.CompetitionRepository, g
 			CreateCompetition:           command.NewCreateCompetitionHandler(competitionRepo, logger),
 			UpdateCompetitionParameters: command.NewUpdateCompetitionParametersHandler(competitionRepo, logger),
 			UpdateCompetition:           command.NewUpdateCompetitionHandler(competitionRepo, logger),
-			InitializeGroups:            command.NewInitializeGroupsHandler(groupRepo, competitionRepo, competitorRepo),
+			InitializeGroups:            command.NewInitializeGroupsHandler(groupRepo, competitionRepo, competitorRepo, logger),
 		},
 		Queries: Queries{
 			AllCompetitions: query.NewAllCompetitionsHandler(competitionRepo, logger),

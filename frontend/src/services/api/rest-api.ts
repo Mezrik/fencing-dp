@@ -26,6 +26,8 @@ import {
   postCompetitorsImport,
   UpdateCompetitorCommand,
   putCompetitorsCompetitorId,
+  postCompetitionsCompetitionIdGroupsInitialize,
+  CompetitionDetail,
 } from '@/generated/server';
 import { Api } from './api';
 
@@ -34,7 +36,7 @@ export class RestApi implements Api {
     return getCompetitions();
   }
 
-  GetCompetition(id: UUID): Promise<CompetitionResult> {
+  GetCompetition(id: UUID): Promise<CompetitionDetail> {
     return getCompetitionsCompetitionId(id);
   }
 
@@ -92,5 +94,9 @@ export class RestApi implements Api {
 
   ImportCompetitor(file: File): Promise<void> {
     return postCompetitorsImport({ file: new Blob([file]) });
+  }
+
+  InitializeGroups(competitionId: UUID): Promise<void> {
+    return postCompetitionsCompetitionIdGroupsInitialize(competitionId);
   }
 }

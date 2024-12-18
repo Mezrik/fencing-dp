@@ -10,6 +10,7 @@ import {
   MatchDetail,
   CompetitionParticipant,
   UpdateCompetitorCommand,
+  CompetitionDetail,
 } from '@/generated/server';
 import { DesktopApi } from './desktop-api';
 import { RestApi } from './rest-api';
@@ -19,7 +20,7 @@ import { RestApi } from './rest-api';
 export interface Api {
   GetCompetitions(): Promise<Array<CompetitionResult>>;
 
-  GetCompetition(id: UUID): Promise<CompetitionResult>;
+  GetCompetition(id: UUID): Promise<CompetitionDetail>;
 
   CreateCompetition(data: CreateCompetitionCommand): Promise<void>;
 
@@ -48,6 +49,8 @@ export interface Api {
   AssignParticipants(competitorId: UUID[], competitionId: UUID): Promise<void>;
 
   ImportCompetitor(file: File): Promise<void>;
+
+  InitializeGroups(competitionId: UUID): Promise<void>;
 }
 
 export const api: Api = import.meta.env.MODE === 'desktop' ? new DesktopApi() : new RestApi();

@@ -19,4 +19,5 @@ type CompetitorModel struct {
 	License    *string      `db:"license"`
 	LicenseFie *string      `db:"license_fie"`
 	Birthdate  sql.NullTime `db:"birthdate"`
+	Rating     int          `db:"rating"`
 }

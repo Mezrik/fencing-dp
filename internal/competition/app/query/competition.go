@@ -7,6 +7,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type CompetitionParameters struct {
+	ExpectedParticipants       int                     `json:"expectedParticipants"`
+	DeploymentType             entities.DeploymentType `json:"deploymentType"`
+	GroupHits                  int                     `json:"groupHits"`
+	EliminationHits            int                     `json:"eliminationHits"`
+	QualificationBasedOnRounds int                     `json:"qualificationBasedOnRounds"`
+}
+
 type Competition struct {
 	ID              uuid.UUID                    `json:"id" ts_type:"UUID"`
 	Name            string                       `json:"name"`
@@ -17,9 +25,25 @@ type Competition struct {
 	Gender          entities.GenderEnum          `json:"gender"`
 	Weapon          Weapon                       `json:"weapon"`
 	Date            time.Time                    `json:"date"`
+	Parameters      *CompetitionParameters       `json:"parameters"`
+}
+
+func ToCompetitionParametersFromEntity(parameters *entities.CompetitionParameters) *CompetitionParameters {
+	if parameters == nil {
+		return nil
+	}
+
+	return &CompetitionParameters{
+		ExpectedParticipants:       parameters.ExpectedParticipants(),
+		DeploymentType:             entities.DeploymentType(parameters.DeploymentType()),
+		GroupHits:                  parameters.GroupHits(),
+		EliminationHits:            parameters.EliminationHits(),
+		QualificationBasedOnRounds: parameters.QualificationBasedOnRounds(),
+	}
 }
 
 func ToCompetitionQueryFromEntity(competition *entities.Competition) *Competition {
+
 	return &Competition{
 		ID:   competition.ID,
 		Name: competition.Name(),
@@ -41,6 +65,8 @@ func ToCompetitionQueryFromEntity(competition *entities.Competition) *Competitio
 		},
 
 		Date: competition.Date(),
+
+		Parameters: ToCompetitionParametersFromEntity(competition.Parameters()),
 	}
 }
 func ToCompetitionQueryListFromEntities(competitions []*entities.Competition) []*Competition {

@@ -58,12 +58,36 @@ type CompetitionCategoryResult struct {
 	Name string             `json:"name"`
 }
 
+// CompetitionDetail defines model for CompetitionDetail.
+type CompetitionDetail struct {
+	Category        CompetitionCategoryResult `json:"category"`
+	CompetitionType CompetitionTypeEnum       `json:"competitionType"`
+	Date            string                    `json:"date"`
+	FederationName  string                    `json:"federationName"`
+	Gender          GenderEnum                `json:"gender"`
+	Id              openapi_types.UUID        `json:"id"`
+	Name            string                    `json:"name"`
+	OrganizerName   string                    `json:"organizerName"`
+	Parameters      *CompetitionParameters    `json:"parameters,omitempty"`
+	Weapon          WeaponResult              `json:"weapon"`
+}
+
 // CompetitionGroup defines model for CompetitionGroup.
 type CompetitionGroup struct {
 	CompetitionId openapi_types.UUID `json:"competitionId"`
 	Id            openapi_types.UUID `json:"id"`
 	Name          string             `json:"name"`
 	PisteNumber   *int               `json:"pisteNumber,omitempty"`
+}
+
+// CompetitionParameters defines model for CompetitionParameters.
+type CompetitionParameters struct {
+	DeploymentType             DeploymentTypeEnum `json:"deploymentType"`
+	EliminationHits            int                `json:"eliminationHits"`
+	ExpectedParticipants       int                `json:"expectedParticipants"`
+	GroupHits                  int                `json:"groupHits"`
+	QualificationBasedOnRounds int                `json:"qualificationBasedOnRounds"`
+	RoundsCount                int                `json:"roundsCount"`
 }
 
 // CompetitionParticipant defines model for CompetitionParticipant.

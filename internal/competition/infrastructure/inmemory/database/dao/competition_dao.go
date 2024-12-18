@@ -58,24 +58,27 @@ func (dao *CompetitionDao) FindById(id uuid.UUID) (*models.CompetitionModel, err
 				cc.name as "category.name", 
 				cc.created_at as "category.created_at", 
 				cc.updated_at as "category.updated_at", 
-				cp.id as "parameters.id", 
-				cp.created_at as "parameters.created_at",
-				cp.updated_at as "parameters.updated_at",
-				cp.expected_participants as "parameters.expected_participants",
-				cp.deployment_type as "parameters.deployment_type",
-				cp.group_hits as "parameters.group_hits",
-				cp.elimination_hits as "parameters.elimination_hits",
-				cp.qualification_based_on_rounds as "parameters.qualification_based_on_rounds",
 				c.*
 			FROM competitions c
 			JOIN weapons w ON c.weapon_id = w.id
       JOIN competition_categories cc ON c.category_id = cc.id
-			JOIN competition_parameters cp ON c.competition_parameters_id = cp.id
 			WHERE c.id = ?
 		`, id)
 
 	if err != nil {
 		return nil, err
+	}
+
+	if competition.ParametersID != nil {
+		var parameters models.CompetitionParametersModel
+		err := dao.DB.Get(&parameters, `SELECT * FROM competition_parameters WHERE id = ?`, competition.ParametersID)
+
+		competition.Parameters = &parameters
+		if err != nil {
+			return nil, err
+		}
+
+		competition.Parameters = &parameters
 	}
 
 	return &competition, nil
@@ -91,7 +94,7 @@ func (dao *CompetitionDao) FindAll() ([]*models.CompetitionModel, error) {
 					cc.id as "category.id", 
 					cc.name as "category.name", 
 					cc.created_at as "category.created_at", 
-					cc.updated_at as "category.updated_at", 
+					cc.updated_at as "category.updated_at",
 					c.*
         FROM competitions c
         JOIN weapons w ON c.weapon_id = w.id

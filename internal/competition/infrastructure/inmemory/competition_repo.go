@@ -47,16 +47,20 @@ func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Comp
 	category := entities.UnmarshalCompetitionCategory(c.Category.ID, c.Category.Name, c.Category.CreatedAt, util.GetTimePtr(c.Category.UpdatedAt))
 	weapon := entities.UnmarshalWeapon(c.Weapon.ID, c.Weapon.Name, c.Weapon.CreatedAt, util.GetTimePtr(c.Weapon.UpdatedAt))
 
-	parameters := entities.UnmarshalCompetitionParameters(
-		c.Parameters.ID,
-		c.Parameters.ExpectedParticipants,
-		entities.DeploymentType(c.Parameters.DeploymentType),
-		c.Parameters.GroupHits,
-		c.Parameters.EliminationHits,
-		c.Parameters.QualificationBasedOnRounds,
-		c.Parameters.CreatedAt,
-		util.GetTimePtr(c.Parameters.UpdatedAt),
-	)
+	var parameters *entities.CompetitionParameters
+
+	if c.Parameters != nil {
+		parameters = entities.UnmarshalCompetitionParameters(
+			c.Parameters.ID,
+			c.Parameters.ExpectedParticipants,
+			entities.DeploymentType(c.Parameters.DeploymentType),
+			c.Parameters.GroupHits,
+			c.Parameters.EliminationHits,
+			c.Parameters.QualificationBasedOnRounds,
+			c.Parameters.CreatedAt,
+			util.GetTimePtr(c.Parameters.UpdatedAt),
+		)
+	}
 
 	// Get all group rounds
 	groupRoundsModels, err := groupRoundDao.FindAll(id)
@@ -268,9 +272,9 @@ func (repo InMemoryCompetitionRepository) Update(competition *entities.Competiti
 	}
 
 	if parameters == nil {
-		err = competitionParametersDao.Create(&competitionModel.Parameters)
+		err = competitionParametersDao.Create(competitionModel.Parameters)
 	} else {
-		err = competitionParametersDao.Update(&competitionModel.Parameters)
+		err = competitionParametersDao.Update(competitionModel.Parameters)
 	}
 
 	if err != nil {

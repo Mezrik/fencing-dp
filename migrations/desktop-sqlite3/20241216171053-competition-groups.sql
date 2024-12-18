@@ -2,12 +2,12 @@
 create table if not exists competition_parameters (
   id text not null constraint competition_parameters_pk primary key,
   expected_participants integer not null,
-  deployment_type text check(deploymentType in ("deployment", "points")) not null,
+  deployment_type text check(deployment_type in ("deployment", "points")) not null,
   group_hits int not null,
   elimination_hits int not null,
   qualification_based_on_rounds int not null,
   created_at datetime not null,
-  updated_at datetime,
+  updated_at datetime
 );
 
 alter table
@@ -25,7 +25,7 @@ create table if not exists competition_group_rounds (
   shift_criteria text not null,
   number_of_advancers int not null,
   created_at datetime not null,
-  updated_at datetime,
+  updated_at datetime
 );
 
 -- +migrate Down

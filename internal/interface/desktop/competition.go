@@ -59,3 +59,9 @@ func (a *Admin) UpdateCompetition(competition command.UpdateCompetitionCommand) 
 
 	return err
 }
+
+func (a *Admin) InitializeGroups(competitionId uuid.UUID) error {
+	err := a.competitions.Commands.InitializeGroups.Handle(a.ctx, command.InitializeGroups{CompetitionID: competitionId})
+
+	return err
+}

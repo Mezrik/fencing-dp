@@ -32,12 +32,24 @@ func (m *InMemoryGroupsRepository) Create(group *entities.Group) error {
 }
 
 func (m *InMemoryGroupsRepository) marshalCompetitionGroup(group *entities.Group) (*models.CompetitionGroupModel, error) {
+	pisteNumber := sql.NullInt64{Valid: true, Int64: 0}
+
+	if group.PisteNumber() != nil {
+		pisteNumber = sql.NullInt64{Valid: true, Int64: *group.PisteNumber()}
+	}
+
+	var updatedAt sql.NullTime
+
+	if group.UpdatedAt != nil {
+		updatedAt = sql.NullTime{Valid: true, Time: *group.UpdatedAt}
+	}
+
 	return &models.CompetitionGroupModel{
 		ID:            group.ID,
 		Name:          group.Name(),
-		PisteNumber:   sql.NullInt64{Valid: group.PisteNumber() != nil, Int64: *group.PisteNumber()},
+		PisteNumber:   pisteNumber,
 		CreatedAt:     group.CreatedAt,
-		UpdatedAt:     sql.NullTime{Valid: group.UpdatedAt != nil, Time: *group.UpdatedAt},
+		UpdatedAt:     updatedAt,
 		CompetitionId: group.CompetitionID(),
 	}, nil
 }

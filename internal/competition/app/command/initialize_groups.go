@@ -8,6 +8,7 @@ import (
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
 	compRepo "github.com/Mezrik/fencing-dp/internal/competitor/domain/repositories"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 type InitializeGroups struct {
@@ -22,12 +23,12 @@ type initializeGroupsHandler struct {
 	competitorRepo  compRepo.CompetitorRepo
 }
 
-func NewInitializeGroupsHandler(repo repositories.GroupRepository, competitionRepo repositories.CompetitionRepository, competitorRepo compRepo.CompetitorRepo) InitializeGroupsHandler {
+func NewInitializeGroupsHandler(repo repositories.GroupRepository, competitionRepo repositories.CompetitionRepository, competitorRepo compRepo.CompetitorRepo, logger *logrus.Entry) InitializeGroupsHandler {
 	if repo == nil {
 		panic("nil repo")
 	}
 
-	return decorator.ApplyCommandDecorators[InitializeGroups](initializeGroupsHandler{repo, competitionRepo, competitorRepo}, nil)
+	return decorator.ApplyCommandDecorators[InitializeGroups](initializeGroupsHandler{repo, competitionRepo, competitorRepo}, logger)
 }
 
 func (h initializeGroupsHandler) Handle(ctx context.Context, cmd InitializeGroups) error {

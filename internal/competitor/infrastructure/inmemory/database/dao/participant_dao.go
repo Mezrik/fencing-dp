@@ -31,7 +31,7 @@ func (dao *ParticipantDao) Update(participant models.ParticipantModel) error {
 			points = :points, 
 			starting_position = :starting_position,
 			deployment_number = :deployment_number,
-			group_id = :group_id,
+			group_id = :group_id
 			WHERE competitor_id = :competitor_id AND competition_id = :competition_id
 		`,
 		participant)

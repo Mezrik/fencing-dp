@@ -98,7 +98,7 @@ func (c GroupRound) CreateGroups(participants []*competitorEntities.Participant)
 
 	for i := 0; i < c.numberOfGroups; i++ {
 		gd := &GroupData{
-			Group:        NewCompetitionGroup("Group "+string(i+1), c.competitionID),
+			Group:        NewCompetitionGroup("Group "+string(rune(i+1)), c.competitionID),
 			Participants: participants[i*c.participantsInGroups : (i+1)*c.participantsInGroups],
 		}
 
@@ -106,10 +106,7 @@ func (c GroupRound) CreateGroups(participants []*competitorEntities.Participant)
 			p.SetGroupID(gd.Group.ID)
 		}
 
-		groups = append(groups, &GroupData{
-			Group:        NewCompetitionGroup("Group "+string(i+1), c.competitionID),
-			Participants: participants[i*c.participantsInGroups : (i+1)*c.participantsInGroups],
-		})
+		groups = append(groups, gd)
 	}
 
 	return groups

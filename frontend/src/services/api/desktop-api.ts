@@ -13,6 +13,7 @@ import {
   GetParticipants,
   AssignCompetitors,
   UpdateCompetitor,
+  InitializeGroups,
   GetCompetitor,
 } from '@/generated/wailsjs/go/desktop/Admin';
 import { command, query } from '@/generated/wailsjs/go/models';
@@ -81,5 +82,9 @@ export class DesktopApi implements Api {
 
   ImportCompetitor(): Promise<void> {
     return Promise.resolve();
+  }
+
+  InitializeGroups(competitionId: UUID): Promise<void> {
+    return InitializeGroups(competitionId);
   }
 }
