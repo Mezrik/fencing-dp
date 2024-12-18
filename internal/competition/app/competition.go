@@ -4,6 +4,7 @@ import (
 	"github.com/Mezrik/fencing-dp/internal/competition/app/command"
 	"github.com/Mezrik/fencing-dp/internal/competition/app/query"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
+	competitorRepo "github.com/Mezrik/fencing-dp/internal/competitor/domain/repositories"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,6 +17,7 @@ type Commands struct {
 	CreateCompetition           command.CreateCompetitionHandler
 	UpdateCompetitionParameters command.UpdateCompetitionParametersHandler
 	UpdateCompetition           command.UpdateCompetitionHandler
+	InitializeGroups            command.InitializeGroupsHandler
 }
 
 type Queries struct {
@@ -27,13 +29,14 @@ type Queries struct {
 	GetGroup        query.GetGroupHandler
 }
 
-func NewCompetitionService(competitionRepo repositories.CompetitionRepository, logger *logrus.Entry) Service {
+func NewCompetitionService(competitionRepo repositories.CompetitionRepository, groupRepo repositories.GroupRepository, competitorRepo competitorRepo.CompetitorRepo, logger *logrus.Entry) Service {
 
 	return Service{
 		Commands: Commands{
 			CreateCompetition:           command.NewCreateCompetitionHandler(competitionRepo, logger),
 			UpdateCompetitionParameters: command.NewUpdateCompetitionParametersHandler(competitionRepo, logger),
 			UpdateCompetition:           command.NewUpdateCompetitionHandler(competitionRepo, logger),
+			InitializeGroups:            command.NewInitializeGroupsHandler(groupRepo, competitionRepo, competitorRepo),
 		},
 		Queries: Queries{
 			AllCompetitions: query.NewAllCompetitionsHandler(competitionRepo, logger),

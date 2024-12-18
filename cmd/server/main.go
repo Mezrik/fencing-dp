@@ -46,7 +46,9 @@ func main() {
 
 	matchService := match.NewMatchService(matchRepository, logger)
 
-	competitionService := competition.NewCompetitionService(competitionRepository, logger)
+	groupRepository := competitionRepositories.NewInMemoryGroupsRepository(ctx, db)
+
+	competitionService := competition.NewCompetitionService(competitionRepository, groupRepository, competitorRepository, logger)
 	competitorService := competitor.NewCompetitorService(
 		competitorRepository,
 		clubRepository,

@@ -67,3 +67,7 @@ func (p Participant) StartingPosition() int {
 func (p Participant) GroupId() uuid.NullUUID {
 	return p.group_id
 }
+
+func (p *Participant) SetGroupID(id uuid.UUID) {
+	p.group_id = uuid.NullUUID{UUID: id, Valid: true}
+}

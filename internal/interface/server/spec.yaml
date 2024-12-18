@@ -98,6 +98,22 @@ paths:
         '200':
           description: todo
 
+  /competitions/{competitionId}/groups/initialize:
+    post:
+      tags:
+        - Competition
+      parameters:
+        - in: path
+          name: competitionId
+          schema:
+            type: string
+            format: uuid
+            example: 123e4567-e89b-12d3-a456-426614174000
+          required: true
+      responses:
+        '200':
+          description: todo
+
   /competitions/{competitionId}/groups:
     get:
       tags:

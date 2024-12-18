@@ -293,6 +293,18 @@ func (repo InMemoryCompetitorRepository) AssignCompetitors(competitorIds []uuid.
 	return nil
 }
 
+func (repo InMemoryCompetitorRepository) UpdateParticipant(participant *entities.Participant) error {
+	participantDao := &dao.ParticipantDao{DB: repo.db}
+
+	participantModel, err := repo.marshalParticipant(participant)
+
+	if err != nil {
+		return err
+	}
+
+	return participantDao.Update(*participantModel)
+}
+
 func (repo InMemoryCompetitorRepository) marshalCompetitor(c *entities.Competitor) (*models.CompetitorModel, error) {
 	var clubID *uuid.UUID
 

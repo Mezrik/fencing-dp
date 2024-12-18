@@ -2,6 +2,7 @@ package dao
 
 import (
 	"github.com/Mezrik/fencing-dp/internal/competition/infrastructure/inmemory/database/models"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -35,4 +36,16 @@ func (dao *CompetitionGroupRoundDao) Create(competitionGroupRound *models.Compet
 	)
 
 	return err
+}
+
+func (dao *CompetitionGroupRoundDao) FindAll(competitionId uuid.UUID) ([]*models.CompetitionGroupRoundModel, error) {
+	var competitionGroupRoundModels []*models.CompetitionGroupRoundModel
+
+	err := dao.DB.Select(&competitionGroupRoundModels, "SELECT * FROM competition_group_rounds WHERE competition_id = ?", competitionId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return competitionGroupRoundModels, nil
 }

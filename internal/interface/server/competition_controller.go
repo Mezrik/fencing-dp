@@ -108,3 +108,14 @@ func (s Server) PutCompetitionsCompetitionId(w http.ResponseWriter, r *http.Requ
 
 	render.Respond(w, r, http.StatusOK)
 }
+
+func (s Server) PostCompetitionsCompetitionIdGroupsInitialize(w http.ResponseWriter, r *http.Request, competitionId uuid.UUID) {
+	err := s.competition.Commands.InitializeGroups.Handle(r.Context(), command.InitializeGroups{CompetitionID: competitionId})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	render.Respond(w, r, http.StatusOK)
+}

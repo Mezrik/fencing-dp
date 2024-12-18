@@ -25,6 +25,20 @@ func (dao *ParticipantDao) Create(participant models.ParticipantModel) error {
 	return err
 }
 
+func (dao *ParticipantDao) Update(participant models.ParticipantModel) error {
+	_, err := dao.DB.NamedExec(`UPDATE participating_competitors 
+		SET 
+			points = :points, 
+			starting_position = :starting_position,
+			deployment_number = :deployment_number,
+			group_id = :group_id,
+			WHERE competitor_id = :competitor_id AND competition_id = :competition_id
+		`,
+		participant)
+
+	return err
+}
+
 func (c *ParticipantDao) BatchCreate(participants []models.ParticipantModel) error {
 	query := `
 		INSERT INTO participating_competitors (

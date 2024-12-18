@@ -35,9 +35,10 @@ func (repo InMemoryCompetitionRepository) Create(competition *entities.Competiti
 }
 
 func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Competition, error) {
-	dao := &dao.CompetitionDao{DB: repo.db}
+	competitionDao := &dao.CompetitionDao{DB: repo.db}
+	groupRoundDao := &dao.CompetitionGroupRoundDao{DB: repo.db}
 
-	c, err := dao.FindById(id)
+	c, err := competitionDao.FindById(id)
 
 	if err != nil {
 		return nil, err
@@ -45,6 +46,42 @@ func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Comp
 
 	category := entities.UnmarshalCompetitionCategory(c.Category.ID, c.Category.Name, c.Category.CreatedAt, util.GetTimePtr(c.Category.UpdatedAt))
 	weapon := entities.UnmarshalWeapon(c.Weapon.ID, c.Weapon.Name, c.Weapon.CreatedAt, util.GetTimePtr(c.Weapon.UpdatedAt))
+
+	parameters := entities.UnmarshalCompetitionParameters(
+		c.Parameters.ID,
+		c.Parameters.ExpectedParticipants,
+		entities.DeploymentType(c.Parameters.DeploymentType),
+		c.Parameters.GroupHits,
+		c.Parameters.EliminationHits,
+		c.Parameters.QualificationBasedOnRounds,
+		c.Parameters.CreatedAt,
+		util.GetTimePtr(c.Parameters.UpdatedAt),
+	)
+
+	// Get all group rounds
+	groupRoundsModels, err := groupRoundDao.FindAll(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	groupRounds := make([]*entities.GroupRound, 0, len(groupRoundsModels))
+
+	for _, groupRound := range groupRoundsModels {
+
+		groupRounds = append(groupRounds, entities.UnmarshalGroupRound(
+			groupRound.ID,
+			groupRound.CompetitionID,
+			groupRound.Number,
+			groupRound.ParticipantStartingCount,
+			groupRound.NumberOfGroups,
+			groupRound.ParticipantsInGroups,
+			shiftCriteriaToEnums(strings.Split(groupRound.ShiftCriteria, ",")),
+			groupRound.NumberOfAdvancers,
+			groupRound.CreatedAt,
+			util.GetTimePtr(groupRound.UpdatedAt),
+		))
+	}
 
 	competition := entities.UnmarshalCompetition(
 		c.ID,
@@ -58,8 +95,8 @@ func (repo InMemoryCompetitionRepository) FindById(id uuid.UUID) (*entities.Comp
 		entities.GenderEnum(c.Gender),
 		*weapon,
 		c.Date,
-		nil,
-		[]*entities.GroupRound{},
+		parameters,
+		groupRounds,
 	)
 
 	return competition, nil
@@ -285,4 +322,12 @@ func shiftCriteriaToStrings(criteria []entities.ShiftCriteria) []string {
 		strs[i] = string(c)
 	}
 	return strs
+}
+
+func shiftCriteriaToEnums(strs []string) []entities.ShiftCriteria {
+	criteria := make([]entities.ShiftCriteria, len(strs))
+	for i, s := range strs {
+		criteria[i] = entities.ShiftCriteria(s)
+	}
+	return criteria
 }

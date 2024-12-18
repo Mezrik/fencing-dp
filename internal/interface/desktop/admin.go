@@ -48,8 +48,9 @@ func (a *Admin) Startup(ctx context.Context) {
 	competitorRepository := competitorRepositories.NewInMemoryCompetitorRepository(a.ctx, db)
 	clubRepository := competitorRepositories.NewInMemoryClubRepo(a.ctx, db)
 	matchRepository := matchRepositories.NewInMemoryMatchRepo(a.ctx, db)
+	groupRepository := competitionRepositories.NewInMemoryGroupsRepository(a.ctx, db)
 
-	a.competitions = competition.NewCompetitionService(competitionRepository, logger)
+	a.competitions = competition.NewCompetitionService(competitionRepository, groupRepository, competitorRepository, logger)
 
 	a.competitors = competitor.NewCompetitorService(
 		competitorRepository,
