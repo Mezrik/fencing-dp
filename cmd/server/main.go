@@ -48,7 +48,7 @@ func main() {
 
 	groupRepository := competitionRepositories.NewInMemoryGroupsRepository(ctx, db)
 
-	competitionService := competition.NewCompetitionService(competitionRepository, groupRepository, competitorRepository, logger)
+	competitionService := competition.NewCompetitionService(competitionRepository, groupRepository, competitorRepository, matchRepository, logger)
 	competitorService := competitor.NewCompetitorService(
 		competitorRepository,
 		clubRepository,

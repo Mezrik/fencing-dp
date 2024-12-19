@@ -8,4 +8,5 @@ import (
 type MatchRepository interface {
 	FindAll(groupID uuid.UUID) ([]*entities.Match, error)
 	FindById(id uuid.UUID) (*entities.Match, error)
+	Create(match *entities.Match) error
 }

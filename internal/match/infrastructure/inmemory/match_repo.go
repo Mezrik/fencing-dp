@@ -2,10 +2,12 @@ package inmemory
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/Mezrik/fencing-dp/internal/common/util"
 	"github.com/Mezrik/fencing-dp/internal/match/domain/entities"
 	"github.com/Mezrik/fencing-dp/internal/match/infrastructure/inmemory/database/dao"
+	"github.com/Mezrik/fencing-dp/internal/match/infrastructure/inmemory/database/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -20,7 +22,16 @@ func NewInMemoryMatchRepo(ctx context.Context, db *sqlx.DB) *InMemoryMatchRepo {
 }
 
 func (repo InMemoryMatchRepo) Create(match *entities.Match) error {
-	return nil
+
+	dao := &dao.MatchDao{DB: repo.db}
+
+	matchModel, err := repo.marshalMatch(match)
+
+	if err != nil {
+		return err
+	}
+
+	return dao.Create(matchModel)
 }
 
 func (repo InMemoryMatchRepo) FindAll(groupID uuid.UUID) ([]*entities.Match, error) {
@@ -87,4 +98,15 @@ func (repo InMemoryMatchRepo) FindById(id uuid.UUID) (*entities.Match, error) {
 	)
 
 	return match, nil
+}
+
+func (repo InMemoryMatchRepo) marshalMatch(match *entities.Match) (models.MatchModel, error) {
+	return models.MatchModel{
+		ID:               match.ID,
+		CreatedAt:        match.CreatedAt,
+		UpdatedAt:        sql.NullTime{},
+		GroupID:          match.GroupID(),
+		ParticipantOneID: match.ParticipantOneID(),
+		ParticipantTwoID: match.ParticipantTwoID(),
+	}, nil
 }

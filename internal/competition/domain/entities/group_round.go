@@ -38,7 +38,7 @@ type GroupRound struct {
 
 func NewGroupRound(competitionID uuid.UUID, number int, participantsStartingCount int, shiftCriteria []ShiftCriteria, advancingPercent int) *GroupRound {
 
-	recommendedSize := CalculateGroupSizes(participantsStartingCount, 3, 6)[0]
+	recommendedSize := CalculateGroupSizes(participantsStartingCount, 2, 6)[0]
 
 	return &GroupRound{
 		Entity:                    common.Entity{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: nil},

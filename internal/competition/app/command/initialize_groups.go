@@ -6,7 +6,10 @@ import (
 	"github.com/Mezrik/fencing-dp/internal/common/decorator"
 	"github.com/Mezrik/fencing-dp/internal/common/errors"
 	"github.com/Mezrik/fencing-dp/internal/competition/domain/repositories"
+	"github.com/Mezrik/fencing-dp/internal/competitor/domain/entities"
 	compRepo "github.com/Mezrik/fencing-dp/internal/competitor/domain/repositories"
+	matchEntities "github.com/Mezrik/fencing-dp/internal/match/domain/entities"
+	matchRepo "github.com/Mezrik/fencing-dp/internal/match/domain/repositories"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -21,14 +24,15 @@ type initializeGroupsHandler struct {
 	repo            repositories.GroupRepository
 	competitionRepo repositories.CompetitionRepository
 	competitorRepo  compRepo.CompetitorRepo
+	matchRepo       matchRepo.MatchRepository
 }
 
-func NewInitializeGroupsHandler(repo repositories.GroupRepository, competitionRepo repositories.CompetitionRepository, competitorRepo compRepo.CompetitorRepo, logger *logrus.Entry) InitializeGroupsHandler {
+func NewInitializeGroupsHandler(repo repositories.GroupRepository, competitionRepo repositories.CompetitionRepository, competitorRepo compRepo.CompetitorRepo, matchRepo matchRepo.MatchRepository, logger *logrus.Entry) InitializeGroupsHandler {
 	if repo == nil {
 		panic("nil repo")
 	}
 
-	return decorator.ApplyCommandDecorators[InitializeGroups](initializeGroupsHandler{repo, competitionRepo, competitorRepo}, logger)
+	return decorator.ApplyCommandDecorators[InitializeGroups](initializeGroupsHandler{repo, competitionRepo, competitorRepo, matchRepo}, logger)
 }
 
 func (h initializeGroupsHandler) Handle(ctx context.Context, cmd InitializeGroups) error {
@@ -54,6 +58,16 @@ func (h initializeGroupsHandler) Handle(ctx context.Context, cmd InitializeGroup
 		for _, participant := range groupData.Participants {
 			err = h.competitorRepo.UpdateParticipant(participant)
 		}
+
+		matches := createMatches(groupData.Participants, groupData.Group.ID)
+
+		for _, match := range matches {
+			err = h.matchRepo.Create(&match)
+
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	if err != nil {
@@ -61,4 +75,22 @@ func (h initializeGroupsHandler) Handle(ctx context.Context, cmd InitializeGroup
 	}
 
 	return nil
+}
+
+func createMatches(participants []*entities.Participant, groupId uuid.UUID) []matchEntities.Match {
+	var matches []matchEntities.Match
+
+	for i := 0; i < len(participants); i++ {
+		for j := i + 1; j < len(participants); j++ {
+			if participants[i].Competitor().ID == participants[j].Competitor().ID {
+				continue
+			}
+
+			match := matchEntities.NewMatch(groupId, participants[i].Competitor().ID, participants[j].Competitor().ID)
+
+			matches = append(matches, *match)
+		}
+	}
+
+	return matches
 }

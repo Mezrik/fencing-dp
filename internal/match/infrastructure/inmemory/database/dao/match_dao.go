@@ -11,7 +11,29 @@ type MatchDao struct {
 }
 
 func (dao *MatchDao) Create(match models.MatchModel) error {
-	return nil
+
+	_, err := dao.DB.NamedExec(`
+		INSERT INTO competition_matches
+		(
+			id,
+			competition_group_id,
+			participant_one_id,
+			participant_two_id,
+			created_at,
+			updated_at
+		)
+		VALUES
+		(
+			:id,
+			:competition_group_id,
+			:participant_one_id,
+			:participant_two_id,
+			:created_at,
+			:updated_at
+		)
+	`, match)
+
+	return err
 }
 
 func (dao *MatchDao) FindAll(groupID uuid.UUID) ([]*models.MatchModel, error) {

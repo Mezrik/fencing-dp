@@ -4,7 +4,12 @@ import {
   useCompetition,
 } from '@/features/competitions/api/get-competition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Overview, Groups, Elimination } from '@/features/competitions/components/competition';
+import {
+  Overview,
+  Groups,
+  Elimination,
+  Referees,
+} from '@/features/competitions/components/competition';
 
 import { msg, Trans } from '@lingui/macro';
 import { QueryClient } from '@tanstack/react-query';
@@ -85,7 +90,7 @@ export const CompetitionRoute = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <Overview competition={competition}></Overview>
+          <Overview competition={competition} />
         </TabsContent>
         <TabsContent value="groups">
           <Groups competitionId={competition.id} />
@@ -93,7 +98,9 @@ export const CompetitionRoute = () => {
         <TabsContent value="elimination">
           <Elimination />
         </TabsContent>
-        <TabsContent value="referees">WIP</TabsContent>
+        <TabsContent value="referees">
+          <Referees />
+        </TabsContent>
       </Tabs>
 
       <UpdateCompetitionParameters
