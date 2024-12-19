@@ -116,7 +116,7 @@ func (dao *CompetitionDao) FindAll() ([]*models.CompetitionModel, error) {
 
 func (dao *CompetitionDao) Update(competition *models.CompetitionModel) error {
 	query := `
-		UPDATE competition
+		UPDATE competitions
 		SET
 			updated_at = :updated_at,
 			weapon_id = :weapon_id,
@@ -126,8 +126,8 @@ func (dao *CompetitionDao) Update(competition *models.CompetitionModel) error {
 			federation_name = :federation_name,
 			competition_type = :competition_type,
 			gender = :gender,
-			date = :date
-			parameters_id = :parameters_id
+			date = :date,
+			competition_parameters_id = :competition_parameters_id
 		WHERE id = :id
 	`
 

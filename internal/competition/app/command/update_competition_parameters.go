@@ -12,13 +12,13 @@ import (
 )
 
 type UpdateCompetitionParameters struct {
-	CompetitionID              uuid.UUID               `json:"competition_id" ts_type:"UUID"`
-	ExpectedParticipants       int                     `json:"expected_participants"`
-	DeploymentType             entities.DeploymentType `json:"deployment_type"`
-	GroupHits                  int                     `json:"group_hits"`
-	EliminationHits            int                     `json:"elimination_hits"`
-	QualificationBasedOnRounds int                     `json:"qualification_based_on_rounds"`
-	RoundsCount                int                     `json:"rounds_count"`
+	CompetitionID              uuid.UUID               `json:"competitionId" ts_type:"UUID"`
+	ExpectedParticipants       int                     `json:"expectedParticipants"`
+	DeploymentType             entities.DeploymentType `json:"deploymentType"`
+	GroupHits                  int                     `json:"groupHits"`
+	EliminationHits            int                     `json:"eliminationHits"`
+	QualificationBasedOnRounds int                     `json:"qualificationBasedOnRounds"`
+	RoundsCount                int                     `json:"roundsCount"`
 }
 
 type UpdateCompetitionParametersHandler decorator.CommandHandler[UpdateCompetitionParameters]

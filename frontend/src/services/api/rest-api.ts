@@ -28,6 +28,9 @@ import {
   putCompetitorsCompetitorId,
   postCompetitionsCompetitionIdGroupsInitialize,
   CompetitionDetail,
+  putCompetitionsCompetitionIdParameters,
+  UpdateCompetitionParametersCommand,
+  putCompetitionsCompetitionId,
 } from '@/generated/server';
 import { Api } from './api';
 
@@ -98,5 +101,16 @@ export class RestApi implements Api {
 
   InitializeGroups(competitionId: UUID): Promise<void> {
     return postCompetitionsCompetitionIdGroupsInitialize(competitionId);
+  }
+
+  UpdateCompetitionParameters(
+    competitionId: UUID,
+    data: UpdateCompetitionParametersCommand,
+  ): Promise<void> {
+    return putCompetitionsCompetitionIdParameters(competitionId, data);
+  }
+
+  UpdateCompetition(id: UUID, data: CreateCompetitionCommand): Promise<void> {
+    return putCompetitionsCompetitionId(id, data);
   }
 }

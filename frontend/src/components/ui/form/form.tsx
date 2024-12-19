@@ -182,6 +182,8 @@ const Form = <
 }: FormProps<TFormValues, Schema>) => {
   const form = useForm({ ...options, resolver: zodResolver(schema) });
 
+  console.log(form.getValues());
+
   React.useEffect(() => {
     options?.defaultValues && form.reset(options?.defaultValues as DefaultValues<TFormValues>);
   }, [options?.defaultValues]);

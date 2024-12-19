@@ -1,6 +1,11 @@
 import { MenGenderIcon, MixedGenderIcon, WomenGenderIcon } from '@/assets/icons';
 import { I18n } from '@lingui/core';
-import { CompetitionParticipant, CompetitionTypeEnum, GenderEnum } from '@/generated/server';
+import {
+  CompetitionParticipant,
+  CompetitionTypeEnum,
+  DeploymentTypeEnum,
+  GenderEnum,
+} from '@/generated/server';
 import { msg } from '@lingui/macro';
 
 export const getCompetionTypeCaption = (competitionType: CompetitionTypeEnum, _: I18n['_']) => {
@@ -22,6 +27,15 @@ export const getGenderCaption = (gender: GenderEnum, _: I18n['_'], plural = true
       return plural ? _(msg`Women`) : _(msg`Woman`);
     case GenderEnum.mixed:
       return plural ? _(msg`Mixed`) : _(msg`Other`);
+    default:
+      return '???';
+  }
+};
+
+export const getDeploymentTypeCaption = (deploymentType: string, _: I18n['_']) => {
+  switch (deploymentType) {
+    case DeploymentTypeEnum.deployment:
+      return _(msg`Deployment`);
     default:
       return '???';
   }

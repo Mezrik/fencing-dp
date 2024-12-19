@@ -18,6 +18,7 @@ import {
 } from '@/generated/wailsjs/go/desktop/Admin';
 import { command, query } from '@/generated/wailsjs/go/models';
 import { Api } from './api';
+import { UpdateCompetitionParametersCommand } from '@/generated/server';
 
 export class DesktopApi implements Api {
   GetCompetitions(): Promise<Array<query.Competition>> {
@@ -86,5 +87,16 @@ export class DesktopApi implements Api {
 
   InitializeGroups(competitionId: UUID): Promise<void> {
     return InitializeGroups(competitionId);
+  }
+
+  UpdateCompetitionParameters(
+    competitionId: UUID,
+    data: UpdateCompetitionParametersCommand,
+  ): Promise<void> {
+    return Promise.resolve();
+  }
+
+  UpdateCompetition(): Promise<void> {
+    return Promise.resolve();
   }
 }

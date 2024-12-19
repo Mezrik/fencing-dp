@@ -21,7 +21,9 @@ func (dao *CompetitionGroupRoundDao) Create(competitionGroupRound *models.Compet
       participants_starting_count,
       shift_criteria,
       number_of_advancers,
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+			number_of_groups,
+			participants_in_groups
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	_, err := dao.DB.Exec(
 		query,
@@ -33,6 +35,8 @@ func (dao *CompetitionGroupRoundDao) Create(competitionGroupRound *models.Compet
 		competitionGroupRound.ParticipantStartingCount,
 		competitionGroupRound.ShiftCriteria,
 		competitionGroupRound.NumberOfAdvancers,
+		competitionGroupRound.NumberOfGroups,
+		competitionGroupRound.ParticipantsInGroups,
 	)
 
 	return err

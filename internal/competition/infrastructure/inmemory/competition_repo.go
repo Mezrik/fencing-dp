@@ -265,13 +265,9 @@ func (repo InMemoryCompetitionRepository) Update(competition *entities.Competiti
 		return err
 	}
 
-	parameters, err := competitionParametersDao.FindById(competitionModel.Parameters.ID)
+	_, err = competitionParametersDao.FindById(competitionModel.Parameters.ID)
 
 	if err != nil {
-		return err
-	}
-
-	if parameters == nil {
 		err = competitionParametersDao.Create(competitionModel.Parameters)
 	} else {
 		err = competitionParametersDao.Update(competitionModel.Parameters)
@@ -304,6 +300,19 @@ func (repo InMemoryCompetitionRepository) Update(competition *entities.Competiti
 }
 
 func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competition) (*models.CompetitionModel, error) {
+	var parametersId *uuid.UUID
+	var parameters *models.CompetitionParametersModel
+	var err error
+
+	if c.Parameters() != nil {
+		parametersId = &c.Parameters().ID
+		parameters, err = repo.marshalCompetitionParameters(c.Parameters())
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
 	competitionModel := &models.CompetitionModel{
 		ID:              c.ID,
 		Name:            c.Name(),
@@ -315,9 +324,24 @@ func (repo InMemoryCompetitionRepository) marshalCompetition(c *entities.Competi
 		CategoryID:      c.Category().ID,
 		WeaponID:        c.Weapon().ID,
 		CreatedAt:       c.CreatedAt,
+		ParametersID:    parametersId,
+		Parameters:      parameters,
 	}
 
 	return competitionModel, nil
+}
+
+func (repo InMemoryCompetitionRepository) marshalCompetitionParameters(c *entities.CompetitionParameters) (*models.CompetitionParametersModel, error) {
+
+	return &models.CompetitionParametersModel{
+		ID:                         c.ID,
+		ExpectedParticipants:       c.ExpectedParticipants(),
+		DeploymentType:             string(c.DeploymentType()),
+		GroupHits:                  c.GroupHits(),
+		EliminationHits:            c.EliminationHits(),
+		QualificationBasedOnRounds: c.QualificationBasedOnRounds(),
+		CreatedAt:                  c.CreatedAt,
+	}, nil
 }
 
 func shiftCriteriaToStrings(criteria []entities.ShiftCriteria) []string {

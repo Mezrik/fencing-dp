@@ -12,6 +12,9 @@ import { LoaderFunctionArgs, useParams } from 'react-router-dom';
 import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLingui } from '@lingui/react';
+import { UpdateCompetitionParameters } from '@/features/competitions/components/dialog/update-competition-parameters';
+import { useState } from 'react';
+import { UpdateCompetition } from '@/features/competitions/components/dialog/update-competition';
 
 export const competitionLoader =
   (queryClient: QueryClient) =>
@@ -26,6 +29,9 @@ export const competitionLoader =
 export const CompetitionRoute = () => {
   const { _ } = useLingui();
   const params = useParams();
+
+  const [showUpdateParameters, setShowUpdateParameters] = useState(false);
+  const [showUpdate, setShowUpdate] = useState(false);
 
   const competitionId = params.competitionId as string;
   const competitionQuery = useCompetition({
@@ -48,13 +54,13 @@ export const CompetitionRoute = () => {
       subtitle={_(msg`Competition`)}
       actions={
         <div className="flex gap-2">
-          <Button className="gap-2" variant="default">
+          <Button className="gap-2" variant="secondary" onClick={() => setShowUpdate(true)}>
             <PencilIcon className="size-4" />
             <span className="hidden sm:inline">
               <Trans>Edit basic info</Trans>
             </span>
           </Button>
-          <Button className="gap-2" variant="default">
+          <Button className="gap-2" variant="default" onClick={() => setShowUpdateParameters(true)}>
             <PencilIcon className="size-4" />
             <span className="hidden sm:inline">
               <Trans>Edit parameters</Trans>
@@ -89,6 +95,15 @@ export const CompetitionRoute = () => {
         </TabsContent>
         <TabsContent value="referees">WIP</TabsContent>
       </Tabs>
+
+      <UpdateCompetitionParameters
+        id={competition.id}
+        onOpenChange={setShowUpdateParameters}
+        open={showUpdateParameters}
+        parameters={competition.parameters}
+      />
+
+      <UpdateCompetition id={competition.id} onOpenChange={setShowUpdate} open={showUpdate} />
     </BasicPageLayout>
   );
 };

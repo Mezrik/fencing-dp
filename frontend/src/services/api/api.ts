@@ -11,6 +11,7 @@ import {
   CompetitionParticipant,
   UpdateCompetitorCommand,
   CompetitionDetail,
+  UpdateCompetitionParametersCommand,
 } from '@/generated/server';
 import { DesktopApi } from './desktop-api';
 import { RestApi } from './rest-api';
@@ -51,6 +52,13 @@ export interface Api {
   ImportCompetitor(file: File): Promise<void>;
 
   InitializeGroups(competitionId: UUID): Promise<void>;
+
+  UpdateCompetitionParameters(
+    competitionId: UUID,
+    data: UpdateCompetitionParametersCommand,
+  ): Promise<void>;
+
+  UpdateCompetition(id: UUID, data: CreateCompetitionCommand): Promise<void>;
 }
 
 export const api: Api = import.meta.env.MODE === 'desktop' ? new DesktopApi() : new RestApi();
